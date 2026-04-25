@@ -1,0 +1,427 @@
+/* ============================================================
+   CREATOR'S LOG — blog entries, admin form styles
+
+   Class naming note:
+   - blog-entries.html uses capital-B classes: .Blog-Entry, .Blog-Date etc.
+   - The desktop window builder (window-manager.js) uses lowercase: .blog-entry etc.
+   - Both sets are styled here so both sources render correctly.
+============================================================ */
+
+/* ---- Header row ---- */
+.blog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* ---- Entry card — lowercase (window-manager.js inline HTML) ---- */
+.blog-entry,
+.Blog-Entry {
+  border-left: 3px solid #a8c8e8;
+  background: rgba(7, 42, 113, 0.4);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+/* ---- Meta row ---- */
+.blog-meta,
+.Blog-Entry-Meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* ---- Date ---- */
+.blog-date,
+.Blog-Date {
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: #354a5f;
+}
+
+/* ---- Tag pill ---- */
+.blog-tag,
+.Blog-Tag {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(0, 109, 255, 0.15);
+  border: 1px solid #a8c8e8;
+  color: #006dff;
+}
+
+/* ---- Title ---- */
+.blog-title,
+.Blog-Entry-Title {
+  font-size: 9px;
+  color: #a8c8e8;
+  margin-bottom: 4px;
+  font-family: "Press Start 2P", monospace;
+  line-height: 1.5;
+}
+
+/* ---- Body ---- */
+.blog-body,
+.Blog-Entry-Body {
+  font-size: 8px;
+  line-height: 1.6;
+  color: #9ac8f6;
+  font-family: "Press Start 2P", monospace;
+}
+
+/* ---- Copy / action buttons (shared) ---- */
+.copy-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  background: transparent;
+  color: #006dff;
+  border: 1.5px solid #006dff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.copy-btn:hover {
+  background: #006dff;
+  color: #fff;
+}
+.copy-btn.copied {
+  background: #00cc66;
+  color: #fff;
+  border-color: #00cc66;
+}
+
+/* ============================================================
+   TOOLBAR — header with sort + filter dropdown + admin toggle
+============================================================ */
+.Blog-Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 109, 255, 0.25);
+  flex-wrap: wrap;
+}
+.Blog-Header-Left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.Blog-Header-Title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #a8c8e8;
+}
+.Blog-Entry-Count {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: #354a5f;
+}
+.Blog-Header-Right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Sort button */
+.Blog-Sort-Wrap {
+  position: relative;
+}
+.Blog-Sort-Btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  background: rgba(0, 10, 30, 0.5);
+  color: #9ac8f6;
+  border: 1px solid #1a4a8a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+  white-space: nowrap;
+}
+.Blog-Sort-Btn:hover {
+  border-color: #a8c8e8;
+  color: #a8c8e8;
+}
+.Blog-Sort-Btn.active {
+  border-color: #006dff;
+  color: #fff;
+  background: rgba(0, 109, 255, 0.2);
+}
+
+/* Sort + filter dropdown panel */
+.Blog-Sort-Dropdown {
+  position: fixed;
+  min-width: 220px;
+  background: #0a1628;
+  border: 2px solid #006dff;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 40, 120, 0.5);
+  padding: 6px 0;
+  z-index: 99999;
+  display: none;
+  font-family: "Press Start 2P", monospace;
+}
+.Blog-Sort-Dropdown.open {
+  display: block;
+}
+
+.Blog-Dropdown-Section-Title {
+  font-size: 6px;
+  letter-spacing: 2px;
+  color: #354a5f;
+  padding: 6px 12px 4px;
+  border-bottom: 1px solid #0f2040;
+}
+.Blog-Dropdown-Opt {
+  font-size: 7px;
+  letter-spacing: 1px;
+  padding: 7px 12px;
+  cursor: pointer;
+  color: #9ac8f6;
+  transition: 0.12s;
+}
+.Blog-Dropdown-Opt:hover {
+  background: rgba(0, 109, 255, 0.2);
+  color: #a8c8e8;
+}
+.Blog-Dropdown-Opt.active {
+  color: #fff;
+  background: rgba(0, 109, 255, 0.3);
+  border-left: 2px solid #00eaff;
+  padding-left: 10px;
+}
+
+/* Filter chips */
+.Blog-Filter-Chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 10px 8px;
+}
+.Blog-Filter-Chip {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1px;
+  padding: 5px 8px;
+  background: rgba(0, 10, 30, 0.5);
+  color: #9ac8f6;
+  border: 1px solid #1a4a8a;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: 0.12s;
+}
+.Blog-Filter-Chip:hover {
+  border-color: #a8c8e8;
+  color: #a8c8e8;
+}
+.Blog-Filter-Chip.active {
+  background: #006dff;
+  color: #fff;
+  border-color: #00eaff;
+}
+
+/* Export + Clear buttons (promote flow) */
+.Blog-Export-Btn,
+.Blog-Clear-Btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+  white-space: nowrap;
+}
+.Blog-Export-Btn {
+  background: rgba(0, 204, 102, 0.12);
+  color: #00cc66;
+  border: 1px solid #00cc66;
+}
+.Blog-Export-Btn:hover {
+  background: #00cc66;
+  color: #000;
+  box-shadow: 0 0 8px rgba(0, 204, 102, 0.5);
+}
+.Blog-Export-Btn.flashed {
+  background: #00cc66;
+  color: #000;
+}
+.Blog-Export-Btn.error,
+.Blog-Clear-Btn.error {
+  background: rgba(242, 90, 120, 0.2);
+  color: #f25a78;
+  border-color: #f25a78;
+}
+.Blog-Clear-Btn {
+  background: rgba(242, 90, 120, 0.08);
+  color: #f25a78;
+  border: 1px solid #f25a78;
+}
+.Blog-Clear-Btn:hover {
+  background: #f25a78;
+  color: #000;
+  box-shadow: 0 0 8px rgba(242, 90, 120, 0.5);
+}
+.Blog-Clear-Btn.flashed {
+  background: #f25a78;
+  color: #000;
+}
+
+/* Admin toggle button */
+.Blog-Admin-Toggle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  background: rgba(0, 109, 255, 0.15);
+  color: #00eaff;
+  border: 1px solid #006dff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+  white-space: nowrap;
+}
+.Blog-Admin-Toggle:hover {
+  background: #006dff;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(0, 109, 255, 0.5);
+}
+
+/* ============================================================
+   ADMIN FORM — hidden by default, toggled via .visible
+============================================================ */
+.Blog-Admin-Form {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+  background: rgba(0, 5, 20, 0.7);
+  border: 1px solid #1a4a8a;
+  border-left: 3px solid #00eaff;
+  border-radius: 4px;
+}
+.Blog-Admin-Form.visible {
+  display: flex;
+}
+
+.Blog-Admin-Row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.Blog-Admin-Row-Split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.Blog-Admin-Row-Split > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.Blog-Admin-Label {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: #354a5f;
+}
+.Blog-Admin-Input {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  padding: 6px 8px;
+  background: #000;
+  color: #9ac8f6;
+  border: 1px inset #1a4a8a;
+  border-radius: 2px;
+  outline: none;
+  caret-color: #00eaff;
+}
+.Blog-Admin-Input:focus {
+  border-color: #00eaff;
+}
+.Blog-Admin-Textarea {
+  resize: vertical;
+  min-height: 50px;
+  line-height: 1.5;
+  font-family: "Press Start 2P", monospace;
+}
+
+.Blog-Admin-Footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.Blog-Admin-Status {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1px;
+  color: #354a5f;
+  min-height: 10px;
+}
+.Blog-Admin-Status.error {
+  color: #f25a78;
+}
+.Blog-Admin-Btns {
+  display: flex;
+  gap: 6px;
+}
+
+.Blog-Admin-Cancel,
+.Blog-Admin-Submit {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 1px;
+  padding: 7px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.Blog-Admin-Cancel {
+  background: transparent;
+  color: #9ac8f6;
+  border: 1px solid #1a4a8a;
+}
+.Blog-Admin-Cancel:hover {
+  border-color: #f25a78;
+  color: #f25a78;
+}
+.Blog-Admin-Submit {
+  background: #006dff;
+  color: #fff;
+  border: 1px solid #00eaff;
+}
+.Blog-Admin-Submit:hover {
+  background: #00eaff;
+  color: #000;
+}
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+.Blog-Empty {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  color: #354a5f;
+  text-align: center;
+  padding: 20px 8px;
+  font-style: italic;
+}

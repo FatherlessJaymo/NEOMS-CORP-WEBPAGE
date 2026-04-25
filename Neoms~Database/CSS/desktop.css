@@ -1,0 +1,25 @@
+/* ============================================================
+   NEOMS — DESKTOP SHELL STYLES
+   Neoms~Database/CSS/desktop.css
+
+   All core shell rules (taskbar, windows, icons, start-menu)
+   live in Databaselog.css.
+   Code viewer rules (.cv-file-btn, hljs) → codeviewer/codeviewer.css
+   World-map marker rules (.nm-site-marker) → worldmap/worldmap.css
+   ============================================================ */
+
+/* ── Desktop background map SVG ─────────────────────────────── */
+#desktop-map-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Safety fallback: ensures D3 always gets real pixel dimensions
+     even on the first rAF tick before layout fully resolves */
+  min-width: 100vw;
+  min-height: calc(100vh - 30px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+  display: block;
+}

@@ -1,0 +1,548 @@
+/* ============================================================
+   NEOMIX PLAYER — modern music-app style
+   All IDs/classes from buildNeomix() preserved.
+   Button images pulled from /Neoms~Universal-Fonts+Images/icons/Neomix/
+============================================================ */
+
+/* === ROOT WRAPPER === */
+#neomix-player {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: -12px; /* cancel .win-scroll padding */
+  background: linear-gradient(180deg, #0a0a18 0%, #050510 60%, #020206 100%);
+  color: #e6ecf5;
+  font-family: "Press Start 2P", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+#neomix-player::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(0, 234, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 100%, rgba(0, 109, 255, 0.1), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+#neomix-player > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* === HEADER === */
+#neomix-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  flex-shrink: 0;
+  font-size: 7px;
+  letter-spacing: 4px;
+  color: #6ab7ff;
+  text-shadow: 0 0 8px rgba(0, 234, 255, 0.5);
+  border-bottom: 1px solid rgba(106, 183, 255, 0.1);
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+#neomix-title-bar::before,
+#neomix-title-bar::after {
+  display: none;
+}
+
+/* === BODY === */
+#neomix-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1a4a8a transparent;
+}
+#neomix-body::-webkit-scrollbar {
+  width: 4px;
+}
+#neomix-body::-webkit-scrollbar-thumb {
+  background: #1a4a8a;
+  border-radius: 2px;
+}
+
+/* === ART / VIDEO AREA === */
+#neomix-display {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  background: #000;
+  border: 1px solid rgba(106, 183, 255, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  display: none;
+  margin-bottom: 4px;
+}
+#neomix-yt-target {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+#neomix-yt-target iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  display: block;
+}
+
+/* === NOW PLAYING CARD === */
+#neomix-screen {
+  background: linear-gradient(135deg, rgba(0, 109, 255, 0.08), rgba(0, 234, 255, 0.04));
+  border: 1px solid rgba(106, 183, 255, 0.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+#neomix-song-name {
+  font-size: 8px;
+  color: #ffffff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(0, 234, 255, 0.4);
+  overflow: hidden;
+}
+#neomix-song-name b {
+  font-weight: normal;
+}
+#neomix-song-name marquee {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+#neomix-song-sub {
+  font-size: 6px;
+  color: rgba(230, 236, 245, 0.55);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* === SEEK BAR === */
+#neomix-seek-bar {
+  width: 100%;
+  height: 4px;
+  margin: 4px 0 0 !important;
+  display: block;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(106, 183, 255, 0.12);
+  border: none !important;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+}
+#neomix-seek-bar::-webkit-slider-runnable-track {
+  height: 4px;
+  background: transparent;
+}
+#neomix-seek-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #00eaff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.6);
+  margin-top: -4px;
+}
+#neomix-seek-bar::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #00eaff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.6);
+}
+#neomix-seek-bar::-moz-range-track {
+  height: 4px;
+  background: rgba(106, 183, 255, 0.12);
+  border-radius: 2px;
+}
+
+/* === TIME + TRACK INFO === */
+.neomix-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: rgba(230, 236, 245, 0.6);
+  padding: 0 2px;
+}
+#neomix-time-cur,
+#neomix-time-dur {
+  color: #a8c8e8;
+  font-variant-numeric: tabular-nums;
+}
+#neomix-track-info {
+  color: rgba(230, 236, 245, 0.4);
+  margin-left: auto;
+}
+
+/* ============================================================
+   PLAYBACK CONTROLS — image buttons
+============================================================ */
+.neomix-ctrls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  padding: 6px 0;
+  margin: 0 auto;
+}
+
+/* All icon buttons (prev, stop, next, and play) */
+.neomix-ibtn {
+  width: 38px;
+  height: 38px;
+  min-width: 0;
+  padding: 0;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(106, 183, 255, 0.2) !important;
+  color: #e6ecf5 !important;
+  cursor: pointer;
+  transition:
+    transform 0.12s,
+    background 0.15s,
+    box-shadow 0.15s,
+    border-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  text-shadow: none;
+  font-family: inherit;
+  overflow: hidden;
+  line-height: 0;
+}
+.neomix-ibtn:hover {
+  background: rgba(0, 234, 255, 0.15) !important;
+  border-color: rgba(0, 234, 255, 0.5) !important;
+  transform: scale(1.08);
+}
+.neomix-ibtn:active {
+  transform: scale(0.95);
+  background: rgba(0, 234, 255, 0.25) !important;
+}
+
+.neomix-ibtn-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(0, 234, 255, 0.2));
+}
+.neomix-ibtn-glyph {
+  font-size: 14px;
+  color: #e6ecf5;
+  line-height: 1;
+}
+
+/* Big central play button */
+#neomix-play {
+  width: 52px !important;
+  height: 52px !important;
+  background: linear-gradient(135deg, #00eaff, #006dff) !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(0, 234, 255, 0.35) !important;
+}
+#neomix-play:hover {
+  background: linear-gradient(135deg, #33efff, #3386ff) !important;
+  box-shadow: 0 6px 22px rgba(0, 234, 255, 0.5) !important;
+  transform: scale(1.06);
+}
+#neomix-play .neomix-ibtn-img {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* === Generic button reset inside the player === */
+#neomix-player button {
+  font-family: "Press Start 2P", sans-serif;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(106, 183, 255, 0.2);
+  color: #e6ecf5;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 6px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+  text-shadow: none;
+  box-shadow: none;
+}
+#neomix-player button:hover {
+  background: rgba(0, 234, 255, 0.12);
+  border-color: rgba(0, 234, 255, 0.4);
+}
+#neomix-player button:active {
+  background: rgba(0, 234, 255, 0.2);
+  border: 1px solid rgba(0, 234, 255, 0.4);
+}
+
+/* === MUTE + VOLUME ROW === */
+.neomix-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+#neomix-mute {
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+#neomix-vol-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 1;
+  height: 3px !important;
+  background: rgba(106, 183, 255, 0.12) !important;
+  border: none !important;
+  border-radius: 2px;
+  min-width: 60px;
+  outline: none;
+  cursor: pointer;
+}
+#neomix-vol-bar::-webkit-slider-runnable-track {
+  height: 3px;
+  background: transparent;
+}
+#neomix-vol-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #a8c8e8;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -3.5px;
+  box-shadow: 0 0 4px rgba(168, 200, 232, 0.6);
+}
+#neomix-vol-bar::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #a8c8e8;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(168, 200, 232, 0.6);
+}
+
+/* === PLAYLIST SELECT === */
+#neomix-playlist-select {
+  flex-shrink: 0;
+  font-family: "Press Start 2P", sans-serif;
+  font-size: 6px !important;
+  max-width: 140px !important;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(106, 183, 255, 0.2) !important;
+  color: #e6ecf5 !important;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #6ab7ff 50%),
+    linear-gradient(135deg, #6ab7ff 50%, transparent 50%) !important;
+  background-position:
+    right 10px top 50%,
+    right 6px top 50% !important;
+  background-size:
+    4px 4px,
+    4px 4px !important;
+  background-repeat: no-repeat !important;
+  padding-right: 22px;
+  letter-spacing: 0.5px;
+}
+#neomix-playlist-select option {
+  background: #0a0a18;
+  color: #e6ecf5;
+  font-family: inherit;
+}
+
+/* === TOGGLE BUTTONS (Video / Shuffle) === */
+.neomix-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(106, 183, 255, 0.2) !important;
+  color: #a8c8e8 !important;
+  font-size: 6px !important;
+  letter-spacing: 1px;
+}
+.neomix-toggle-btn:hover {
+  background: rgba(0, 234, 255, 0.08) !important;
+  border-color: rgba(0, 234, 255, 0.4) !important;
+}
+.neomix-toggle-btn[state="on"] {
+  background: rgba(0, 234, 255, 0.18) !important;
+  border-color: #00eaff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(0, 234, 255, 0.25);
+}
+.neomix-toggle-btn > span {
+  font-size: 6px;
+  color: inherit;
+  letter-spacing: 1px;
+}
+/* The Video button (no image) keeps the dot indicator */
+#neomix-video-toggle[state="off"] > span::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #30374a;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+#neomix-video-toggle[state="on"] > span::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00eaff;
+  margin-right: 5px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px #00eaff;
+}
+
+/* Shuffle toggle: image + label, no dot */
+.neomix-toggle-img {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px rgba(168, 200, 232, 0.4));
+  opacity: 0.6;
+  transition:
+    opacity 0.15s,
+    filter 0.15s;
+  pointer-events: none;
+}
+#neomix-shuffle[state="on"] .neomix-toggle-img {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(0, 234, 255, 0.8));
+}
+
+/* === BLINK === */
+.neomix-blink {
+  animation: blink 1.6s step-start infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ============================================================
+   TASKBAR MINI PLAYER
+============================================================ */
+#tb-neomix {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  height: 100%;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  min-width: 0;
+}
+#tb-neomix-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  max-width: 160px;
+}
+#tb-neomix-title {
+  font-size: 6px;
+  letter-spacing: 0.5px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
+  max-width: 160px;
+}
+#tb-neomix-sub {
+  font-size: 5px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.5px;
+}
+
+.tb-nm-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  line-height: 0;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.tb-nm-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+.tb-nm-btn:active {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Image inside taskbar mini-player buttons */
+.tb-nm-img {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+}
