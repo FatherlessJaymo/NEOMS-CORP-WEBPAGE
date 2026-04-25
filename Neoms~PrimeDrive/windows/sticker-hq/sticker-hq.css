@@ -1,0 +1,24 @@
+/* ============================================================
+   STICKER HQ — tray items, upload button
+============================================================ */
+.sticker-tray { display:flex; flex-wrap:wrap; gap:8px; padding:8px; }
+.tray-item {
+  display: flex; flex-direction:column; align-items:center; gap:3px;
+  cursor: pointer; padding:6px; border-radius:6px;
+  border: 1px solid #1a4a8a; background:rgba(0,10,30,.5);
+  transition: .2s; min-width:56px;
+}
+.tray-item:hover {
+  border-color: #a8c8e8; background:rgba(0,40,100,.4);
+  box-shadow: 0 0 10px rgba(0,109,255,.3); transform:scale(1.06);
+}
+.tray-item img  { width:42px; height:42px; object-fit:contain; border-radius:4px; }
+.tray-label     { font-size:6px; letter-spacing:1px; color:#a8c8e8; text-align:center; }
+.upload-btn {
+  display: flex; flex-direction:column; align-items:center; gap:3px;
+  cursor: pointer; padding:6px; border-radius:6px;
+  border: 1px dashed #006dff; background:rgba(0,20,60,.3);
+  transition: .2s; min-width:56px;
+}
+.upload-btn:hover { background:rgba(0,109,255,.15); box-shadow:0 0 8px rgba(0,109,255,.3); }
+.upload-icon { font-size:22px; color:#006dff; line-height:42px; width:42px; height:42px; text-align:center; }

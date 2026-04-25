@@ -1,0 +1,116 @@
+/* ============================================================
+   DESKTOP BASE — variables, body, desktop area, label bar
+============================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+:root {
+  --accent: #006dff;
+  --accent-hi: #a8c8e8;
+  --accent-glow: #c0d8f0;
+  --accent-sub: #c0d8f0;
+  --accent-bg: rgba(7, 42, 113, 0.5);
+  --panel-bg: rgba(0, 5, 20, 0.92);
+  --panel-border: #c0d8f0;
+  --text-base: #9ac8f6;
+  --text-muted: #a8c8e8;
+  --text-dim: #354a5f;
+  --logo-color: #a3c4e0;
+  --entry-border: #a8c8e8;
+  --danger: #f25a78;
+  --win-bar: #0a1f4a;
+  --taskbar-h: 48px;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Press Start 2P", monospace;
+}
+
+body {
+  background: url("/Neoms~Universal-Fonts+Images/BG/Sonic-CD.gif") no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text-base);
+  position: relative;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 5, 20, 0.45);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Desktop area */
+#desktop {
+  position: fixed;
+  inset: 0;
+  bottom: var(--taskbar-h);
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Top label bar */
+.desk-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #006dff 15%, #0044bb 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 20px;
+  z-index: 9000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.desk-label-item {
+  font-size: 6px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.4);
+}
+.desk-label-title {
+  color: #fff;
+  font-size: 7px;
+  letter-spacing: 4px;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.4);
+}
+
+/* Notification toast */
+#toast {
+  position: fixed;
+  bottom: calc(var(--taskbar-h) + 8px);
+  right: 8px;
+  background: #0a1628;
+  border: 3.5px solid #006dff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #9ac8f6;
+  z-index: 99997;
+  box-shadow: 0 4px 16px rgba(0, 40, 120, 0.4);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: 0.3s;
+  pointer-events: none;
+  max-width: 220px;
+  font-family: "Press Start 2P", monospace;
+}
+#toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}

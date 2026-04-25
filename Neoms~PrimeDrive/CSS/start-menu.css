@@ -1,0 +1,195 @@
+/* ============================================================
+   START MENU & CONTEXT MENU
+============================================================ */
+
+/* Right-click context menu */
+#ctx-menu {
+  position: fixed;
+  z-index: 99999;
+  background: #0a1628;
+  border: 3.5px solid #006dff;
+  border-radius: 8px;
+  padding: 4px 0;
+  min-width: 170px;
+  display: none;
+  box-shadow: 0 4px 14px rgba(0, 40, 120, 0.5);
+  font-family: "Press Start 2P", monospace;
+}
+.ctx-item {
+  font-size: 7px;
+  letter-spacing: 0.8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  color: #9ac8f6;
+  transition: 0.15s;
+}
+.ctx-item:hover {
+  background: rgba(0, 109, 255, 0.25);
+  color: #a8c8e8;
+}
+.ctx-sep {
+  height: 1px;
+  margin: 3px 8px;
+  background: #1a3a6a;
+}
+
+/* Start menu */
+#start-menu {
+  position: fixed;
+  bottom: var(--taskbar-h);
+  left: 0;
+  z-index: 99998;
+  background: #0a1628;
+  border: 3.5px solid #006dff;
+  border-radius: 12px 12px 5px 5px;
+  box-shadow: 0 -2px 16px rgba(0, 40, 120, 0.5);
+  width: 480px;
+  display: none;
+  font-family: "Press Start 2P", monospace;
+  overflow: hidden;
+}
+#start-menu::before {
+  display: none;
+}
+
+.start-header {
+  background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #006dff 15%, #0044bb 100%);
+  padding: 0 14px;
+  height: 36px;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #fff;
+  border-bottom: 2px solid #1a3a6a;
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Two-column layout: .start-user (left) + .start-apps (right) */
+.start-body {
+  display: flex;
+  flex-direction: row;
+  min-height: 320px;
+}
+
+/* Left — user panel */
+.start-user {
+  width: 170px;
+  flex-shrink: 0;
+  background: rgba(0, 5, 18, 0.7);
+  border-right: 1px solid #1a3a6a;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 10px;
+  gap: 10px;
+}
+.start-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #006dff;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 4px;
+  box-shadow: 0 0 12px rgba(0, 109, 255, 0.4);
+}
+.start-username {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #a8c8e8;
+  text-align: center;
+  margin-bottom: 2px;
+}
+.start-usertag {
+  font-size: 6px;
+  color: #354a5f;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.start-sep {
+  height: 1px;
+  background: #1a3a6a;
+  margin: 2px 0;
+}
+.start-social {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.12s;
+  text-decoration: none;
+  color: #9ac8f6;
+  font-size: 6px;
+  letter-spacing: 0.8px;
+}
+.start-social:hover {
+  background: rgba(0, 109, 255, 0.2);
+  color: #a8c8e8;
+}
+.start-social img {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.start-social-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Right — apps list (vertical stack) */
+.start-apps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #006dff #071020;
+  min-width: 0;
+}
+.start-apps-title {
+  font-size: 6px;
+  letter-spacing: 2px;
+  color: #354a5f;
+  padding: 8px 12px 4px;
+  border-bottom: 1px solid #0f2040;
+  flex-shrink: 0;
+}
+
+/* Each menu item: one full-width row, icon left of label */
+.start-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 7px;
+  letter-spacing: 0.7px;
+  padding: 7px 12px;
+  cursor: pointer;
+  color: #9ac8f6;
+  border-bottom: 1px solid #0a1a30;
+  transition: 0.12s;
+  flex-shrink: 0;
+}
+.start-item:hover {
+  background: rgba(0, 109, 255, 0.22);
+  color: #a8c8e8;
+}
+
+/* Icon sizing — applies to both <span> and <img> variants */
+.start-item-icon,
+.start-item img.start-item-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 3px;
+  filter: drop-shadow(0 1px 2px rgba(0, 40, 120, 0.5));
+}

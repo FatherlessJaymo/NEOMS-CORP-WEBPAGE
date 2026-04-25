@@ -1,0 +1,101 @@
+/* ============================================================
+   TASKBAR — bar, start button, window buttons, clock
+============================================================ */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--taskbar-h);
+  background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #006dff 15%, #0044bb 100%);
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  /* Extra left padding pushes the Start button a bit to the right of the edge
+     (if you want it flush to the corner, set the left value back to 0). */
+  padding: 0 6px 0 14px;
+  z-index: 9999;
+}
+
+/* Start button */
+#start-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 5px;
+  letter-spacing: 5px;
+  padding: 0 1px;
+  height: 41px;
+  /* Small left margin for extra breathing room from the taskbar padding */
+  margin-left: -13px;
+  background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 5px 5px 20px 5px;
+  box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.6);
+}
+#start-btn:hover {
+  background: linear-gradient(to bottom, #0050d8 0%, #006dff 8%, #0050d8 100%);
+}
+#start-btn:active {
+  background: linear-gradient(to top, #0050d8 0%, #006dff 8%, #0050d8 100%);
+}
+
+/* Open window buttons */
+.tb-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
+}
+.tb-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.tb-btn.active {
+  background: linear-gradient(to bottom, #006dff 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.2),
+    0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Clock */
+#taskbar-clock {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #fff;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+  width: 100px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
+  box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
+  font-style: italic;
+}

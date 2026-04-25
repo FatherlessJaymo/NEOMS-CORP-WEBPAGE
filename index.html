@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeoMS | Desktop OS</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+    <!-- ===== CSS ===== -->
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/desktop-base.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/desktop-icons.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/window-manager.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/taskbar.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/windows/neomix/neomix-player.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/start-menu.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/windows/creators-log/creators-log.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/windows/sticker-hq/sticker-hq.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/content-windows.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/windows/ranking/ranking-viewer.css" />
+  </head>
+  <body>
+    <!-- ===== TOP LABEL BAR ===== -->
+    <div class="desk-label">
+      <span class="desk-label-title">NEO OVERDRIVE CORE</span>
+      <span class="desk-label-item" id="label-time"></span>
+      <span class="desk-label-item">SYSTEM ONLINE</span>
+    </div>
+
+    <!-- ===== DESKTOP ===== -->
+    <div id="desktop">
+      <div class="icon-grid" id="icon-grid"></div>
+    </div>
+
+    <!-- ===== STICKER BOARD (viewport overlay) ===== -->
+    <div
+      id="Sticker-Board"
+      style="position: fixed; inset: 8; pointer-events: none; z-index: 8000; overflow: visible"></div>
+
+    <!-- ===== CONTEXT MENU ===== -->
+    <div id="ctx-menu">
+      <div class="ctx-item" onclick="openWin('prime');closeCtx()">Creator's Log</div>
+      <div class="ctx-item" onclick="openWin('neomix');closeCtx()">NeoMix Player</div>
+      <div class="ctx-item" onclick="openWin('guestbook');closeCtx()">Systems Log</div>
+      <div class="ctx-sep"></div>
+      <div class="ctx-item" onclick="openWin('wallpaper');closeCtx()">Change Wallpaper</div>
+    </div>
+
+    <!-- ===== START MENU ===== -->
+    <div id="start-menu">
+      <div class="start-header">NEOMS</div>
+
+      <div class="start-body">
+        <!-- LEFT: user panel -->
+        <div class="start-user">
+          <img
+            src="/Neoms~Universal-Fonts+Images/Creator/Creator-icon-RMB.png"
+            class="start-avatar"
+            alt="Avatar"
+            onerror="this.style.display='none'" />
+          <div class="start-username">FatherlessJaymo</div>
+          <div class="start-usertag">NeoMS Creator</div>
+          <div class="start-sep"></div>
+          <a href="https://steamcommunity.com/id/Fatherless-" target="_blank" class="start-social">
+            <img src="/Neoms~Universal-Fonts+Images/Socials/Steam8bit.png" alt="Steam" />
+            <span class="start-social-name">Steam</span>
+          </a>
+          <a href="https://discordapp.com/users/474088249267060737" target="_blank" class="start-social">
+            <img src="/Neoms~Universal-Fonts+Images/Socials/Discord8bit.png" alt="Discord" />
+            <span class="start-social-name">Discord</span>
+          </a>
+          <div class="start-sep"></div>
+          <a href="#" onclick="openWin('etc');closeStart();return false;" class="start-social">
+            <img
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              alt="Etc"
+              onerror="this.style.display='none'" />
+            <span class="start-social-name">Etc</span>
+          </a>
+        </div>
+
+        <!-- RIGHT: apps list (vertical stack) -->
+        <div class="start-apps">
+          <div class="start-apps-title">menu</div>
+
+          <div class="start-item" onclick="openWin('prime');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Creator's Log
+          </div>
+          <div class="start-item" onclick="openWin('neomix');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            NeoMix
+          </div>
+          <div class="start-item" onclick="openWin('core');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Core Directive
+          </div>
+          <div class="start-item" onclick="openWin('guestbook');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Guest Book
+          </div>
+          <div class="start-item" onclick="openWin('sticker');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Sticker HQ
+          </div>
+          <div class="start-item" onclick="openWin('badges');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Badges
+          </div>
+          <div class="start-item" onclick="openWin('ranking');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Rankings
+          </div>
+          <div class="start-item" onclick="window.open('/Neoms~Database/HTML/intake.html','_blank');closeStart()">
+            <img
+              class="start-item-icon"
+              src="/Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Neoms~Database
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast"></div>
+
+    <!-- ===== TASKBAR ===== -->
+    <div id="taskbar">
+      <button id="start-btn" onclick="toggleStart()" title="NeoMS Start">&#9670; NEOMS</button>
+      <div
+        id="tb-buttons"
+        style="display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; max-width: 340px; flex-shrink: 1"></div>
+      <div style="flex: 1; min-width: 0"></div>
+      <div id="tb-neomix">
+        <button class="tb-nm-btn" id="tb-nm-prev" title="Previous">&#9664;&#9664;</button>
+        <button class="tb-nm-btn" id="tb-nm-play" title="Play / Pause">&#9654;</button>
+        <button class="tb-nm-btn" id="tb-nm-next" title="Next">&#9654;&#9654;</button>
+        <div id="tb-neomix-info">
+          <div id="tb-neomix-title">NEOMIX</div>
+          <div id="tb-neomix-sub">-- / --</div>
+        </div>
+        <input type="range" id="tb-nm-seek" value="0" min="0" max="100" title="Seek" />
+        <input type="range" id="tb-nm-vol" value="50" min="0" max="100" title="Volume" />
+      </div>
+      <div id="taskbar-clock"></div>
+    </div>
+
+    <!-- ===== JS — load order matters ===== -->
+    <script src="Neoms~PrimeDrive/windows/ranking/ranking-data.js"></script>
+    <script src="Neoms~PrimeDrive/JS/window-manager.js"></script>
+    <script src="Neoms~PrimeDrive/windows/neomix/neomix-player.js"></script>
+    <script src="Neoms~PrimeDrive/windows/sticker-hq/sticker-hq.js"></script>
+    <script src="Neoms~PrimeDrive/windows/creators-log/creators-log.js"></script>
+    <script src="Neoms~PrimeDrive/windows/ranking/ranking-viewer.js"></script>
+    <script src="Neoms~PrimeDrive/JS/desktop-icons.js"></script>
+    <script src="Neoms~PrimeDrive/JS/desktop-core.js"></script>
+  </body>
+</html>

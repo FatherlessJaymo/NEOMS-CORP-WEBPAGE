@@ -1,0 +1,138 @@
+/* ============================================================
+   CONTENT WINDOWS — all window-specific panel styles
+============================================================ */
+
+/* === CREATOR PROFILE === */
+.creator-wrap { display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+.creator-avatar-box {
+  width: 72px; height:72px; border-radius:50%;
+  border: 3px solid #006dff;
+  box-shadow: 0 0 14px rgba(0,109,255,.4);
+  overflow: hidden; flex-shrink:0; background:#071428;
+}
+.creator-avatar-box img { width:100%; height:100%; object-fit:cover; }
+.creator-name {
+  color: #006dff; font-size:10px; margin-bottom:4px; letter-spacing:1px;
+  text-shadow: 0 0 10px rgba(0,109,255,.5);
+}
+.creator-bio { color:#a8c8e8; font-size:8px; line-height:1.7; }
+.badge-list  { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.badge-link img {
+  width: 80px; height:30px; border-radius:6px;
+  border: 1px solid #1a4a8a; transition:transform .2s; display:block;
+}
+.badge-link img:hover { transform:scale(1.1); }
+.social-link img {
+  width: 32px; height:32px; border-radius:6px;
+  border: 1px solid #1a4a8a; transition:transform .2s; display:block;
+}
+.social-link img:hover { transform:scale(1.1); }
+
+/* === RANKINGS === */
+.rank-sidebar {
+  display: flex; flex-direction:column; gap:2px;
+  min-width: 90px; border-right:1px solid #1a3a6a; padding-right:6px;
+}
+.rank-cat {
+  font-size: 7px; letter-spacing:.8px; color:#354a5f;
+  padding: 7px 8px; cursor:pointer; border-left:2px solid transparent;
+  transition: .15s; border-radius:0 4px 4px 0;
+}
+.rank-cat:hover  { color:#9ac8f6; background:rgba(0,109,255,.1); border-left-color:#006dff; }
+.rank-cat.active { color:#a8c8e8; background:rgba(0,109,255,.2); border-left-color:#a8c8e8; }
+.rank-split { display:flex; gap:10px; height:100%; }
+.rank-main  { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#006dff #071020; }
+.rank-card {
+  display: flex; gap:10px; padding:10px; margin-bottom:8px;
+  background: rgba(0,5,20,.6); border:1px solid #1a3a6a;
+  border-left: 3px solid var(--rv-color,#006dff);
+  border-radius: 0 8px 8px 0;
+}
+.rank-img   { width:80px; height:110px; object-fit:cover; border-radius:4px; flex-shrink:0; background:#071020; }
+.rank-badge {
+  display: inline-block; font-size:7px; font-weight:700; letter-spacing:2px;
+  padding: 2px 8px; border-radius:3px; color:#000;
+  background: var(--rv-color,#006dff); margin-bottom:6px;
+}
+.rank-title { font-size:8px; color:#a8c8e8; line-height:1.6; word-break:break-word; }
+.rank-notes { font-size:7px; color:#9ac8f6; margin-top:6px; line-height:1.6; }
+.rank-empty { font-size:8px; color:#354a5f; font-style:italic; padding:20px; }
+
+/* === BADGES === */
+.badge-card {
+  background: rgba(7,42,113,.35); border:1px solid #1a4a8a;
+  border-radius: 10px; padding:14px; margin-bottom:12px;
+}
+.badge-card-inner { display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+.badge-preview img { width:120px; border-radius:6px; border:1px solid #1a4a8a; }
+.badge-name { color:#a8c8e8; font-size:10px; margin-bottom:4px; }
+.badge-desc { color:#9ac8f6; font-size:8px; margin-bottom:8px; }
+.badge-code {
+  background: rgba(0,0,0,.4); border:1px solid #1a4a8a;
+  border-radius: 4px; padding:6px 8px; margin-bottom:6px; overflow-x:auto;
+}
+.badge-code code { font-family:'Courier New',monospace; font-size:8px; color:#9ac8f6; word-break:break-all; white-space:pre-wrap; }
+
+/* === ETC LINKS === */
+.etc-link {
+  display: flex; align-items:center; gap:12px; padding:10px 12px;
+  background: rgba(7,42,113,.35); border:1px solid #1a4a8a;
+  border-radius: 8px; text-decoration:none; transition:.2s; margin-bottom:8px;
+}
+.etc-link:hover { border-color:#a8c8e8; background:rgba(0,40,100,.5); transform:translateX(4px); }
+.etc-link-name  { color:#a8c8e8; font-size:10px; margin-bottom:2px; }
+.etc-link-desc  { color:#9ac8f6; font-size:7px; }
+.etc-arrow { color:#006dff; font-size:14px; opacity:.4; margin-left:auto; }
+.etc-link:hover .etc-arrow { opacity:1; }
+
+/* === PROTOCOL BUTTON === */
+.protocol-btn {
+  font-family: 'Press Start 2P',monospace; font-size:9px;
+  letter-spacing: 1px; margin-top:10px; padding:10px 16px;
+  background: rgba(0,0,0,.4); color:#f25a78;
+  border: 2px solid #f25a78; border-radius:8px; cursor:pointer;
+  transition: .2s; display:flex; align-items:center; gap:8px; width:100%; justify-content:center;
+}
+.protocol-btn:hover { background:#f25a78; color:#000; box-shadow:0 0 14px rgba(242,90,120,.4); }
+.protocol-btn img   { width:24px; height:24px; object-fit:cover; border-radius:3px; }
+
+/* === GUESTBOOK === */
+#Guestbook-Frame { width:100%; height:380px; border:none; display:block; background:transparent; }
+
+/* === VM TERMINAL === */
+.vm-shell {
+  background: #000; border:inset 3px #1a4a8a;
+  font-family: 'Courier New',monospace; font-size:11px;
+  color: #00ff41; padding:10px; height:300px; overflow-y:auto;
+  scrollbar-width: thin; scrollbar-color:#00ff41 #000;
+}
+.vm-line { line-height:1.6; white-space:pre; }
+.vm-input-row {
+  display: flex; align-items:center; gap:6px;
+  background: #000; border:inset 2px #1a4a8a; padding:4px 8px; margin-top:2px;
+}
+.vm-prompt { color:#00ff41; font-family:'Courier New',monospace; font-size:11px; flex-shrink:0; }
+#vm-input {
+  flex: 1; background:transparent; border:none; outline:none;
+  font-family: 'Courier New',monospace; font-size:11px; color:#00ff41; caret-color:#00ff41;
+}
+.vm-title-bar {
+  background: #0a1f4a; padding:6px 10px; font-size:9px;
+  letter-spacing: 2px; color:#00ff41; border-bottom:1px solid #1a4a8a;
+  text-shadow: 0 0 6px #00ff41;
+}
+.vm-status {
+  background: #0a1f4a; border-top:1px solid #1a4a8a; padding:4px 10px;
+  font-size: 8px; color:#00ff41; display:flex; justify-content:space-between;
+}
+
+/* === WALLPAPER OPTIONS === */
+.wp-option {
+  display: inline-flex; align-items:center; gap:6px;
+  font-size: 7px; padding:5px 10px; cursor:pointer;
+  color: #9ac8f6; margin:3px;
+  background: rgba(0,10,30,.5); border:1px solid #1a4a8a;
+  border-radius: 4px; transition:.15s;
+}
+.wp-option:hover  { border-color:#a8c8e8; color:#a8c8e8; background:rgba(0,40,100,.4); }
+.wp-option.active { background:rgba(0,109,255,.25); border-color:#006dff; color:#a8c8e8; }
