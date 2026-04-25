@@ -1,0 +1,485 @@
+/* ============================================================
+   NEOMS — ENTITY DETAIL WINDOW STYLES
+   Neoms~Database/windows/entity-detail/entity-detail.css
+   ============================================================ */
+
+/* ── Empty tab state ─────────────────────────────────────────── */
+.ed-empty-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    gap: 10px;
+}
+.ed-empty-icon {
+    font-size: 36px;
+    opacity: 0.3;
+}
+.ed-empty-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #334455;
+    font-family: var(--mono);
+}
+.ed-empty-sub {
+    font-size: 10px;
+    color: #223;
+    font-family: var(--mono);
+    max-width: 340px;
+    line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BIO TAB — IMAGE GALLERY
+   ══════════════════════════════════════════════════════════════ */
+
+.ed-bio-gallery {
+    margin-bottom: 20px;
+    border: 1px solid #1a2a4a;
+    background: #080d18;
+}
+
+/* Main display area */
+.ed-bio-gallery-main {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: #040810;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ed-bio-gallery-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: opacity 0.15s ease;
+}
+
+/* Caption overlay */
+.ed-bio-gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 10px;
+    background: rgba(4, 8, 16, 0.82);
+    font-size: 9px;
+    font-family: var(--mono);
+    color: #556677;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Prev / Next arrow buttons */
+.ed-bio-gallery-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(4, 8, 16, 0.75);
+    border: 1px solid #1a2a4a;
+    color: #4488aa;
+    font-size: 22px;
+    line-height: 1;
+    padding: 4px 10px 6px;
+    cursor: pointer;
+    transition:
+        background 0.15s,
+        color 0.15s;
+    z-index: 2;
+    font-family: sans-serif;
+}
+.ed-bio-gallery-btn:hover {
+    background: rgba(0, 60, 100, 0.85);
+    color: #88ccee;
+    border-color: #336688;
+}
+.ed-bio-gallery-prev {
+    left: 0;
+}
+.ed-bio-gallery-next {
+    right: 0;
+}
+
+/* Counter badge top-right */
+.ed-bio-gallery-counter {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 9px;
+    font-family: var(--mono);
+    color: #445566;
+    background: rgba(4, 8, 16, 0.75);
+    padding: 2px 6px;
+    border: 1px solid #1a2a4a;
+    letter-spacing: 1px;
+}
+.ed-bio-gallery-cur {
+    color: var(--teal-b);
+}
+
+/* Thumbnail strip */
+.ed-bio-gallery-thumbs {
+    display: flex;
+    gap: 4px;
+    padding: 6px 8px;
+    overflow-x: auto;
+    background: #050a14;
+    border-top: 1px solid #0d1a2a;
+    scrollbar-width: thin;
+    scrollbar-color: #1a2a4a transparent;
+}
+.ed-bio-gallery-thumbs::-webkit-scrollbar {
+    height: 3px;
+}
+.ed-bio-gallery-thumbs::-webkit-scrollbar-thumb {
+    background: #1a2a4a;
+}
+
+.ed-bio-thumb {
+    flex-shrink: 0;
+    width: 52px;
+    height: 38px;
+    border: 1px solid #1a2a3a;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.5;
+    transition:
+        opacity 0.15s,
+        border-color 0.15s;
+    background: #040810;
+}
+.ed-bio-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+.ed-bio-thumb:hover {
+    opacity: 0.8;
+    border-color: #336688;
+}
+.ed-bio-thumb.active {
+    opacity: 1;
+    border-color: var(--teal-b);
+}
+
+/* ── SOURCE TAB ──────────────────────────────────────────────── */
+.ed-source-video-item {
+    margin-bottom: 18px;
+}
+.ed-source-video-item:last-child {
+    margin-bottom: 0;
+}
+.ed-source-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #556677;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+.ed-video-wrap {
+    position: relative;
+    width: 150%;
+    max-width: 380px; /* ← controls the size — adjust freely */
+    padding-bottom: 213px; /* ← 56.25% of 380px = fixed pixel height */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid #1a2a4a;
+    margin-bottom: 4px;
+}
+.ed-video-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.ed-wiki-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    color: var(--teal-b);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition:
+        border-color 0.15s,
+        background 0.15s;
+    margin-bottom: 6px;
+}
+.ed-wiki-link:last-of-type {
+    margin-bottom: 8px;
+}
+.ed-wiki-link:hover {
+    border-color: var(--teal-d);
+    background: rgba(0, 140, 140, 0.1);
+}
+.ed-wiki-icon {
+    font-size: 13px;
+}
+.ed-wiki-note {
+    font-size: 9px;
+    color: #334;
+    margin-top: 6px;
+}
+
+/* ── DISCOVERY TAB ───────────────────────────────────────────── */
+.ed-disc-table {
+    margin-bottom: 0;
+}
+.ed-disc-staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+}
+.ed-disc-staff-card {
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    padding: 10px 12px;
+}
+.ed-disc-staff-card.ed-disc-staff-redacted {
+    border-color: #2a1a1a;
+    background: #0a0810;
+    opacity: 0.6;
+}
+.ed-disc-staff-id {
+    font-size: 9px;
+    color: #445566;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    font-family: var(--mono);
+}
+.ed-disc-staff-name {
+    font-family: var(--pixel);
+    font-size: 15px;
+    color: #aabbcc;
+    margin-bottom: 6px;
+}
+.ed-disc-staff-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: #556677;
+    font-family: var(--mono);
+    margin-bottom: 3px;
+}
+.ed-disc-staff-clr {
+    font-size: 9px;
+    color: #445566;
+}
+.ed-disc-staff-dept {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #334;
+    font-family: var(--mono);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REPORTS TAB — TOOLBAR (filter chips + sort toggle)
+   ══════════════════════════════════════════════════════════════ */
+
+.ed-rpt-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 0 12px;
+    border-bottom: 1px solid #0d1a2a;
+    margin-bottom: 12px;
+}
+
+/* Filter chip row */
+.ed-rpt-chips {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.ed-rpt-chip {
+    font-size: 8px;
+    font-family: var(--mono);
+    letter-spacing: 1.5px;
+    padding: 3px 9px;
+    border: 1px solid #1a2a3a;
+    background: #0a0a14;
+    color: #445566;
+    cursor: pointer;
+    transition:
+        border-color 0.15s,
+        color 0.15s,
+        background 0.15s;
+}
+.ed-rpt-chip:hover {
+    border-color: var(--chip-col, #667788);
+    color: var(--chip-col, #aabbcc);
+    background: rgba(0, 0, 0, 0.4);
+}
+.ed-rpt-chip.active {
+    border-color: var(--chip-col, #667788);
+    color: var(--chip-col, #aabbcc);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 6px var(--chip-col, transparent);
+}
+
+/* Sort toggle button */
+.ed-rpt-sort {
+    font-size: 8px;
+    font-family: var(--mono);
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border: 1px solid #1a2a3a;
+    background: #0a0a14;
+    color: #445566;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        border-color 0.15s,
+        color 0.15s;
+    flex-shrink: 0;
+}
+.ed-rpt-sort:hover {
+    border-color: var(--teal-b);
+    color: var(--teal-b);
+}
+
+/* Report list wrapper */
+.ed-rpt-list {
+}
+
+/* Empty filter state */
+.ed-rpt-empty {
+    font-size: 10px;
+    font-family: var(--mono);
+    color: #334;
+    letter-spacing: 2px;
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* ── REPORTS TAB — CARDS ─────────────────────────────────────── */
+.ed-report-card {
+    background: #0d1020;
+    border-left: 3px solid #334;
+    border-bottom: 1px solid #0d1a2a;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+.ed-report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.ed-report-type {
+    font-size: 9px;
+    letter-spacing: 3px;
+    font-family: var(--mono);
+    margin-right: 8px;
+}
+.ed-report-title {
+    font-family: var(--pixel);
+    font-size: 15px;
+    color: #ccdde8;
+    letter-spacing: 0.5px;
+}
+.ed-report-date {
+    font-size: 9px;
+    color: #445566;
+    font-family: var(--mono);
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+.ed-report-summary {
+    margin-bottom: 10px;
+    border-left: 1px solid #1a2a3a;
+    padding-left: 10px;
+}
+.ed-report-locked {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #1a0a0a;
+    border: 1px solid #2a1a1a;
+    font-size: 10px;
+    color: #664444;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+.ed-report-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px solid #0d1520;
+}
+.ed-report-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--teal-b);
+    text-decoration: none;
+    padding: 3px 8px;
+    border: 1px solid #1a2a4a;
+    background: #0a0a14;
+    transition: border-color 0.15s;
+}
+.ed-report-file:hover {
+    border-color: var(--teal-d);
+    background: rgba(0, 140, 140, 0.08);
+}
+.ed-report-file-offline {
+    font-size: 10px;
+    color: #445566;
+    font-family: var(--mono);
+}
+.ed-report-file-note {
+    font-size: 9px;
+    color: #334;
+}
+.ed-report-author {
+    font-size: 9px;
+    color: #445566;
+    font-family: var(--mono);
+    flex: 1;
+}
+.ed-report-contribs {
+    font-size: 9px;
+    color: #3a4f5f;
+    font-family: var(--mono);
+    width: 100%;
+    margin-top: 2px;
+}
+.ed-report-clr {
+    font-size: 9px;
+    color: #445566;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border: 1px solid #1a2a3a;
+}
