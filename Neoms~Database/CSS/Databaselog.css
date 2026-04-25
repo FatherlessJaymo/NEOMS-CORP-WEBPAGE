@@ -1,0 +1,1451 @@
+/* ============================================================
+   NEOMS CONTAINMENT LOG — STYLESHEET
+   Neo Monitoring System — Anomalous Entity Management
+   Aesthetic: Corrupted Win95/DOS terminal horror
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap");
+
+/* ── VARIABLES ─────────────────────────────────────────────── */
+:root {
+    --bg: #0a0a0f;
+    --desk: #0d1117;
+    --teal: #008080;
+    --teal-b: #00cccc;
+    --teal-d: #005555;
+    --red: #cc0000;
+    --red-b: #ff3333;
+    --yellow: #ffdd00;
+    --green: #00cc66;
+    --amber: #ff8c00;
+    --win-bg: #c0c0c8;
+    --win-border: #dfdfdf;
+    --win-dark: #808090;
+    --win-darker: #404050;
+    --titlebar: linear-gradient(90deg, #000080 0%, #1084d0 50%, #000080 100%);
+    --mono: "Share Tech Mono", monospace;
+    --pixel: "VT323", monospace;
+}
+
+/* ── RESET ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    font-family: var(--mono);
+    color: #e0e0e0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100%;
+    cursor: default;
+    user-select: none;
+    /* Prevent iOS rubber-band scroll on the shell */
+    overscroll-behavior: none;
+}
+
+/* ── SCANLINES ─────────────────────────────────────────────── */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.18) 3px);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ── DESKTOP ───────────────────────────────────────────────── */
+#desk {
+    position: fixed;
+    inset: 0;
+    background: var(--desk);
+    display: flex;
+    flex-direction: column;
+}
+
+#desk::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(0, 60, 60, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ── TASKBAR ───────────────────────────────────────────────── */
+#taskbar {
+    height: 30px;
+    background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+    border-top: 2px solid var(--teal-d);
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    gap: 6px;
+    flex-shrink: 0;
+    z-index: 100;
+    order: 2;
+}
+
+#taskbar-start {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: linear-gradient(180deg, #2a2a4a, #1a1a2e);
+    border: 1px outset #444;
+    color: var(--teal-b);
+    padding: 2px 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#taskbar-start:hover {
+    background: linear-gradient(180deg, #3a3a5a, #2a2a3e);
+}
+
+#taskbar-sep {
+    width: 1px;
+    height: 18px;
+    background: #333;
+    margin: 0 2px;
+    flex-shrink: 0;
+}
+
+/* FIX D: scroll horizontally instead of clipping */
+#taskbar-wins {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+#taskbar-wins::-webkit-scrollbar {
+    display: none;
+}
+
+.tb-win {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    color: #888;
+    cursor: pointer;
+    max-width: 130px;
+    min-width: 50px;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tb-win.active {
+    background: #0d1117;
+    border-color: var(--teal-d);
+    color: var(--teal-b);
+}
+
+#taskbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    color: #666;
+    padding: 0 6px;
+    border-left: 1px solid #222;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+#sys-clock {
+    color: var(--teal-b);
+    font-family: var(--pixel);
+    font-size: 16px;
+}
+
+#clearance-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.clr-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #333;
+    flex-shrink: 0;
+}
+
+.clr-dot.active {
+    background: var(--teal-b);
+}
+
+/* ── DESKTOP AREA ──────────────────────────────────────────── */
+#desktop-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    order: 1;
+}
+
+/* ── DESKTOP ICONS ─────────────────────────────────────────── */
+#desktop-icons {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10;
+}
+
+.desk-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    width: 72px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.desk-icon:hover,
+.desk-icon:active {
+    background: rgba(0, 140, 140, 0.15);
+    border-color: var(--teal-d);
+}
+
+.desk-icon .di-img {
+    font-size: 26px;
+    line-height: 1;
+    text-align: center;
+}
+
+.desk-icon .di-label {
+    font-size: 9px;
+    color: #aaa;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.2;
+    font-family: var(--mono);
+}
+
+.desk-icon:hover .di-label,
+.desk-icon:active .di-label {
+    color: var(--teal-b);
+}
+
+/* ── WINDOWS ───────────────────────────────────────────────── */
+/* FIX A: clamp instead of fixed 300px so narrow phones don't overflow */
+.win {
+    position: absolute;
+    background: var(--win-bg);
+    border: 2px outset #dfdfdf;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+    min-width: clamp(240px, 90vw, 300px);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+}
+
+.win.active-win {
+    z-index: 60;
+}
+
+/* FIX B: prevent iOS text-selection / scroll competing with drag */
+.win-titlebar {
+    background: var(--titlebar);
+    padding: 3px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: move;
+    flex-shrink: 0;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.win-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #fff;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.win-title .win-ico {
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.win-controls {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.win-btn {
+    width: 16px;
+    height: 14px;
+    font-size: 9px;
+    font-family: var(--mono);
+    border: 1px outset #dfdfdf;
+    background: var(--win-bg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.win-btn:active {
+    border: 1px inset #dfdfdf;
+}
+
+.win-btn.close-btn:hover,
+.win-btn.close-btn:active {
+    background: #cc0000;
+    color: #fff;
+}
+
+.win-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+/* ── TABS ──────────────────────────────────────────────────── */
+/* FIX H: scroll instead of wrapping/clipping on small windows */
+.win-tabs {
+    display: flex;
+    gap: 0;
+    background: #0a0a14;
+    border-bottom: 1px solid #1a2a4a;
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.win-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.win-tab {
+    font-size: 10px;
+    padding: 5px 12px;
+    color: #556;
+    cursor: pointer;
+    border-right: 1px solid #0d1520;
+    font-family: var(--mono);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.win-tab.active-tab {
+    color: var(--teal-b);
+    background: #0d1520;
+    border-bottom: 2px solid var(--teal-b);
+}
+
+.win-tab:hover:not(.active-tab) {
+    color: #889;
+    background: rgba(0, 140, 140, 0.05);
+}
+
+/* ── SCROLL AREA ───────────────────────────────────────────── */
+/* FIX I: smooth momentum scroll on iOS */
+.scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.scroll-area::-webkit-scrollbar {
+    width: 8px;
+    background: #0a0a14;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+    background: #1a1a3a;
+}
+
+/* ── NAVIGATION SIDEBAR ────────────────────────────────────── */
+.nav-sidebar {
+    width: 180px;
+    flex-shrink: 0;
+    background: #0d0d1a;
+    border-right: 2px inset #333;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* FIX I */
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-section {
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.nav-section-head {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #444;
+    padding: 6px 8px 3px;
+    text-transform: uppercase;
+    font-family: var(--mono);
+}
+
+.nav-item {
+    font-size: 11px;
+    color: #888;
+    padding: 5px 8px 5px 16px;
+    cursor: pointer;
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-left: 2px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-item:hover {
+    background: rgba(0, 140, 140, 0.12);
+    color: var(--teal-b);
+    border-left-color: var(--teal-d);
+}
+
+.nav-item.active {
+    background: rgba(0, 140, 140, 0.18);
+    color: var(--teal-b);
+    border-left-color: var(--teal-b);
+}
+
+.nav-item .nav-ico {
+    font-size: 11px;
+    width: 14px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nav-badge {
+    margin-left: auto;
+    font-size: 8px;
+    background: var(--red);
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+.nav-badge.ok {
+    background: #006633;
+}
+.nav-badge.warn {
+    background: #885500;
+}
+
+/* ── PAGE STRUCTURE ────────────────────────────────────────── */
+.page-area {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #0a0a14;
+    padding: 0;
+}
+
+.page-area::-webkit-scrollbar {
+    width: 8px;
+    background: #0d0d1a;
+}
+
+.page-area::-webkit-scrollbar-thumb {
+    background: #1a1a3a;
+    border: 1px solid #333;
+}
+
+.page-header {
+    background: linear-gradient(180deg, #0d1530 0%, #0a0a14 100%);
+    border-bottom: 1px solid #1a2a4a;
+    padding: 16px 20px 12px;
+}
+
+.page-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.page-breadcrumb {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-family: var(--mono);
+}
+
+.page-title {
+    font-family: var(--pixel);
+    font-size: 28px;
+    color: var(--teal-b);
+    text-shadow: 0 0 8px rgba(0, 204, 204, 0.4);
+    line-height: 1;
+}
+
+.page-subtitle {
+    font-size: 11px;
+    color: #556;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}
+
+.page-content {
+    padding: 16px 20px;
+    clear: both;
+}
+
+.page-section {
+    margin-bottom: 20px;
+}
+
+.page-section-title {
+    font-family: var(--pixel);
+    font-size: 19px;
+    color: #aabbcc;
+    border-bottom: 1px solid #1a2a4a;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.page-text {
+    font-size: 12px;
+    color: #8899aa;
+    line-height: 1.8;
+    font-family: var(--mono);
+}
+
+.redacted {
+    background: #c00;
+    color: #c00;
+    border-radius: 1px;
+    cursor: not-allowed;
+}
+
+.redacted:hover {
+    background: #c00;
+    color: #fff;
+}
+
+/* ── ENTITY CLASSIFICATION BADGES ──────────────────────────── */
+.class-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border: 1px solid;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+
+.class-HD {
+    border-color: #006633;
+    color: #00cc66;
+    background: rgba(0, 102, 51, 0.15);
+}
+.class-EU {
+    border-color: #005588;
+    color: #4488ff;
+    background: rgba(0, 85, 136, 0.15);
+}
+.class-AR {
+    border-color: #886600;
+    color: var(--amber);
+    background: rgba(136, 102, 0, 0.15);
+}
+.class-NM {
+    border-color: #880033;
+    color: #ff3366;
+    background: rgba(136, 0, 51, 0.15);
+}
+.class-AP {
+    border-color: #660088;
+    color: #cc44ff;
+    background: rgba(102, 0, 136, 0.15);
+}
+.class-KT {
+    border-color: #880000;
+    color: var(--red-b);
+    background: rgba(136, 0, 0, 0.2);
+}
+
+/* ── STATUS CHIPS ──────────────────────────────────────────── */
+.status-chip {
+    display: inline-block;
+    padding: 1px 6px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    border: 1px solid;
+}
+
+.status-CONTAINED {
+    border-color: #006633;
+    color: #00cc66;
+}
+.status-BREACHED {
+    border-color: #880000;
+    color: var(--red-b);
+    animation: blink-red 1s step-start infinite;
+}
+.status-MONITORED {
+    border-color: #886600;
+    color: var(--amber);
+}
+.status-PENDING {
+    border-color: #555588;
+    color: #8888ff;
+}
+
+@keyframes blink-red {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* ── INFOBOX ───────────────────────────────────────────────── */
+.infobox {
+    float: right;
+    margin: 0 0 16px 16px;
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    width: 240px;
+    flex-shrink: 0;
+}
+
+.infobox-title {
+    background: #0a1020;
+    border-bottom: 1px solid #1a2a4a;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--teal-b);
+    letter-spacing: 1px;
+    font-family: var(--mono);
+}
+
+.infobox-img {
+    width: 100%;
+    height: 140px;
+    background-color: #040810;
+    background-image: url("/Neoms~Universal-Fonts+Images/Icons/NEOMS-CORP-4.png");
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    border-bottom: 1px solid #1a2a4a;
+    position: relative;
+    overflow: hidden;
+}
+
+.infobox-img:has(.entity-img) {
+    background-image: none;
+}
+
+.infobox-table {
+    width: 100%;
+    font-size: 10px;
+    border-collapse: collapse;
+}
+
+.infobox-table tr {
+    border-bottom: 1px solid #0d1a2a;
+}
+
+.infobox-table th {
+    text-align: left;
+    color: #445566;
+    padding: 4px 8px;
+    width: 80px;
+    font-weight: normal;
+    letter-spacing: 0.5px;
+}
+
+.infobox-table td {
+    color: #aabbcc;
+    padding: 4px 8px;
+}
+
+/* ── PROTOCOL BOXES ────────────────────────────────────────── */
+.protocol-box {
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    margin-bottom: 10px;
+}
+
+.protocol-box-header {
+    background: #0a1020;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1a2a4a;
+}
+
+.protocol-type {
+    font-size: 9px;
+    letter-spacing: 2px;
+    font-family: var(--mono);
+}
+
+.ptype-CONTAINMENT {
+    color: var(--teal-b);
+}
+.ptype-INTERACTION {
+    color: #4488ff;
+}
+.ptype-BREACH {
+    color: var(--red-b);
+}
+.ptype-TERMINATION {
+    color: #cc44ff;
+}
+
+.protocol-clr {
+    font-size: 9px;
+    color: #445566;
+    letter-spacing: 1px;
+}
+
+.protocol-body {
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #8899aa;
+    line-height: 1.7;
+    font-family: var(--mono);
+}
+
+.protocol-meta {
+    display: flex;
+    gap: 16px;
+    padding: 4px 10px 8px;
+    border-top: 1px solid #0d1a2a;
+    flex-wrap: wrap;
+}
+
+.protocol-meta-item {
+    font-size: 9px;
+    color: #445566;
+    letter-spacing: 0.5px;
+}
+
+.protocol-meta-val {
+    color: #667788;
+}
+
+/* ── ENTITY LIST TABLE ─────────────────────────────────────── */
+.entity-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.entity-list-table th {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #445566;
+    padding: 5px 8px;
+    border-bottom: 1px solid #1a2a4a;
+    text-align: left;
+    background: #0a0a14;
+    font-weight: normal;
+}
+
+.entity-list-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #0d1520;
+    color: #8899aa;
+    cursor: pointer;
+}
+
+.entity-list-table tr:hover td {
+    background: rgba(0, 140, 140, 0.08);
+    color: #aabbcc;
+}
+
+.entity-list-table .ent-name {
+    color: #aabbcc;
+    font-family: var(--mono);
+}
+.entity-list-table .ent-id {
+    color: #445566;
+    font-size: 10px;
+}
+
+/* ── SEARCH / FILTER BAR ───────────────────────────────────── */
+.search-bar-wrap {
+    padding: 8px 10px;
+    background: #0a0a14;
+    border-bottom: 1px solid #0d1520;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.search-label {
+    font-size: 10px;
+    color: #445566;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 80px;
+    background: #000;
+    border: 1px inset #333;
+    color: var(--teal-b);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 6px;
+    outline: none;
+    caret-color: var(--teal-b);
+}
+
+.search-input:focus {
+    border-color: var(--teal-d);
+}
+
+.filter-btn {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 3px 8px;
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    color: #667788;
+    cursor: pointer;
+    letter-spacing: 1px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.filter-btn.active-filter {
+    border-color: var(--teal-b);
+    color: var(--teal-b);
+    background: rgba(0, 140, 140, 0.1);
+}
+
+.filter-btn:hover {
+    border-color: #2a3a5a;
+    color: #aabbcc;
+}
+
+/* ── HOME GRID ─────────────────────────────────────────────── */
+.home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.home-card {
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.home-card:hover {
+    border-color: var(--teal-d);
+}
+
+.home-card-title {
+    font-family: var(--pixel);
+    font-size: 18px;
+    color: var(--teal-b);
+    margin-bottom: 4px;
+}
+
+.home-card-desc {
+    font-size: 10px;
+    color: #556677;
+    line-height: 1.6;
+}
+
+.home-card-count {
+    font-family: var(--pixel);
+    font-size: 28px;
+    color: #1a3a5a;
+    margin-top: 6px;
+}
+
+/* ── STAT GRID ─────────────────────────────────────────────── */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 0 20px 16px;
+}
+
+.stat-box {
+    background: #0d1520;
+    border: 1px solid #1a2a4a;
+    padding: 8px 10px;
+}
+
+.stat-label {
+    font-size: 9px;
+    color: #445566;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.stat-val {
+    font-family: var(--pixel);
+    font-size: 22px;
+}
+.stat-val.danger {
+    color: var(--red-b);
+}
+.stat-val.warn {
+    color: var(--amber);
+}
+.stat-val.ok {
+    color: var(--green);
+}
+
+/* ── ALERT BANNER ──────────────────────────────────────────── */
+.alert-banner {
+    background: #1a0000;
+    border-left: 3px solid var(--red-b);
+    padding: 8px 12px;
+    margin: 12px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.alert-ico {
+    color: var(--red-b);
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.alert-text {
+    color: #ffaaaa;
+    line-height: 1.5;
+}
+.alert-text b {
+    color: var(--red-b);
+}
+
+/* ── STAFF TABLE ───────────────────────────────────────────── */
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.staff-table th {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #445566;
+    padding: 4px 8px;
+    border-bottom: 1px solid #1a2a4a;
+    text-align: left;
+    font-weight: normal;
+    background: #0a0a14;
+}
+
+.staff-table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid #0d1520;
+    color: #8899aa;
+}
+
+.staff-table tr:hover td {
+    background: rgba(0, 140, 140, 0.06);
+}
+
+/* ── CLEARANCE PIPS ────────────────────────────────────────── */
+.clr-pip {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.clr-1 {
+    background: #006633;
+}
+.clr-2 {
+    background: #005588;
+}
+.clr-3 {
+    background: #886600;
+}
+.clr-4 {
+    background: #880033;
+}
+.clr-5 {
+    background: #880000;
+}
+
+/* ── START MENU ────────────────────────────────────────────── */
+#start-menu {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 220px;
+    background: #0d0d1a;
+    border: 2px outset #333;
+    z-index: 200;
+    display: none;
+}
+
+#start-menu.open {
+    display: block;
+}
+
+.sm-header {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    padding: 8px 10px;
+    font-family: var(--pixel);
+    font-size: 20px;
+    color: #fff;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #1a2a4a;
+}
+
+.sm-item {
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #aaa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 2px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sm-item:hover,
+.sm-item:active {
+    background: rgba(0, 140, 140, 0.15);
+    color: var(--teal-b);
+    border-left-color: var(--teal-b);
+}
+
+.sm-sep {
+    height: 1px;
+    background: #1a1a2e;
+    margin: 3px 0;
+}
+
+/* ── ENTITY GLYPH ──────────────────────────────────────────── */
+.entity-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    opacity: 0.85;
+}
+
+/* ── DEPT TAGS ─────────────────────────────────────────────── */
+.dept-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border: 1px solid #1a2a4a;
+    color: #556677;
+    font-family: var(--mono);
+    display: inline-block;
+}
+
+/* ── UTILITY ───────────────────────────────────────────────── */
+.hidden {
+    display: none !important;
+}
+
+/* ============================================================
+   ADDITIONS — utility / modifier classes
+   nm-site-marker rules → windows/worldmap/worldmap.css
+   Terminal rules       → windows/terminal/terminal.css
+   ============================================================ */
+
+/* ── Window page root layout ─────────────────────────────────── */
+.win-page-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #0a0a14;
+}
+
+/* ── Window shared utilities ─────────────────────────────────── */
+.win-table-pad {
+    padding: 12px 16px;
+}
+
+.win-legend {
+    padding: 10px 16px;
+    font-size: 10px;
+    color: #334;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.win-toolbar {
+    padding: 8px 20px;
+    background: #0a0a14;
+    border-bottom: 1px solid #0d1520;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.page-header--compact {
+    padding-bottom: 8px;
+}
+
+.win-page-footer {
+    padding: 0 20px 20px;
+    font-size: 10px;
+    color: #223;
+    line-height: 1.8;
+    border-top: 1px solid #0d1520;
+    margin: 0 20px;
+}
+
+.search-input--sm {
+    flex: none;
+    width: 150px;
+}
+.search-label--spaced {
+    margin-left: 8px;
+}
+.alert-banner--top {
+    margin: 10px 0 0;
+}
+.home-card-count--sm {
+    font-size: 14px;
+}
+.home-card-count--md {
+    font-size: 16px;
+}
+.class-badge--sm {
+    font-size: 9px;
+    padding: 2px 6px;
+}
+.class-badge__sub {
+    font-size: 8px;
+}
+.status-chip--sm {
+    font-size: 9px;
+}
+.ent-ps {
+    color: #556677;
+    font-size: 11px;
+}
+.ent-site {
+    color: #445566;
+    font-size: 10px;
+}
+.ent-empty {
+    text-align: center;
+    color: #334;
+    padding: 20px;
+    font-size: 11px;
+}
+.ent-row-clickable {
+    cursor: pointer;
+}
+.infobox--narrow {
+    width: 200px;
+}
+.infobox-img--sm {
+    height: 100px;
+    background-size: 55%;
+}
+
+.site-card {
+    padding: 16px 20px;
+    border-bottom: 1px solid #0d1a2a;
+    margin-bottom: 8px;
+    clear: both;
+}
+
+.site-status-ok {
+    color: var(--green);
+    font-size: 10px;
+}
+.page-text-label {
+    color: #aabbcc;
+}
+.page-text--dim {
+    color: #334;
+}
+
+.site-dept-footer {
+    padding: 0 20px 20px;
+    font-size: 10px;
+    color: #334;
+    line-height: 1.8;
+}
+
+.site-dept-inner {
+    margin: 0 0 4px;
+    border-top: 1px solid #0d1520;
+    padding-top: 10px;
+}
+
+/* ── Staff table cell classes ────────────────────────────────── */
+.staff-id {
+    color: #445566;
+    font-size: 10px;
+}
+.staff-name {
+    color: #aabbcc;
+}
+.staff-pos {
+    font-size: 10px;
+    color: #778899;
+}
+.staff-dept {
+    font-size: 10px;
+    color: #556677;
+}
+.staff-clr-label {
+    font-size: 10px;
+    color: #556677;
+}
+.staff-site {
+    font-size: 10px;
+    color: #445566;
+}
+.staff-status {
+    font-size: 10px;
+}
+.staff-active {
+    color: #00aa44;
+}
+.staff-inactive {
+    color: #666;
+}
+
+/* ── CLR label in taskbar ────────────────────────────────────── */
+.clr-label {
+    font-size: 9px;
+    color: #445566;
+    letter-spacing: 1px;
+}
+
+/* ── Sites — classified entity section ───────────────────────── */
+.site-ent-classified {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #0a0a18;
+    border: 1px solid #1a1a3a;
+    border-left: 3px solid #334466;
+}
+
+.site-ent-classified-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    opacity: 0.6;
+    margin-top: 2px;
+}
+
+.site-ent-classified-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #445566;
+    margin-bottom: 4px;
+    font-family: var(--mono);
+}
+
+.site-ent-classified-sub {
+    font-size: 10px;
+    color: #334;
+    line-height: 1.6;
+    font-family: var(--mono);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOUCH DEVICE OVERRIDES  (pointer:coarse = finger input)
+   FIX C: enlarge .win-btn to a tappable size (was 16×14px)
+   FIX F: bigger desktop icons
+   ══════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+    /* Window control buttons: 16×14 → 32×28 */
+    .win-btn {
+        width: 32px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    /* Desktop icons */
+    .desk-icon {
+        width: 80px;
+        padding: 8px 6px;
+    }
+    .desk-icon .di-img {
+        font-size: 32px;
+    }
+    .desk-icon .di-label {
+        font-size: 10px;
+    }
+
+    /* Nav, menu, tabs */
+    .nav-item {
+        padding: 9px 8px 9px 16px;
+    }
+    .sm-item {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+    .win-tab {
+        padding: 8px 14px;
+        font-size: 11px;
+    }
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NARROW SCREEN (≤ 600px) — phone portrait
+   FIX E, G, and general layout
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+    /* FIX E: icons in horizontal strip instead of vertical column */
+    #desktop-icons {
+        top: 6px;
+        left: 6px;
+        right: 6px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .desk-icon {
+        width: 60px;
+        padding: 4px;
+    }
+    .desk-icon .di-img {
+        font-size: 22px;
+    }
+    .desk-icon .di-label {
+        font-size: 8px;
+    }
+
+    /* FIX G: start menu full width on phones */
+    #start-menu {
+        width: 100%;
+    }
+
+    /* Hide clock text to save taskbar space, keep dots */
+    #sys-clock {
+        font-size: 12px;
+        letter-spacing: 0;
+    }
+
+    /* Windows fill viewport width on phones */
+    .win {
+        min-width: calc(100vw - 8px);
+    }
+
+    /* Single-column home grid */
+    .home-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    /* Two-column stat grid */
+    .stat-grid {
+        grid-template-columns: 1fr 1fr;
+        padding: 0 12px 12px;
+    }
+
+    /* Infobox: unfloat and go full width on phones */
+    .infobox {
+        float: none;
+        width: 100%;
+        margin: 0 0 14px 0;
+    }
+
+    /* Nav sidebar: horizontal scrolling strip */
+    .nav-sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 110px;
+        border-right: none;
+        border-bottom: 2px inset #333;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    .nav-section {
+        border-bottom: none;
+        border-right: 1px solid #1a1a2e;
+    }
+    .nav-section-head {
+        display: none;
+    }
+    .nav-item {
+        white-space: nowrap;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        padding: 6px 10px;
+    }
+    .nav-item.active {
+        border-bottom-color: var(--teal-b);
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MEDIUM SCREENS (601–900px) — tablet / small landscape
+   ══════════════════════════════════════════════════════════════ */
+@media (min-width: 601px) and (max-width: 900px) {
+    .home-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .desk-icon {
+        width: 72px;
+    }
+}
