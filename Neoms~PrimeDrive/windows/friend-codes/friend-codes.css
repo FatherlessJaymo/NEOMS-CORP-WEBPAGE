@@ -1,0 +1,105 @@
+/* ============================================================
+   FRIEND CODES — STYLES
+   Themed to match Creator's Log entry cards.
+============================================================ */
+
+/* ---- Header / intro ---- */
+.fc-intro {
+  color: var(--text-muted);
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.fc-sub {
+  color: var(--text-dim);
+  font-size: 7px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+/* ---- Code card ---- */
+.fc-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: rgba(7, 42, 113, 0.4);
+  border: 1px solid #1a4a8a;
+  border-left: 3px solid #a8c8e8;
+  border-radius: 0 6px 6px 0;
+  transition: 0.15s;
+}
+.fc-card:hover {
+  background: rgba(0, 40, 100, 0.5);
+  border-left-color: #006dff;
+}
+
+/* Left column: game name + code */
+.fc-card-text {
+  flex: 1;
+  min-width: 0;
+}
+.fc-game {
+  font-size: 9px;
+  color: #a8c8e8;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  font-family: "Press Start 2P", monospace;
+  word-break: break-word;
+}
+.fc-code {
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  color: #9ac8f6;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #1a4a8a;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+.fc-note {
+  font-size: 7px;
+  line-height: 1.5;
+  color: #354a5f;
+  letter-spacing: 0.5px;
+  font-family: "Press Start 2P", monospace;
+  margin-top: 4px;
+}
+
+/* Right column: copy button */
+.fc-copy-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  background: transparent;
+  color: #006dff;
+  border: 1.5px solid #006dff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.fc-copy-btn:hover {
+  background: #006dff;
+  color: #fff;
+}
+.fc-copy-btn.copied {
+  background: #00cc66;
+  color: #fff;
+  border-color: #00cc66;
+}
+
+/* ---- Empty state ---- */
+.fc-empty {
+  color: var(--text-dim);
+  font-size: 8px;
+  text-align: center;
+  padding: 30px 12px;
+  letter-spacing: 1px;
+  font-style: italic;
+}

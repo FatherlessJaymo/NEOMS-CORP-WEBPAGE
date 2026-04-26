@@ -6,14 +6,21 @@
    NeoMix icons: the desktop icon, the window titlebar, and the
    taskbar button all use play.png from the uploaded Neomix icon
    set so NeoMix reads as a "music app" across all three surfaces.
+
+   PATHS NOTE:
+   These paths are used in src="..." attributes injected into
+   the DOM. The browser resolves them relative to the current
+   page URL (index.html lives at the repo root), NOT relative
+   to this JS file. So we use the same relative paths the HTML
+   uses — no leading slash.
 ============================================================ */
 var zTop = 200;
 var wins = {};
 var tbBtns = {};
 
 /* Shared image paths — match Neoms~PrimeDrive/JS/desktop-icons.js */
-var FOLDER_IMG = "/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
-var NEOMIX_IMG = "/Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
+var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
+var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
 
 var WIN_DEFS = {
   prime: { title: "CREATOR'S LOG", w: 520, h: 500, icon: "prime", iconImg: FOLDER_IMG },
@@ -24,30 +31,29 @@ var WIN_DEFS = {
   badges: { title: "NEOMS BADGES", w: 500, h: 420, icon: "badges", iconImg: FOLDER_IMG },
   ranking: { title: "RANKING VIEWER", w: 560, h: 500, icon: "ranking", iconImg: FOLDER_IMG },
   etc: { title: "ETC / OTHER SITES", w: 440, h: 360, icon: "etc", iconImg: FOLDER_IMG },
-  wallpaper: { title: "WALLPAPER SETTINGS", w: 360, h: 280, icon: "wallpaper", iconImg: FOLDER_IMG }
+  wallpaper: { title: "WALLPAPER SETTINGS", w: 360, h: 280, icon: "wallpaper", iconImg: FOLDER_IMG },
+  friendcodes: { title: "GAME CODES", w: 480, h: 480, icon: "friendcodes", iconImg: FOLDER_IMG }
 };
 
-/* ---- SVG icon library (fallback only — used if iconImg fails to load) ---- */
-function iconSVG(id) {
-  var icons = {
-    prime:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#1a3a7a"/><rect x="8" y="14" width="36" height="28" rx="3" fill="#0a1f4a" stroke="#a8c8e8" stroke-width="1.5"/><rect x="16" y="8" width="20" height="10" rx="3" fill="#a8c8e8"/><line x1="14" y1="25" x2="38" y2="25" stroke="#9ac8f6" stroke-width="1.5"/><line x1="14" y1="30" x2="32" y2="30" stroke="#354a5f" stroke-width="1.5"/><line x1="14" y1="35" x2="28" y2="35" stroke="#354a5f" stroke-width="1"/></svg>',
-    neomix:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#0a1a3a"/><circle cx="26" cy="26" r="18" fill="none" stroke="#00eaff" stroke-width="2"/><circle cx="26" cy="26" r="10" fill="#001a3a" stroke="#00eaff" stroke-width="1.5"/><circle cx="26" cy="26" r="4" fill="#00eaff" opacity=".6"/><circle cx="26" cy="26" r="2" fill="#00eaff"/></svg>',
-    core: '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#0a0014"/><rect x="8" y="12" width="36" height="28" rx="3" fill="#000" stroke="#f25a78" stroke-width="2"/><text x="26" y="32" font-size="14" fill="#f25a78" text-anchor="middle" font-family="monospace">&gt;_</text></svg>',
-    guestbook:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#0a1f4a"/><rect x="8" y="10" width="36" height="32" rx="3" fill="#061530" stroke="#a8c8e8" stroke-width="1.5"/><line x1="14" y1="20" x2="38" y2="20" stroke="#006dff" stroke-width="2"/><line x1="14" y1="27" x2="38" y2="27" stroke="#354a5f" stroke-width="1.5"/></svg>',
-    sticker:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#1a2a0a"/><text x="26" y="36" font-size="28" text-anchor="middle">★</text></svg>',
-    badges:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#1a1a3a"/><rect x="16" y="6" width="20" height="30" rx="4" fill="#0a1f4a" stroke="#a8c8e8" stroke-width="1.5"/><circle cx="26" cy="18" r="6" fill="#ffaa00" opacity=".9"/></svg>',
-    ranking:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#1a0a0a"/><rect x="6" y="30" width="10" height="16" rx="2" fill="#ff6b35"/><rect x="21" y="18" width="10" height="28" rx="2" fill="#c792ea"/><rect x="36" y="24" width="10" height="22" rx="2" fill="#a8c8e8"/></svg>',
-    etc: '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#0a1f4a"/><circle cx="16" cy="26" r="5" fill="#354a5f"/><circle cx="26" cy="26" r="5" fill="#354a5f"/><circle cx="36" cy="26" r="5" fill="#354a5f"/></svg>',
-    wallpaper:
-      '<svg class="icon-svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="10" fill="#0a1f4a"/><rect x="6" y="6" width="40" height="40" rx="5" fill="#061530"/><circle cx="16" cy="16" r="5" fill="#ffaa00" opacity=".7"/><path d="M6 34 l10-10 8 8 6-6 8 8 8-8 v14H6z" fill="#006dff" opacity=".5"/></svg>'
-  };
-  return icons[id] || icons["etc"];
+/* ---- Icon image lookup ----
+   Returns the real image path for a given window id.
+   No more SVG fallbacks — icons should always load.
+   To swap an icon later, change its path in WIN_ICONS or WIN_DEFS. */
+var WIN_ICONS = {
+  prime:     FOLDER_IMG,
+  neomix:    NEOMIX_IMG,
+  core:      FOLDER_IMG,
+  guestbook: FOLDER_IMG,
+  sticker:   FOLDER_IMG,
+  badges:    FOLDER_IMG,
+  ranking:   FOLDER_IMG,
+  etc:       FOLDER_IMG,
+  wallpaper: FOLDER_IMG,
+  friendcodes: FOLDER_IMG
+};
+
+function iconImg(id) {
+  return WIN_ICONS[id] || FOLDER_IMG;
 }
 
 /* ---- Open window ---- */
@@ -70,13 +76,11 @@ function openWin(id) {
 
   var bar = document.createElement("div");
   bar.className = "win-bar";
-  var barIcon = def.iconImg
-    ? '<img src="' +
-      def.iconImg +
-      '" class="win-bar-svg" style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;" onerror="this.outerHTML=\'' +
-      escAttr(iconSVG(def.icon).replace('class="icon-svg"', 'class="win-bar-svg"')) +
-      "'\"/>"
-    : iconSVG(def.icon).replace('class="icon-svg"', 'class="win-bar-svg"');
+  var barIcon =
+    '<img src="' +
+    (def.iconImg || iconImg(id)) +
+    '" class="win-bar-img" alt="" ' +
+    'style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;"/>';
   bar.innerHTML =
     barIcon +
     '<span class="win-title">' +
@@ -177,17 +181,15 @@ function maxWin(id) {
   w.el.classList.add("focused");
 }
 
-/* ---- Taskbar button — image icon with SVG fallback ---- */
-function addTBBtn(id, title, icon, iconImg) {
+/* ---- Taskbar button — image icon (plain, no fallback) ---- */
+function addTBBtn(id, title, icon, iconSrc) {
   var btn = document.createElement("button");
   btn.className = "tb-btn active";
-  var iconHTML = iconImg
-    ? '<img src="' +
-      iconImg +
-      '" style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;" onerror="this.outerHTML=\'' +
-      escAttr(iconSVG(icon).replace('class="icon-svg"', 'style=\\"width:16px;height:16px;\\"')) +
-      "'\"/>"
-    : iconSVG(icon).replace('class="icon-svg"', 'style="width:16px;height:16px;"');
+  var iconHTML =
+    '<img src="' +
+    (iconSrc || iconImg(icon)) +
+    '" alt="" ' +
+    'style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;"/>';
   btn.innerHTML =
     iconHTML +
     '<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:6px;">' +
@@ -263,6 +265,7 @@ function afterOpen(id) {
     setTimeout(function () {
       renderRank("Memes");
     }, 50);
+  if (id === "friendcodes") setTimeout(initFriendCodes, 50);
 }
 
 /* ---- Content builders ---- */
@@ -286,6 +289,8 @@ function buildContent(id) {
       return buildEtc();
     case "wallpaper":
       return buildWallpaper();
+    case "friendcodes":
+      return buildFriendCodes();
     default:
       return '<p style="color:var(--text-dim);font-size:9px;">// NO CONTENT</p>';
   }
@@ -298,77 +303,17 @@ function buildPrime() {
     '<div class="Blog-Header">' +
     '<div class="Blog-Header-Left">' +
     '<span class="Blog-Header-Title">CREATOR\'S LOG</span>' +
-    '<span class="Blog-Entry-Count" id="Blog-Entry-Count">0 ENTRIES</span>' +
     "</div>" +
     '<div class="Blog-Header-Right">' +
-    '<div class="Blog-Sort-Wrap" id="Blog-Sort-Wrap">' +
-    '<button class="Blog-Sort-Btn" id="Blog-Sort-Btn">NEW\u2192OLD \u25be</button>' +
-    '<div class="Blog-Sort-Dropdown" id="Blog-Sort-Dropdown">' +
-    '<div class="Blog-Dropdown-Section-Title">SORT</div>' +
-    '<div class="Blog-Dropdown-Opt" data-sort="desc">NEW \u2192 OLD</div>' +
-    '<div class="Blog-Dropdown-Opt" data-sort="asc">OLD \u2192 NEW</div>' +
-    '<div class="Blog-Dropdown-Section-Title">FILTER BY TAG</div>' +
-    '<div class="Blog-Filter-Chips" id="Blog-Filter-Chips">' +
-    '<button class="Blog-Filter-Chip active" data-tag="ALL">ALL</button>' +
-    '<button class="Blog-Filter-Chip" data-tag="UPDATE">UPDATE</button>' +
-    '<button class="Blog-Filter-Chip" data-tag="NEWS">NEWS</button>' +
-    '<button class="Blog-Filter-Chip" data-tag="PATCH">PATCH</button>' +
-    '<button class="Blog-Filter-Chip" data-tag="NOTE">NOTE</button>' +
-    "</div>" +
-    "</div>" +
-    "</div>" +
-    '<button class="Blog-Export-Btn" id="Blog-Export-Btn" title="Copy local entries as HTML to paste into blog-entries.html">EXPORT HTML</button>' +
-    '<button class="Blog-Clear-Btn" id="Blog-Clear-Btn" title="Delete all local entries (use after pasting the export into blog-entries.html)">CLEAR LOCAL</button>' +
-    '<button class="Blog-Admin-Toggle" id="Blog-Admin-Toggle" title="New entry">+ NEW</button>' +
-    "</div>" +
-    "</div>" +
-    '<form class="Blog-Admin-Form" id="Blog-Admin-Form" autocomplete="off">' +
-    '<div class="Blog-Admin-Row">' +
-    '<label class="Blog-Admin-Label" for="Blog-Admin-Pass">PASSCODE</label>' +
-    '<input class="Blog-Admin-Input" type="password" id="Blog-Admin-Pass" placeholder="director\'s passcode"/>' +
-    "</div>" +
-    '<div class="Blog-Admin-Row Blog-Admin-Row-Split">' +
-    "<div>" +
-    '<label class="Blog-Admin-Label" for="Blog-Admin-Date">DATE</label>' +
-    '<input class="Blog-Admin-Input" type="text" id="Blog-Admin-Date" placeholder="YYYY.MM.DD"/>' +
-    "</div>" +
-    "<div>" +
-    '<label class="Blog-Admin-Label" for="Blog-Admin-Tag">TAG</label>' +
-    '<select class="Blog-Admin-Input" id="Blog-Admin-Tag">' +
-    '<option value="UPDATE">UPDATE</option>' +
-    '<option value="NEWS">NEWS</option>' +
-    '<option value="PATCH">PATCH</option>' +
-    '<option value="NOTE">NOTE</option>' +
-    "</select>" +
-    "</div>" +
-    "</div>" +
-    '<div class="Blog-Admin-Row">' +
-    '<label class="Blog-Admin-Label" for="Blog-Admin-Title">TITLE</label>' +
-    '<input class="Blog-Admin-Input" type="text" id="Blog-Admin-Title" placeholder="entry title"/>' +
-    "</div>" +
-    '<div class="Blog-Admin-Row">' +
-    '<label class="Blog-Admin-Label" for="Blog-Admin-Body">BODY</label>' +
-    '<textarea class="Blog-Admin-Input Blog-Admin-Textarea" id="Blog-Admin-Body" rows="3" placeholder="entry body"></textarea>' +
-    "</div>" +
-    '<div class="Blog-Admin-Footer">' +
-    '<span class="Blog-Admin-Status" id="Blog-Admin-Status"></span>' +
-    '<div class="Blog-Admin-Btns">' +
-    '<button type="button" class="Blog-Admin-Cancel" id="Blog-Admin-Cancel">CANCEL</button>' +
-    '<button type="submit" class="Blog-Admin-Submit">POST</button>' +
-    "</div>" +
-    "</div>" +
-    "</form>" +
-    '<div id="Blog-Feed">' +
-    '<p class="Blog-Empty">Loading entries...</p>' +
-    "</div>"
+    '<select id="Blog-Sort" class="Blog-Select"><option value="new">NEWEST</option><option value="old">OLDEST</option></select>' +
+    "</div></div>" +
+    '<div id="Blog-Feed"></div>'
   );
 }
 
-/* ---- NeoMix player — buttons now use uploaded icon images.
-   Play button starts showing play.png; neomixUpdateStatus() swaps it
-   to pause.png when the YT player reports "playing" state. ---- */
+/* ---- NeoMix player shell ---- */
 function buildNeomix() {
-  var NM = "/Neoms~Universal-Fonts+Images/Icons/Neomix/";
+  var NM = "Neoms~Universal-Fonts+Images/Icons/Neomix/";
   var imgBtn = function (id, file, alt) {
     return (
       '<button id="' +
@@ -423,14 +368,73 @@ function buildNeomix() {
   );
 }
 
-/* ---- Core Directive — placeholder panel ---- */
+/* ---- Core Directive — desktop icon guide / "what does each window do?" ---- */
 function buildCore() {
+  /* Each entry: [icon-id, title, description].
+     The icon-id is looked up via iconImg() to get a real image path,
+     so this guide stays in sync with the desktop icons automatically.
+     Swap a window's icon path in WIN_ICONS at the top of this file
+     and it updates here, in the title bar, and on the taskbar. */
+  var GUIDE = [
+    ["prime",     "Creator's Log",   "Blog feed and update log. Posts about NeoMS development, Neoms~Database progress, and general notes. Tag-filterable; new entries can be added via the admin form."],
+    ["neomix",    "NeoMix",          "Embedded music player backed by YouTube playlists (NeoMsMix-Main, SinisterMinds, NeoMsMix-Rewrite, and more). Supports shuffle, video mode, and a mini-player in the taskbar."],
+    ["core",      "Core Directive",  "This window. A guide to every desktop icon and what each one contains."],
+    ["guestbook", "Guest Book",      "Public chat/guestbook (powered by Cbox). Leave a message, say hi, or open the full chat in a new tab."],
+    ["sticker",   "Sticker HQ",      "Click a sticker in the tray to spawn it on the desktop. Drag stickers anywhere; positions persist across visits. Hover a sticker to remove it."],
+    ["badges",    "Badges",          "Grab the NEOMS badge for your own Neocities site. Copy the embed code and paste it into your page."],
+    ["ranking",   "Rankings",        "Tier-list viewer. Categories: Memes, Cartoons, Movies, YouTubers. Each entry is ranked SSS / SS / S with notes."],
+    ["etc",       "Etc",             "Links to my other profiles around the web (AniList, etc.). Use this for things that don't fit anywhere else."],
+    ["friendcodes","Game Codes",      "Friend codes for the games I play. Each entry shows the game and the code with a one-click copy button."],
+    ["wallpaper", "Wallpaper",       "Right-click the desktop and choose \"Change Wallpaper\" to swap the background. (Sonic CD / Neo Metal currently available.)"]
+  ];
+
+  /* Database row uses its own dedicated icon (VM.jpg) */
+  var DB_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg";
+
+  function row(src, name, desc) {
+    return (
+      '<div class="core-guide-row">' +
+        '<div class="core-guide-icon">' +
+          '<img src="' + src + '" alt="" class="core-guide-img"/>' +
+        '</div>' +
+        '<div class="core-guide-text">' +
+          '<div class="core-guide-name">' + name + '</div>' +
+          '<div class="core-guide-desc">' + desc + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  var rows = GUIDE.map(function (g) {
+    return row(iconImg(g[0]), g[1], g[2]);
+  }).join("");
+
+  var dbRow = row(
+    DB_IMG,
+    "Neoms~Database",
+    "Opens the Neoms~Database wiki in a new tab \u2014 the structured knowledge base behind NeoMS. Double-click the icon on the desktop to launch."
+  );
+
+  /* Inline styles so we don't have to add a separate CSS file */
+  var STYLE =
+    '<style>' +
+    '.core-guide-intro{color:var(--text-muted);font-size:9px;letter-spacing:1px;margin-bottom:6px;}' +
+    '.core-guide-sub{color:var(--text-dim);font-size:7px;line-height:1.6;margin-bottom:14px;}' +
+    '.core-guide-row{display:flex;gap:12px;align-items:flex-start;padding:10px;margin-bottom:8px;background:rgba(7,42,113,.35);border:1px solid #1a4a8a;border-left:3px solid var(--accent-hi);border-radius:0 6px 6px 0;}' +
+    '.core-guide-row:hover{background:rgba(0,40,100,.5);border-left-color:var(--accent);}' +
+    '.core-guide-icon{flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}' +
+    '.core-guide-img{width:32px;height:32px;object-fit:contain;border-radius:4px;filter:drop-shadow(0 1px 3px rgba(0,40,120,.5));}' +
+    '.core-guide-text{flex:1;min-width:0;}' +
+    '.core-guide-name{font-size:9px;color:var(--accent-hi);letter-spacing:1px;margin-bottom:5px;font-family:"Press Start 2P",monospace;}' +
+    '.core-guide-desc{font-size:7px;line-height:1.7;color:#9ac8f6;font-family:"Press Start 2P",monospace;}' +
+    '</style>';
+
   return (
-    '<p style="color:var(--text-muted);font-size:9px;margin-bottom:14px;letter-spacing:1px;">CORE DIRECTIVE</p>' +
-    '<p style="color:var(--text-dim);font-size:8px;line-height:1.6;">// No active directive.</p>' +
-    '<p style="color:var(--text-dim);font-size:8px;line-height:1.6;margin-top:10px;">' +
-    'To access the Neoms~Database, use the <b style="color:var(--accent-hi);">Neoms~Database</b> icon on the desktop.' +
-    "</p>"
+    STYLE +
+    '<div class="core-guide-intro">// CORE DIRECTIVE</div>' +
+    '<div class="core-guide-sub">Welcome to NeoMS. Here\u2019s what each desktop icon opens.</div>' +
+    rows +
+    dbRow
   );
 }
 
@@ -461,7 +465,7 @@ function buildBadges() {
   return (
     '<p style="color:var(--text-muted);font-size:9px;margin-bottom:14px;">Grab a badge for your Neocities site.</p>' +
     '<div class="badge-card"><div class="badge-card-inner">' +
-    '<div class="badge-preview"><a href="https://fatherlessjaymo.neocities.org/" target="_blank"><img src="/Neoms~Universal-Fonts+Images/Badges/NEOMS-Badge.jpg" alt="NEOMS Badge" onerror="this.style.display=\'none\'"/></a></div>' +
+    '<div class="badge-preview"><a href="https://fatherlessjaymo.neocities.org/" target="_blank"><img src="Neoms~Universal-Fonts+Images/Badges/NEOMS-Badge.jpg" alt="NEOMS Badge" onerror="this.style.display=\'none\'"/></a></div>' +
     '<div style="flex:1;min-width:0;"><div class="badge-name">NEOMS</div><div class="badge-desc">Neo Overdrive Core — containment clearance.</div>' +
     '<div class="badge-code"><code>' +
     escHtml(code) +
@@ -545,7 +549,7 @@ function buildEtc() {
   return (
     '<p style="color:var(--text-muted);font-size:9px;margin-bottom:14px;">Links to other NeomsCreator Profiles.</p>' +
     '<a href="https://anilist.co/user/FatherlessJaymo" class="etc-link" target="_blank" rel="noopener">' +
-    '<img src="/Neoms~Universal-Fonts+Images/Icons/Desktop/Star-icon.jpg" alt="AniList" style="width:28px;height:28px;border-radius:4px;" onerror="this.style.display=\'none\'"/>' +
+    '<img src="Neoms~Universal-Fonts+Images/Icons/Desktop/Star-icon.jpg" alt="AniList" style="width:28px;height:28px;border-radius:4px;" onerror="this.style.display=\'none\'"/>' +
     '<div><div class="etc-link-name">Ani_Log</div><div class="etc-link-desc">Anime &amp; Manga — AniList Profile</div></div>' +
     '<span class="etc-arrow">&#x2192;</span></a>'
   );
@@ -554,12 +558,12 @@ function buildEtc() {
 var WP_OPTIONS = [
   {
     label: "Sonic CD",
-    bg: "url('/Neoms~Universal-Fonts+Images/BG/Sonic-CD.gif') no-repeat center center fixed",
+    bg: "url('Neoms~Universal-Fonts+Images/BG/Sonic-CD.gif') no-repeat center center fixed",
     size: "cover"
   },
   {
     label: "Neo Metal",
-    bg: "url('/Neoms~Universal-Fonts+Images/BG/NeoMetal-WP.jpg') no-repeat center center fixed",
+    bg: "url('Neoms~Universal-Fonts+Images/BG/NeoMetal-WP.jpg') no-repeat center center fixed",
     size: "cover"
   }
 ];
@@ -594,6 +598,63 @@ function setWallpaper(idx, el) {
   el.classList.add("active");
   document.body.style.background = wp.bg;
   document.body.style.backgroundSize = wp.size || "";
+}
+
+/* ---- Game Codes window ----
+   Reads from NEOMS_FRIEND_CODES (defined in friend-codes-data.js).
+   Renders a card per entry with a copy button. Empty array → empty state. */
+function buildFriendCodes() {
+  /* Guard: data file must be loaded before this runs */
+  var list = (typeof NEOMS_FRIEND_CODES !== "undefined") ? NEOMS_FRIEND_CODES : [];
+
+  var header =
+    '<div class="fc-intro">// GAME CODES</div>' +
+    '<div class="fc-sub">Friend codes for the games I play. Click COPY to grab one.</div>';
+
+  if (!list.length) {
+    return header + '<div class="fc-empty">// NO CODES YET</div>';
+  }
+
+  var rows = list.map(function (entry, i) {
+    var game = escHtml(entry.game || "Untitled");
+    var code = escHtml(entry.code || "");
+    var note = entry.note ? '<div class="fc-note">' + escHtml(entry.note) + '</div>' : "";
+    return (
+      '<div class="fc-card">' +
+        '<div class="fc-card-text">' +
+          '<div class="fc-game">' + game + '</div>' +
+          '<div class="fc-code">' + code + '</div>' +
+          note +
+        '</div>' +
+        '<button class="fc-copy-btn" data-fc-idx="' + i + '" data-fc-code="' + escAttr(entry.code || "") + '">COPY</button>' +
+      '</div>'
+    );
+  }).join("");
+
+  return header + rows;
+}
+
+function initFriendCodes() {
+  var btns = document.querySelectorAll(".fc-copy-btn");
+  btns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var code = this.getAttribute("data-fc-code");
+      var self = this;
+      function onCopied() {
+        self.textContent = "COPIED!";
+        self.classList.add("copied");
+        setTimeout(function () {
+          self.textContent = "COPY";
+          self.classList.remove("copied");
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(onCopied).catch(onCopied);
+      } else {
+        onCopied();
+      }
+    });
+  });
 }
 
 function initBadgeCopy() {
@@ -632,3 +693,20 @@ function toast(msg, dur) {
     t.classList.remove("show");
   }, dur || 2500);
 }
+
+/* ============================================================
+   AUTO-OPEN ON STARTUP
+   Pop the Core Directive guide on first DOM ready so new
+   visitors see the desktop-icon guide right away.
+
+   Uses a small delay so it lands AFTER:
+     - desktop-icons.js builds the icon grid
+     - the wallpaper / clock / etc. settle
+   ...which keeps the open animation looking clean instead
+   of a window appearing on top of half-built desktop chrome.
+============================================================ */
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(function () {
+    if (typeof openWin === "function") openWin("core");
+  }, 200);
+});
