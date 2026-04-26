@@ -1,0 +1,63 @@
+/* ============================================================
+   ETC / OTHER SITES — STYLES
+============================================================ */
+.etc-intro {
+  color: var(--text-muted);
+  font-size: 9px;
+  margin-bottom: 14px;
+}
+.etc-empty {
+  color: var(--text-dim);
+  font-size: 8px;
+  text-align: center;
+  padding: 20px;
+  letter-spacing: 1px;
+  font-style: italic;
+}
+
+.etc-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(7, 42, 113, 0.4);
+  border: 1px solid #1a4a8a;
+  border-left: 3px solid var(--accent-hi);
+  border-radius: 0 6px 6px 0;
+  text-decoration: none;
+  transition: 0.15s;
+  color: inherit;
+}
+.etc-link:hover {
+  background: rgba(0, 40, 100, 0.5);
+  border-left-color: var(--accent);
+  transform: translateX(2px);
+}
+
+.etc-link-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.etc-link-name {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--accent-hi);
+  margin-bottom: 4px;
+}
+.etc-link-desc {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  line-height: 1.5;
+  color: #9ac8f6;
+}
+.etc-arrow {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--accent);
+  flex-shrink: 0;
+}

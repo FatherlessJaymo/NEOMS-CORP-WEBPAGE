@@ -12,6 +12,7 @@
 ============================================================ */
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
+var ETC_IMG = "Neoms~Universal-Fonts+Images/Icons/App_Icons/Opera.png";
 
 var ICONS = [
   { id: "prime", label: "Creator's\nLog", img: FOLDER_IMG },
@@ -21,7 +22,7 @@ var ICONS = [
   { id: "sticker", label: "Sticker\nHQ", img: FOLDER_IMG },
   { id: "badges", label: "Badges", img: FOLDER_IMG },
   { id: "ranking", label: "Rankings", img: FOLDER_IMG },
-  { id: "etc", label: "Etc", img: FOLDER_IMG },
+  { id: "etc", label: "Etc", img: ETC_IMG },
   { id: "friendcodes", label: "Game\nCodes", img: FOLDER_IMG },
   {
     id: "database",

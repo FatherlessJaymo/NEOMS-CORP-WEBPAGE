@@ -1,22 +1,21 @@
 /* ============================================================
    RANKING VIEWER
-   Category files: Memes, Cartoons, Movies, YouTubers.
-   Each entry has an image, title, notes, and rank (SSS/SS/S).
+   Standalone viewer that hijacks the Code-Viewer-Shell DOM and
+   replaces its main pane with ranking cards. Separate from
+   ranking-window.js (the desktop-window variant).
 
    Entry data lives in ranking-data.js (NEOMS_RANK_DATA).
-   This script plugs into the Code-Viewer-Shell DOM structure
-   and replaces its main pane with ranking cards.
+   Each entry: { img, title, artist?, notes, rank }.
 
-   BUG FIX: The old file accidentally passed the Source Code
-   Viewer IIFE as an argument to this IIFE, making it dead code.
-   Both modules are now fully separated.
+   Categories: edit RANK_CATEGORIES below to add new ones.
 ============================================================ */
 (function () {
     var RANK_CATEGORIES = [
         { label: "Memes", key: "Memes" },
         { label: "Cartoons", key: "Cartoons" },
         { label: "Movies", key: "Movies" },
-        { label: "YouTubers", key: "YouTubers" }
+        { label: "YouTubers", key: "YouTubers" },
+        { label: "Art", key: "Art" }
     ];
 
     /* ================================================================
@@ -93,6 +92,56 @@
             card.style.setProperty("--rv-rank-glow", meta.glow);
             card.style.setProperty("--rv-rank-bg", meta.bg);
 
+            /* Artist line is optional — only render if entry.artist is truthy.
+               If entry.artistUrl is also set, wrap the name in an external link.
+               If entry.artistSocials is set, append small icon links after the name. */
+            var artistHTML = "";
+            if (entry.artist) {
+                var nameHTML = entry.artistUrl
+                    ? '<a class="RV-Card-Artist-Link" href="' +
+                      esc(entry.artistUrl) +
+                      '" target="_blank" rel="noopener noreferrer">' +
+                      esc(entry.artist) +
+                      "</a>"
+                    : esc(entry.artist);
+
+                var socialsHTML = "";
+                if (Array.isArray(entry.artistSocials) && entry.artistSocials.length) {
+                    socialsHTML =
+                        '<span class="RV-Card-Artist-Socials">' +
+                        entry.artistSocials
+                            .map(function (s) {
+                                var label = esc(s.label || "");
+                                return (
+                                    '<a class="RV-Card-Social" href="' +
+                                    esc(s.url || "#") +
+                                    '" ' +
+                                    'target="_blank" rel="noopener noreferrer" ' +
+                                    'title="' +
+                                    label +
+                                    '" aria-label="' +
+                                    label +
+                                    '">' +
+                                    '<img src="' +
+                                    esc(s.icon || "") +
+                                    '" alt="' +
+                                    label +
+                                    '"/>' +
+                                    "</a>"
+                                );
+                            })
+                            .join("") +
+                        "</span>";
+                }
+
+                artistHTML =
+                    '<div class="RV-Card-Artist">' +
+                    '<span class="RV-Card-Artist-Label">BY</span> ' +
+                    nameHTML +
+                    socialsHTML +
+                    "</div>";
+            }
+
             card.innerHTML =
                 '<div class="RV-Card-Img-Wrap">' +
                 '<img class="RV-Card-Img" src="' +
@@ -108,6 +157,7 @@
                 '<h3 class="RV-Card-Title">' +
                 esc(entry.title) +
                 "</h3>" +
+                artistHTML +
                 '<details class="RV-Notes">' +
                 '<summary class="RV-Notes-Toggle">&#x25BA; NOTES</summary>' +
                 '<p class="RV-Notes-Text">' +

@@ -285,6 +285,74 @@ body.code-tab-active .Center-Panel {
     word-break: break-word;
 }
 
+/*==ARTIST LINE (optional, only renders when entry.artist is set)==*/
+.RV-Card-Artist {
+    font-family: "Press Start 2P", sans-serif;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: var(--text-base);
+    line-height: 1.5;
+    margin-top: -4px; /* tighten to title since cards use gap:10px */
+    word-break: break-word;
+}
+.RV-Card-Artist-Label {
+    color: var(--text-dim);
+    font-size: 7px;
+    letter-spacing: 2px;
+    margin-right: 4px;
+}
+.RV-Card-Artist-Link {
+    color: var(--accent-hi);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent-sub);
+    transition:
+        color 0.15s,
+        border-color 0.15s,
+        text-shadow 0.15s;
+}
+.RV-Card-Artist-Link:hover {
+    color: #fff;
+    border-bottom-color: var(--accent-hi);
+    text-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* Inline social icons after the artist name (TikTok / Bluesky / etc.) */
+.RV-Card-Artist-Socials {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+.RV-Card-Social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    background: rgba(0, 109, 255, 0.12);
+    border: 1px solid rgba(168, 200, 232, 0.25);
+    transition:
+        background 0.15s,
+        border-color 0.15s,
+        transform 0.15s,
+        box-shadow 0.15s;
+}
+.RV-Card-Social:hover {
+    background: rgba(0, 109, 255, 0.3);
+    border-color: var(--accent-hi);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px var(--rv-rank-glow, var(--accent-glow));
+}
+.RV-Card-Social img {
+    width: 12px;
+    height: 12px;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+}
+
 /*==NOTES ACCORDION==*/
 .RV-Notes {
     border: 1px solid rgba(192, 216, 240, 0.15);
@@ -393,4 +461,71 @@ body.code-tab-active .Center-Panel {
         right: 10px;
         transform: none;
     }
+}
+
+/* ============================================================
+   DESKTOP-WINDOW VARIANT (.rank-* classes used by ranking-window.js)
+   The cards here render inside the small NeoMS desktop window;
+   .rank-card / .rank-title / .rank-notes are styled in
+   content-windows.css. We only add the artist line here so the
+   class lives next to its .RV-Card-Artist twin.
+============================================================ */
+.rank-artist {
+    font-size: 7px;
+    color: #9ac8f6;
+    line-height: 1.6;
+    margin-top: 4px;
+    word-break: break-word;
+}
+.rank-artist::before {
+    content: "BY ";
+    color: #354a5f;
+    letter-spacing: 1px;
+}
+.rank-artist-link {
+    color: #a8c8e8;
+    text-decoration: none;
+    border-bottom: 1px dashed #1a4a8a;
+    transition:
+        color 0.15s,
+        border-color 0.15s;
+}
+.rank-artist-link:hover {
+    color: #fff;
+    border-bottom-color: #a8c8e8;
+}
+
+/* Inline social icons next to artist name in the desktop ranking window */
+.rank-artist-socials {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.rank-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    background: rgba(0, 109, 255, 0.12);
+    border: 1px solid rgba(168, 200, 232, 0.25);
+    transition:
+        background 0.15s,
+        border-color 0.15s,
+        transform 0.15s;
+}
+.rank-social:hover {
+    background: rgba(0, 109, 255, 0.3);
+    border-color: #a8c8e8;
+    transform: translateY(-1px);
+}
+.rank-social img {
+    width: 9px;
+    height: 9px;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
 }

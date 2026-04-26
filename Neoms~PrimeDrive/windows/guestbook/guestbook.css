@@ -1,0 +1,35 @@
+/* ============================================================
+   GUEST BOOK — STYLES
+============================================================ */
+.gb-wrap {
+  margin: -12px;
+  height: calc(100% + 24px);
+  display: flex;
+  flex-direction: column;
+}
+.gb-header {
+  background: rgba(0, 20, 60, 0.6);
+  border-bottom: 1px solid var(--panel-border);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.gb-title {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--accent-hi);
+}
+.gb-chat-link {
+  text-decoration: none;
+  font-size: 8px;
+}
+.gb-frame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  display: block;
+  background: transparent;
+  min-height: 0;
+}
