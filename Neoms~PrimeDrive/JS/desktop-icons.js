@@ -2,6 +2,13 @@
    DESKTOP ICONS
    Absolute-positioned, draggable icons with snap-to-grid and
    localStorage position persistence.
+
+   PATHS NOTE:
+   These paths are used in src="..." attributes injected into
+   the DOM. The browser resolves them relative to the current
+   page URL (index.html lives at the repo root), NOT relative
+   to this JS file. So we use the same relative paths the HTML
+   uses — no leading slash.
 ============================================================ */
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
@@ -15,11 +22,12 @@ var ICONS = [
   { id: "badges", label: "Badges", img: FOLDER_IMG },
   { id: "ranking", label: "Rankings", img: FOLDER_IMG },
   { id: "etc", label: "Etc", img: FOLDER_IMG },
+  { id: "friendcodes", label: "Game\nCodes", img: FOLDER_IMG },
   {
     id: "database",
     label: "Neoms~\nDatabase",
     img: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
-    url: "/Neoms~Database/HTML/intake.html"
+    url: "Neoms~Database/HTML/intake.html"
   }
 ];
 
