@@ -37,10 +37,6 @@ body {
 }
 
 body {
-  /* NOTE: this URL is resolved RELATIVE TO THIS CSS FILE.
-     CSS file lives at:   Neoms~PrimeDrive/CSS/desktop-base.css
-     Image lives at:      Neoms~Universal-Fonts+Images/BG/Sonic-CD.gif
-     So we go up two levels to get back to the repo root. */
   background: url("../../Neoms~Universal-Fonts+Images/Wallpapers/Sonic-CD.gif") no-repeat center center fixed;
   background-size: cover;
   color: var(--text-base);

@@ -3,16 +3,6 @@
    Window plumbing only. Open / close / minimize / maximize,
    drag, resize, taskbar buttons, and the content router.
 
-   Each window's HTML builder + per-window logic now lives in
-   its own folder under Neoms~PrimeDrive/windows/<name>/.
-   The builders are exposed on window.buildXxx and looked up
-   by buildContent() below. The init hooks (initXxx) are called
-   from afterOpen() once the window is mounted.
-
-   PATHS NOTE:
-   Image paths injected into the DOM resolve relative to the
-   PAGE URL (index.html), not this file. Always relative,
-   never leading-slash.
 ============================================================ */
 var zTop = 200;
 var wins = {};

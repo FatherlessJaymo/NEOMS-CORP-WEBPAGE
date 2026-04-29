@@ -2,11 +2,6 @@
    RANKING WINDOW (desktop window variant)
    The lightweight ranking viewer shown inside the NeoMS desktop
    window. Reads from NEOMS_RANK_DATA (defined in ranking-data.js).
-
-   This is SEPARATE from ranking-viewer.js, which is a standalone
-   page-level viewer that plugs into a Code-Viewer-Shell DOM and
-   uses different classes (.RV-Card, .RV-Pane, etc).
-
    Exposed:
      window.buildRanking    — called by window-manager router
      window.renderRank(cat) — render a category in the open window
@@ -62,11 +57,6 @@
         el.classList.add("active");
         renderRank(cat);
     };
-
-    /* Build the artist line for an entry.
-       Renders nothing if e.artist is falsy.
-       If e.artistUrl is set, the name itself links to it.
-       If e.artistSocials is set, appends small icon links after. */
     function renderArtist(e) {
         if (!e.artist) return "";
 

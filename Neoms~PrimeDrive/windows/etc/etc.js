@@ -2,6 +2,8 @@
    ETC / OTHER SITES
    Links to other profiles around the web.
    Edit NEOMS_ETC_LINKS to add or remove links.
+   // Add more like:
+{ name: "...", desc: "...", url: "https://...", icon: "Neoms~..." }
 ============================================================ */
 (function () {
 
@@ -12,8 +14,6 @@
             url: "https://anilist.co/user/FatherlessJaymo",
             icon: "Neoms~Universal-Fonts+Images/Icons/Desktop/Star-icon.jpg"
         }
-        // Add more like:
-        // { name: "...", desc: "...", url: "https://...", icon: "Neoms~..." }
     ];
 
     window.buildEtc = function () {

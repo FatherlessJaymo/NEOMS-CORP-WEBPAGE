@@ -1,12 +1,5 @@
 /* ============================================================
    RANKING VIEWER
-   Standalone viewer that hijacks the Code-Viewer-Shell DOM and
-   replaces its main pane with ranking cards. Separate from
-   ranking-window.js (the desktop-window variant).
-
-   Entry data lives in ranking-data.js (NEOMS_RANK_DATA).
-   Each entry: { img, title, artist?, notes, rank }.
-
    Categories: edit RANK_CATEGORIES below to add new ones.
 ============================================================ */
 (function () {
@@ -92,9 +85,6 @@
             card.style.setProperty("--rv-rank-glow", meta.glow);
             card.style.setProperty("--rv-rank-bg", meta.bg);
 
-            /* Artist line is optional — only render if entry.artist is truthy.
-               If entry.artistUrl is also set, wrap the name in an external link.
-               If entry.artistSocials is set, append small icon links after the name. */
             var artistHTML = "";
             if (entry.artist) {
                 var nameHTML = entry.artistUrl

@@ -1,11 +1,7 @@
 /* ============================================================
    CREATOR'S LOG — blog entries, admin form styles
 
-   Class naming note:
-   - blog-entries.html uses capital-B classes: .Blog-Entry, .Blog-Date etc.
-   - The desktop window builder (window-manager.js) uses lowercase: .blog-entry etc.
-   - Both sets are styled here so both sources render correctly.
-============================================================ */
+   ======================================================== */
 
 /* ---- Header row ---- */
 .blog-header {

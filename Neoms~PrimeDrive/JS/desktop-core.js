@@ -3,9 +3,7 @@
    Handles: clock, start menu toggle, context menu,
             global click/keydown, VM terminal.
 
-   NOTE: ranking-data.js is loaded as a <script> tag in index.html
-   before this file, so NEOMS_RANK_DATA is already available globally.
-============================================================ */
+ =========================================================== */
 
 /* ---- Clock ---- */
 function updateClock() {

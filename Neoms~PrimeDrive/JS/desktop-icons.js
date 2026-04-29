@@ -3,12 +3,7 @@
    Absolute-positioned, draggable icons with snap-to-grid and
    localStorage position persistence.
 
-   PATHS NOTE:
-   These paths are used in src="..." attributes injected into
-   the DOM. The browser resolves them relative to the current
-   page URL (index.html lives at the repo root), NOT relative
-   to this JS file. So we use the same relative paths the HTML
-   uses — no leading slash.
+   
 ============================================================ */
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";

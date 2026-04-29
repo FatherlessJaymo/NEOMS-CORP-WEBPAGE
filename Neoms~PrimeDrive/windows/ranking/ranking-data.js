@@ -1,7 +1,7 @@
 /* ============================================================
    RANKING DATA
    Edit this file to add / change tier list entries.
-   Each entry: { img, title, artist, notes, rank: "SSS" | "SS" | "S" }
+   Each entry: { img, title, artist, artisrtUrl, artistSocials: icon url label notes, rank: "SSS" | "SS" | "S" }
 ============================================================ */
 
 var NEOMS_RANK_DATA = {
@@ -18,13 +18,13 @@ var NEOMS_RANK_DATA = {
                     label: "TikTok"
                 },
                 {
-                    icon: "Neoms~Universal-Fonts+Images/Socials/Bluesky.png",
-                    url: "https://bsky.app/profile/yuk1draw.bsky.social",
+                    icon: "",
+                    url: "",
                     label: "Bluesky"
                 },
                 {
-                    icon: "Neoms~Universal-Fonts+Images/Socials/Twitter.png",
-                    url: "https://twitter.com/yuk1draw",
+                    icon: "",
+                    url: "",
                     label: "Twitter / X"
                 }
             ],

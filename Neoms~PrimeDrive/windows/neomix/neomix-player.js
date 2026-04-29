@@ -13,6 +13,14 @@
    The YT iframe lives inside a hidden off-screen <div id="neomix-yt-hidden">
    so playback survives the window being closed. When Video is toggled on,
    we physically move that iframe into the on-screen <div id="neomix-yt-target">.
+
+   STUDIO DECK ADDITIONS (used by the new builder):
+     - Playlist queue list rendered into #neomix-rail-list with
+       click-to-jump (neomixRenderQueue, called on load + state change).
+       Names come from two hardcoded sources — see NEOMIX_QUEUE_NAMES
+       and NEOMIX_QUEUE_NAMES_BY_ID below.
+     - Rail collapse toggle on #neomix-rail-toggle.
+   Both no-op gracefully if the new elements aren't present.
 ============================================================ */
 var NEOMIX_ICON_PATH = "/Neoms~Universal-Fonts+Images/Icons/Neomix/";
 
@@ -21,6 +29,50 @@ var NEOMIX_PLAYLISTS = {
   SinisterMinds: "PLV-phDrTzbSVxpmsO9HWTPFftu6ooZaTS",
   "SinisterMinds (intr)": "PLV-phDrTzbSXwjyUEUYEaFUf6wtXT7ilE",
   "NeoMsMix-Rewrite": "PLV-phDrTzbSWafn5ZpEx77GgO5adfZgRf"
+};
+
+/* ============================================================
+   QUEUE NAMES — hardcoded track names. TWO sources, looked up
+   in this order:
+
+   1. NEOMIX_QUEUE_NAMES_BY_ID — keyed by YouTube video ID.
+      Wins over everything else. Useful when:
+        - The same song appears in multiple playlists and you
+          want one source of truth for its name.
+        - You want names to stay correct even if you reorder
+          the YouTube playlist.
+      You can find a video's ID in its YouTube URL:
+      https://www.youtube.com/watch?v=dQw4w9WgXcQ  ->  "dQw4w9WgXcQ"
+
+   2. NEOMIX_QUEUE_NAMES[playlistKey][index] — per-playlist
+      ordered arrays. Easier for bulk-filling because you don't
+      need to look up IDs, but the array order MUST match the
+      YouTube playlist order.
+
+   3. Falls back to "Track NN" if neither is filled in.
+============================================================ */
+
+/* By-ID lookup. Highest priority. */
+var NEOMIX_QUEUE_NAMES_BY_ID = {
+  // "dQw4w9WgXcQ": "Never Gonna Give You Up",
+  // "yourVideoId": "Your Song Name",
+};
+
+/* By-playlist ordered lookup. Index must match YouTube playlist order. */
+var NEOMIX_QUEUE_NAMES = {
+  "NeoMsMix-Main": [
+    // "Track 1 Name",
+    // "Track 2 Name",
+  ],
+  SinisterMinds: [
+    //
+  ],
+  "SinisterMinds (intr)": [
+    //
+  ],
+  "NeoMsMix-Rewrite": [
+    //
+  ]
 };
 
 var neomixYtPlayer = null;
@@ -33,6 +85,7 @@ var neomixIsVideoOn = false;
 var neomixIsShuffleOn = false;
 var neomixCurrentPl = "NeoMsMix-Main";
 var neomixStatusInterval = null;
+var neomixLastPlIdx = -1; /* tracks playlist index for queue re-render */
 
 /* ---- helpers ---- */
 function neomixFmtTime(s) {
@@ -61,6 +114,82 @@ function neomixSetPlayImg(btn, playing) {
   if (!img) return;
   img.src = NEOMIX_ICON_PATH + (playing ? "pause.png" : "play.png");
   img.alt = playing ? "Pause" : "Play";
+}
+
+/* Look up a hardcoded queue name. Priority order:
+     1. NEOMIX_QUEUE_NAMES_BY_ID[videoId]
+     2. NEOMIX_QUEUE_NAMES[playlistKey][idx]
+     3. "" (caller falls back to "Track NN")
+   videoId may be undefined/empty — only the playlist-array
+   path will be tried in that case. */
+function neomixQueueName(playlistKey, idx, videoId) {
+  /* 1. Video-ID override */
+  if (videoId && NEOMIX_QUEUE_NAMES_BY_ID[videoId]) {
+    return NEOMIX_QUEUE_NAMES_BY_ID[videoId];
+  }
+  /* 2. Per-playlist array */
+  var arr = NEOMIX_QUEUE_NAMES[playlistKey];
+  if (arr && arr.length) {
+    var name = arr[idx];
+    if (typeof name === "string" && name) return name;
+  }
+  return "";
+}
+
+/* ---- STUDIO DECK: render the playlist queue into #neomix-rail-list ----
+   Names come from NEOMIX_QUEUE_NAMES_BY_ID first, then NEOMIX_QUEUE_NAMES,
+   with a "Track NN" fallback for entries that aren't filled in.
+   Each row is clickable and jumps to that track via playVideoAt.
+   No-op if #neomix-rail-list isn't in the DOM. */
+function neomixRenderQueue() {
+  var list = document.getElementById("neomix-rail-list");
+  if (!list || !neomixYtPlayer || !neomixYtPlayer.getPlaylist) return;
+  var pl = neomixYtPlayer.getPlaylist();
+  if (!pl || !pl.length) return;
+
+  var idx = neomixYtPlayer.getPlaylistIndex();
+
+  var html = '<div class="rail-list-title">// QUEUE</div>';
+  for (var i = 0; i < pl.length; i++) {
+    var active = i === idx;
+    var num = active ? "\u25B6" : (i + 1 < 10 ? "0" : "") + (i + 1);
+    /* getPlaylist() returns an array of video IDs (strings) — use the
+       ID for the by-ID lookup, fall back to playlist-array, fall back
+       to "Track NN". */
+    var videoId = pl[i];
+    var name = neomixQueueName(neomixCurrentPl, i, videoId) || "Track " + (i + 1);
+    if (name.length > 32) name = name.slice(0, 32) + "\u2026";
+    html +=
+      '<div class="rail-track' +
+      (active ? " active" : "") +
+      '" data-idx="' +
+      i +
+      '">' +
+      '<span class="rail-track-num">' +
+      num +
+      "</span>" +
+      '<span class="rail-track-name">' +
+      neomixEsc(name) +
+      "</span>" +
+      "</div>";
+  }
+  list.innerHTML = html;
+
+  /* Wire click-to-jump on each row */
+  var rows = list.querySelectorAll(".rail-track");
+  for (var j = 0; j < rows.length; j++) {
+    rows[j].addEventListener("click", function () {
+      var i = parseInt(this.getAttribute("data-idx"), 10);
+      if (!isNaN(i) && neomixYtPlayer && neomixYtPlayer.playVideoAt) {
+        neomixYtPlayer.playVideoAt(i);
+      }
+    });
+  }
+}
+
+/* Tiny escaper used by the queue renderer */
+function neomixEsc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 function neomixUpdateStatus() {
@@ -111,6 +240,13 @@ function neomixUpdateStatus() {
 
   /* Play button: swap the <img> src */
   if (play) neomixSetPlayImg(play, state === 1);
+
+  /* Studio Deck: re-render queue when the active track changes
+     (keeps the "▶" indicator in the rail synced with playback) */
+  if (idx !== neomixLastPlIdx) {
+    neomixLastPlIdx = idx;
+    neomixRenderQueue();
+  }
 }
 
 function neomixLoadPlaylist(key) {
@@ -119,6 +255,10 @@ function neomixLoadPlaylist(key) {
   neomixYtPlayer.stopVideo();
   neomixYtPlayer.loadPlaylist({ list: NEOMIX_PLAYLISTS[key], listType: "playlist" });
   if (neomixIsShuffleOn) neomixYtPlayer.setShuffle(true);
+
+  /* Reset queue index tracking so the queue re-renders after the
+     new playlist loads — and so the names update for the new playlist. */
+  neomixLastPlIdx = -1;
 }
 
 /* ---- VIDEO TOGGLE: move the iframe between hidden and visible containers ---- */
@@ -137,7 +277,8 @@ function neomixApplyVideoMode() {
   } else if (hiddenHost) {
     if (iframe.parentElement !== hiddenHost) hiddenHost.appendChild(iframe);
     iframe.style.cssText = "width:1px;height:1px;border:0;display:block;";
-    if (displayWrap) displayWrap.style.display = "none";
+    /* In the Studio Deck layout we DON'T hide #neomix-display — we let
+       the .neomix-display-fallback message show through instead. */
   }
 }
 
@@ -176,6 +317,14 @@ window.onYouTubeIframeAPIReady = function () {
         }
         clearInterval(neomixStatusInterval);
         neomixStatusInterval = setInterval(neomixUpdateStatus, 500);
+
+        /* Studio Deck: when a playlist first loads (state 5 = cued or
+           state 1 = playing) and we have tracks but no queue rendered,
+           force a render. */
+        if (e.data === 1 || e.data === 5) {
+          var list = document.getElementById("neomix-rail-list");
+          if (list && !list.querySelector(".rail-track")) neomixRenderQueue();
+        }
       }
     }
   });
@@ -205,6 +354,9 @@ function initNeomixInWin() {
     var shufBtn = document.getElementById("neomix-shuffle");
     var vidBtn = document.getElementById("neomix-video-toggle");
     var plSel = document.getElementById("neomix-playlist-select");
+    /* Studio Deck additions */
+    var railToggle = document.getElementById("neomix-rail-toggle");
+    var playerEl = document.getElementById("neomix-player");
 
     playBtn.addEventListener("click", function () {
       if (!neomixYtPlayer) return;
@@ -287,12 +439,28 @@ function initNeomixInWin() {
         neomixLoadPlaylist(this.value);
       });
 
-    if (neomixIsVideoOn) neomixApplyVideoMode();
-    /* Reflect current shuffle state in the freshly opened button */
+    /* Studio Deck: rail collapse toggle */
+    if (railToggle && playerEl) {
+      railToggle.addEventListener("click", function () {
+        playerEl.classList.toggle("rail-collapsed");
+      });
+    }
+
+    /* Sync the playlist dropdown to the currently-loaded playlist
+       (so reopening the window doesn't show a stale selection) */
+    if (plSel && neomixCurrentPl) plSel.value = neomixCurrentPl;
+
+    /* Reflect current state in freshly-opened buttons */
+    if (vidBtn) vidBtn.setAttribute("state", neomixIsVideoOn ? "on" : "off");
     if (shufBtn) shufBtn.setAttribute("state", neomixIsShuffleOn ? "on" : "off");
+
+    if (neomixIsVideoOn) neomixApplyVideoMode();
 
     neomixUpdateSong();
     neomixUpdateStatus();
+
+    /* Studio Deck: render the queue if a playlist is already loaded */
+    neomixRenderQueue();
   }, 300);
 }
 

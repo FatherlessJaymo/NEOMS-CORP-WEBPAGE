@@ -11,9 +11,7 @@
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  gap: 7px;
-  /* Extra left padding pushes the Start button a bit to the right of the edge
-     (if you want it flush to the corner, set the left value back to 0). */
+  gap: 5px; /* Extra left padding pushes the Start button a bit to the right of the edge*/
   padding: 0 6px 0 14px;
   z-index: 9999;
 }
@@ -24,9 +22,8 @@
   font-size: 5px;
   letter-spacing: 5px;
   padding: 0 1px;
-  height: 41px;
-  /* Small left margin for extra breathing room from the taskbar padding */
-  margin-left: -13px;
+  height: 41px;  /* Small left margin for extra breathing room from the taskbar padding */
+  margin-left: -14px;
   background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
   color: #fff;
   border: none;

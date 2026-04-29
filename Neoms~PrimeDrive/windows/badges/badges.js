@@ -4,8 +4,6 @@
    Add more badges by appending to NEOMS_BADGES below.
 ============================================================ */
 (function () {
-
-    /* Edit this array to add more badges. */
     var NEOMS_BADGES = [
         {
             name: "NEOMS",
@@ -18,9 +16,15 @@
 
     function buildEmbedCode(b) {
         return (
-            '<a href="' + b.link + '" target="_blank">' +
-              '<img src="' + b.embed + '" alt="' + b.name + ' Badge" width="150">' +
-            '</a>'
+            '<a href="' +
+            b.link +
+            '" target="_blank">' +
+            '<img src="' +
+            b.embed +
+            '" alt="' +
+            b.name +
+            ' Badge" width="150">' +
+            "</a>"
         );
     }
 
@@ -29,27 +33,39 @@
             var code = buildEmbedCode(b);
             return (
                 '<div class="badge-card"><div class="badge-card-inner">' +
-                  '<div class="badge-preview">' +
-                    '<a href="' + b.link + '" target="_blank">' +
-                      '<img src="' + b.preview + '" alt="' + escHtml(b.name) + ' Badge" ' +
-                      'onerror="this.style.display=\'none\'"/>' +
-                    '</a>' +
-                  '</div>' +
-                  '<div class="badge-card-body">' +
-                    '<div class="badge-name">' + escHtml(b.name) + '</div>' +
-                    '<div class="badge-desc">' + escHtml(b.desc) + '</div>' +
-                    '<div class="badge-code"><code>' + escHtml(code) + '</code></div>' +
-                    '<button class="copy-btn badge-copy-btn" data-badge-idx="' + i +
-                      '" data-code="' + escAttr(code) + '">Copy Code</button>' +
-                  '</div>' +
-                '</div></div>'
+                '<div class="badge-preview">' +
+                '<a href="' +
+                b.link +
+                '" target="_blank">' +
+                '<img src="' +
+                b.preview +
+                '" alt="' +
+                escHtml(b.name) +
+                ' Badge" ' +
+                "onerror=\"this.style.display='none'\"/>" +
+                "</a>" +
+                "</div>" +
+                '<div class="badge-card-body">' +
+                '<div class="badge-name">' +
+                escHtml(b.name) +
+                "</div>" +
+                '<div class="badge-desc">' +
+                escHtml(b.desc) +
+                "</div>" +
+                '<div class="badge-code"><code>' +
+                escHtml(code) +
+                "</code></div>" +
+                '<button class="copy-btn badge-copy-btn" data-badge-idx="' +
+                i +
+                '" data-code="' +
+                escAttr(code) +
+                '">Copy Code</button>' +
+                "</div>" +
+                "</div></div>"
             );
         }).join("");
 
-        return (
-            '<p class="badge-intro">Grab a badge for your Neocities site.</p>' +
-            cards
-        );
+        return '<p class="badge-intro">Grab a badge for your Neocities site.</p>' + cards;
     };
 
     window.initBadgeCopy = function () {

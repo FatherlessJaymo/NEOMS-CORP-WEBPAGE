@@ -11,8 +11,6 @@
      title — entry title
      body  — entry body text
 
-   Entries appear newest-first by default. The first entry in
-   this array is treated as the most recent.
 
    Example (uncomment and edit):
      { date: "2026.04.20", tag: "UPDATE", title: "Database v2",

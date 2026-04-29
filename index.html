@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NeoMS | Desktop OS</title>
-
+    <link rel="icon" type="image/png" href="Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 
@@ -29,8 +29,7 @@
   <body>
     <!-- ===== TOP LABEL BAR ===== -->
     <div class="desk-label">
-      <span class="desk-label-title">NEO OVERDRIVE CORE</span>
-      <span class="desk-label-item" id="label-time"></span>
+      <span class="desk-label-title">NEOCORP VM</span>
       <span class="desk-label-item">SYSTEM ONLINE</span>
     </div>
 
@@ -39,7 +38,7 @@
       <div class="icon-grid" id="icon-grid"></div>
     </div>
 
-    <!-- ===== STICKER BOARD (viewport overlay) ===== -->
+    <!-- ===== STICKER BOARD ===== -->
     <div
       id="Sticker-Board"
       style="position: fixed; inset: 8; pointer-events: none; z-index: 8000; overflow: visible"></div>
@@ -55,7 +54,7 @@
 
     <!-- ===== START MENU ===== -->
     <div id="start-menu">
-      <div class="start-header">NEOMS</div>
+      <div class="start-header">START MENU</div>
 
       <div class="start-body">
         <!-- LEFT: user panel -->
@@ -88,9 +87,7 @@
 
         <!-- RIGHT: apps list (vertical stack) -->
         <div class="start-apps">
-          <div class="start-apps-title">menu</div>
-
-          <!-- Sorted A–Z. Add new items in alphabetical order. -->
+          <div class="start-apps-title">APPs</div>
           <div class="start-item" onclick="openWin('badges');closeStart()">
             <img
               class="start-item-icon"
@@ -200,7 +197,7 @@
 
     <!-- ===== TASKBAR ===== -->
     <div id="taskbar">
-      <button id="start-btn" onclick="toggleStart()" title="NeoMS Start">&#9670; NEOMS</button>
+      <button id="start-btn" onclick="toggleStart()" title="NeoMS Start">&#9670; START</button>
       <div
         id="tb-buttons"
         style="display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; max-width: 340px; flex-shrink: 1"></div>
