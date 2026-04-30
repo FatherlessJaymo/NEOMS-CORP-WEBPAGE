@@ -91,10 +91,9 @@ var NEOMS_CORE_GUIDE = [
   /* The Neoms~Database row uses an explicit icon since it isn't a
        proper window — double-click on the desktop opens it in a new tab. */
   {
-    id: "database",
-    name: "Neoms~Database",
+    id: "terminaldb",
+    name: "Terminal-Database",
     category: "System",
-    icon: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
-    desc: ""
+    desc: "Live terminal connected to NEOMSDATABASE. Reads your intake session record (whoami, session, status). Type 'help' for commands."
   }
 ];
