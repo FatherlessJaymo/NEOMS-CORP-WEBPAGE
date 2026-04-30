@@ -1,26 +1,47 @@
 /* ============================================================
    NEOMS — INTAKE TERMINAL STYLES
    Neoms~Database/CSS/intake.css
+   PrimeDrive Win95 look — deep blue desktop, paper window
    ============================================================ */
 
 html, body {
   width: 100%;
   height: 100%;
-  background: #000;
+  background: #001a4a;
   overflow: hidden;
+  font-family: "Share Tech Mono", monospace;
 }
 
 /* ── Full-page overlay ───────────────────────────────────────── */
 #iv-overlay {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: #001a4a;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: "Share Tech Mono", monospace;
+}
+
+/* faux PrimeDrive top label bar in the intake screen too */
+#iv-overlay::before {
+  content: "NEO OVERDRIVE CORE     INTAKE TERMINAL     SYSTEM ONLINE";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #006dff 15%, #0044bb 100%);
+  color: #fff;
+  font-family: "VT323", monospace;
+  font-size: 13px;
+  letter-spacing: 3px;
+  padding: 4px 12px;
+  z-index: 9000;
+  border-bottom: 1px solid #00eaff;
+  box-sizing: border-box;
 }
 
 #iv-overlay.iv-fadeout {
@@ -32,73 +53,76 @@ html, body {
   to { opacity: 0; pointer-events: none; }
 }
 
-/* ── Window frame ────────────────────────────────────────────── */
+/* ── Window frame (Win95 paper window) ───────────────────────── */
 #iv-inner {
   width: min(680px, 96vw);
-  border: 1px solid #00aa88;
-  background: #03070f;
-  box-shadow: 0 0 60px rgba(0, 180, 140, 0.12);
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
 }
 
 /* ── Title bar ───────────────────────────────────────────────── */
 #iv-titlebar {
-  background: linear-gradient(90deg, #000060, #006666 50%, #000060);
+  background: linear-gradient(90deg, #000080 0%, #1084d0 50%, #000080 100%);
   padding: 5px 10px;
   font-size: 11px;
   color: #fff;
   letter-spacing: 2px;
   display: flex;
   justify-content: space-between;
+  font-weight: bold;
 }
 
 /* ── Terminal output screen ──────────────────────────────────── */
 #iv-screen {
-  background: #000;
+  background: #ffffff;
+  margin: 2px;
+  border: 2px inset #dfdfdf;
   padding: 14px 18px;
   height: 220px;
   overflow-y: auto;
   font-size: 12px;
-  color: #00cc88;
+  color: #000080;
   line-height: 1.9;
+  font-family: "Share Tech Mono", monospace;
   scrollbar-width: thin;
-  scrollbar-color: #0a2a1a #000;
+  scrollbar-color: #c0c0c8 #f0f0f0;
 }
-#iv-screen::-webkit-scrollbar { width: 5px; background: #000; }
-#iv-screen::-webkit-scrollbar-thumb { background: #0a2a1a; }
+#iv-screen::-webkit-scrollbar { width: 14px; background: #f0f0f0; }
+#iv-screen::-webkit-scrollbar-thumb { background: #c0c0c8; border: 2px outset #dfdfdf; }
 
 /* ── Animated line entries ───────────────────────────────────── */
 .iv-line {
   opacity: 0;
   animation: ivLineIn 0.25s forwards;
+  color: #000040;
 }
 @keyframes ivLineIn { to { opacity: 1; } }
-.iv-line-ok { color: #00ffaa; }
+.iv-line-ok { color: #006622; font-weight: bold; }
 
 /* ── Registration form ───────────────────────────────────────── */
 #iv-form {
   display: none;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 24px;
-  border-top: 1px solid #0a2a1a;
-  background: #030a10;
+  padding: 16px 18px;
+  margin: 0 2px 2px;
+  border-top: 1px solid #808090;
+  background: #f0f0f0;
 }
 #iv-form.visible { display: flex; }
 
 .iv-form-label {
   font-size: 10px;
-  color: #446655;
+  color: #000080;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 4px;
+  font-weight: bold;
 }
 
-/* Replaces style="margin-bottom: 6px" on the auto-params label */
-.iv-form-label--mb {
-  margin-bottom: 6px;
-}
+.iv-form-label--mb { margin-bottom: 6px; }
 
-/* Replaces style="display:grid;grid-template-columns:1fr 1fr;gap:12px" */
 .iv-name-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -106,107 +130,109 @@ html, body {
 }
 
 .iv-form-input {
-  background: #000;
-  border: 1px inset #00aa66;
-  color: #00ffaa;
+  background: #ffffff;
+  border: 2px inset #dfdfdf;
+  color: #000040;
   font-family: "Share Tech Mono", monospace;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   outline: none;
   width: 100%;
-  caret-color: #00ffaa;
+  caret-color: #000080;
   letter-spacing: 1px;
 }
 .iv-form-input:focus {
-  border-color: #00ccaa;
-  box-shadow: 0 0 8px rgba(0, 200, 150, 0.2);
+  border-color: #000080;
 }
-.iv-form-input::placeholder { color: #224433; }
+.iv-form-input::placeholder { color: #8888aa; }
 
 /* ── Auto-assigned parameter grid ────────────────────────────── */
 .iv-auto-fields {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  padding: 10px 12px;
-  background: #030d08;
-  border: 1px solid #0a2a1a;
-  border-radius: 2px;
+  gap: 8px;
 }
-.iv-auto-field { font-size: 10px; }
-.iv-auto-field .iv-af-label {
-  color: #336644;
+
+.iv-auto-field {
+  background: #e4e4ec;
+  border: 2px inset #dfdfdf;
+  padding: 6px 10px;
+}
+
+.iv-af-label {
+  font-size: 9px;
+  color: #555577;
   letter-spacing: 1px;
-  margin-bottom: 2px;
-}
-.iv-auto-field .iv-af-val {
-  color: #00aa66;
-  font-size: 12px;
+  margin-bottom: 3px;
+  text-transform: uppercase;
 }
 
-/* Replaces style="color:#00ffaa" on the STATUS auto-field */
+.iv-af-val {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 13px;
+  color: #000040;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
 .iv-af-val--active {
-  color: #00ffaa;
+  color: #006622;
 }
 
-/* ── Form footer row (error + submit button) ─────────────────── */
-/* Replaces style="display:flex;align-items:center;justify-content:space-between" */
+/* ── Form footer ─────────────────────────────────────────────── */
 .iv-form-footer {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-/* ── Submit button ───────────────────────────────────────────── */
+#iv-err {
+  color: #aa0000;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
 .iv-submit {
   font-family: "Share Tech Mono", monospace;
   font-size: 11px;
-  letter-spacing: 3px;
-  padding: 10px 24px;
-  background: #003322;
-  border: 1px solid #00aa66;
-  color: #00ffaa;
+  letter-spacing: 2px;
+  padding: 6px 16px;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  color: #000040;
   cursor: pointer;
-  transition: 0.2s;
+  font-weight: bold;
   text-transform: uppercase;
-  align-self: flex-end;
 }
-.iv-submit:hover {
-  background: #00aa66;
-  color: #000;
-  box-shadow: 0 0 20px #00aa66;
-}
-
-/* ── Error text ──────────────────────────────────────────────── */
-#iv-err {
-  font-size: 10px;
-  color: #ff4444;
-  letter-spacing: 1px;
-  min-height: 14px;
-}
+.iv-submit:hover { background: #d4d4dc; }
+.iv-submit:active { border-style: inset; }
 
 /* ── Transmission step ───────────────────────────────────────── */
 #iv-transmit {
   display: none;
   flex-direction: column;
-  gap: 14px;
-  padding: 18px 24px;
-  border-top: 1px solid #0a2a1a;
-  background: #030a10;
-  animation: ivLineIn 0.3s forwards;
+  gap: 12px;
+  padding: 16px 18px;
+  margin: 0 2px 2px;
+  border-top: 1px solid #808090;
+  background: #f0f0f0;
 }
 #iv-transmit.visible { display: flex; }
 
 .iv-tx-header {
   font-size: 10px;
   letter-spacing: 2px;
-  color: #446655;
+  color: #000080;
   text-transform: uppercase;
-  border-bottom: 1px solid #0a2a1a;
+  border-bottom: 1px solid #c0c0c8;
   padding-bottom: 8px;
+  font-weight: bold;
 }
 .iv-tx-header span {
-  color: #00ffaa;
+  color: #003399;
   font-size: 13px;
   display: block;
   margin-top: 4px;
@@ -215,15 +241,14 @@ html, body {
 
 .iv-tx-desc {
   font-size: 11px;
-  color: #335544;
+  color: #000040;
   line-height: 1.8;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
-.iv-tx-desc b { color: #00aa66; }
+.iv-tx-desc b { color: #000080; }
 
-/* Replaces style="color:#1a3a2a;font-size:10px" on the disclaimer span */
 .iv-tx-note {
-  color: #1a3a2a;
+  color: #555577;
   font-size: 10px;
 }
 
@@ -238,38 +263,39 @@ html, body {
   font-family: "Share Tech Mono", monospace;
   font-size: 11px;
   letter-spacing: 3px;
-  padding: 10px 22px;
-  background: #003322;
-  border: 1px solid #00aa66;
-  color: #00ffaa;
+  padding: 8px 18px;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  color: #000040;
   cursor: pointer;
-  transition: 0.2s;
   text-transform: uppercase;
+  font-weight: bold;
 }
 #iv-tx-btn:hover:not(:disabled) {
-  background: #00aa66;
-  color: #000;
-  box-shadow: 0 0 20px #00aa66;
+  background: #000080;
+  color: #fff;
 }
+#iv-tx-btn:active:not(:disabled) { border-style: inset; }
 #iv-tx-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 #iv-tx-skip {
   font-family: "Share Tech Mono", monospace;
   font-size: 10px;
   letter-spacing: 2px;
-  padding: 10px 16px;
-  background: transparent;
-  border: 1px solid #1a3a2a;
-  color: #335544;
+  padding: 8px 14px;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  color: #555577;
   cursor: pointer;
-  transition: 0.2s;
   text-transform: uppercase;
 }
-#iv-tx-skip:hover { border-color: #446655; color: #667766; }
+#iv-tx-skip:hover { color: #000040; }
+#iv-tx-skip:active { border-style: inset; }
 
 #iv-tx-status {
   font-size: 10px;
   letter-spacing: 1px;
   min-height: 14px;
   flex: 1;
+  color: #000040;
 }

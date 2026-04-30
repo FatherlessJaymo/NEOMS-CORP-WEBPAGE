@@ -1,0 +1,250 @@
+/* ============================================================
+   NEOMS — DATABASE MODE — STYLES
+   Neoms~PrimeDrive/CSS/database-mode.css
+
+   Owns: CLR widget in taskbar, intake overlay, body.dbmode
+         visual changes (wallpaper visibility, icon glow, etc.)
+============================================================ */
+
+/* ── CLR clearance indicator (taskbar widget) ────────────────── */
+#clearance-indicator {
+  display: none;            /* hidden until DB mode activates */
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  height: 100%;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  font-family: "Share Tech Mono", monospace;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+body.dbmode #clearance-indicator { display: flex; }
+
+#clearance-indicator .clr-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
+  margin-right: 3px;
+  font-family: "Share Tech Mono", monospace;
+}
+
+#clearance-indicator .clr-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+#clearance-indicator .clr-dot.active {
+  background: #00eaff;
+  border-color: #fff;
+  box-shadow: 0 0 6px #00eaff, inset 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+#clearance-indicator:hover .clr-dot:not(.active) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Database wallpaper map ──────────────────────────────────── */
+#desktop-map-svg {
+  display: none;            /* shown by JS in dbmode only */
+}
+
+body.dbmode #desktop-map-svg { display: block; }
+
+/* ── Body class: subtle visual cue you're in DB mode ─────────── */
+body.dbmode {
+  /* Slight blue tint to the desktop area — tweak/remove freely */
+  background: #001a4a;
+}
+
+/* In DB mode, the Exit Database icon gets a faint outline so it
+   stands out from the regular DB tools */
+.desk-icon[data-id="exit-database"] {
+  border: 1px dashed rgba(0, 234, 255, 0.4);
+  border-radius: 4px;
+}
+.desk-icon[data-id="exit-database"]:hover {
+  border-color: #00eaff;
+  background: rgba(0, 234, 255, 0.08);
+}
+
+/* DB icon labels can wrap a bit wider */
+body.dbmode .desk-icon .icon-label {
+  text-shadow:
+    1px 1px 0 #000, -1px 1px 0 #000,
+    1px -1px 0 #000, -1px -1px 0 #000;
+}
+
+/* ============================================================
+   INTAKE OVERLAY — embedded one-time intake form
+============================================================ */
+#db-intake-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 8, 32, 0.92);
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Share Tech Mono", monospace;
+  animation: dbIntakeFadeIn 0.3s ease-out;
+}
+
+#db-intake-overlay.db-intake-fadeout {
+  animation: dbIntakeFadeOut 0.5s ease-out forwards;
+}
+
+@keyframes dbIntakeFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dbIntakeFadeOut {
+  to { opacity: 0; pointer-events: none; }
+}
+
+.db-intake-frame {
+  width: min(620px, 92vw);
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.db-intake-titlebar {
+  background: linear-gradient(90deg, #000080 0%, #1084d0 50%, #000080 100%);
+  padding: 5px 10px;
+  font-size: 11px;
+  color: #fff;
+  letter-spacing: 2px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.db-intake-screen {
+  background: #000040;
+  margin: 2px;
+  border: 2px inset #dfdfdf;
+  padding: 14px 18px;
+  height: 180px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: #66ffff;
+  line-height: 1.7;
+  font-family: "Share Tech Mono", monospace;
+}
+
+.db-intake-line {
+  opacity: 0;
+  animation: dbLineIn 0.3s forwards;
+}
+
+@keyframes dbLineIn {
+  to { opacity: 1; }
+}
+
+.db-intake-form {
+  margin: 0 2px 2px;
+  padding: 16px 18px;
+  background: #f0f0f0;
+  border-top: 1px solid #808090;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.db-intake-label {
+  font-size: 10px;
+  color: #000080;
+  letter-spacing: 2px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.db-intake-sublabel {
+  font-size: 9px;
+  color: #555577;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.db-intake-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.db-intake-input {
+  background: #ffffff;
+  border: 2px inset #dfdfdf;
+  color: #000040;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 13px;
+  padding: 6px 10px;
+  outline: none;
+  width: 100%;
+  letter-spacing: 1px;
+}
+
+.db-intake-input:focus { border-color: #000080; }
+.db-intake-input::placeholder { color: #8888aa; }
+
+.db-intake-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+#db-iv-err {
+  color: #aa0000;
+  font-size: 11px;
+  letter-spacing: 1px;
+  flex: 1;
+  font-weight: bold;
+}
+
+.db-intake-cancel,
+.db-intake-submit {
+  font-family: "Share Tech Mono", monospace;
+  letter-spacing: 2px;
+  border: 2px outset #dfdfdf;
+  background: #c0c0c8;
+  color: #000040;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 6px 14px;
+}
+
+.db-intake-cancel { font-size: 10px; }
+.db-intake-submit { font-size: 11px; }
+
+.db-intake-cancel:hover,
+.db-intake-submit:hover { background: #d4d4dc; }
+.db-intake-cancel:active,
+.db-intake-submit:active { border-style: inset; }
+
+/* ============================================================
+   NARROW SCREENS
+============================================================ */
+@media (max-width: 600px) {
+  #clearance-indicator {
+    padding: 0 4px;
+    gap: 2px;
+  }
+  #clearance-indicator .clr-label { font-size: 8px; }
+  #clearance-indicator .clr-dot   { width: 6px; height: 6px; }
+
+  .db-intake-grid {
+    grid-template-columns: 1fr;
+  }
+}

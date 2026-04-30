@@ -3,6 +3,14 @@
    Window plumbing only. Open / close / minimize / maximize,
    drag, resize, taskbar buttons, and the content router.
 
+   PATCHED: Added a lightweight extension point so external
+   modules (like database-mode.js) can register their own window
+   builders without editing this file's switch statement. See
+   the buildContent function below — it consults
+   window.DB_BUILD_OVERRIDES first.
+
+   PATCHED: Auto-open of the "core" Creator's Log window on boot
+   is now skipped if the user is restoring into Database Mode.
 ============================================================ */
 var zTop = 200;
 var wins = {};
@@ -281,8 +289,17 @@ function makeResizable(win, handle) {
    AFTER-OPEN HOOKS
    Called once a window is mounted. Each window's init function
    lives in its own folder; we just call it here.
+
+   PATCHED: consults window.DB_AFTER_OPEN first so external
+   modules can hook the lifecycle for their own ids.
 ============================================================ */
 function afterOpen(id) {
+    /* External-module hook (database-mode.js etc.) */
+    if (window.DB_AFTER_OPEN && typeof window.DB_AFTER_OPEN[id] === "function") {
+        window.DB_AFTER_OPEN[id](id);
+        return;
+    }
+
     if (id === "neomix") setTimeout(initNeomixInWin, 50);
     if (id === "prime")
         setTimeout(function () {
@@ -313,8 +330,16 @@ function getDefaultRankCat() {
    Each case calls a builder function defined in the matching
    per-window folder. If a builder is missing (script not loaded
    in time, etc.) we render a graceful error.
+
+   PATCHED: consults window.DB_BUILD_OVERRIDES first so external
+   modules can register their own ids.
 ============================================================ */
 function buildContent(id) {
+    /* External-module hook (database-mode.js etc.) */
+    if (window.DB_BUILD_OVERRIDES && typeof window.DB_BUILD_OVERRIDES[id] === "function") {
+        return window.DB_BUILD_OVERRIDES[id](id);
+    }
+
     var fn;
     switch (id) {
         case "prime":
@@ -380,11 +405,15 @@ function toast(msg, dur) {
 /* ============================================================
    AUTO-OPEN ON STARTUP
    Show the Core Directive guide once the desktop is ready.
-   Slight delay so it lands AFTER desktop-icons.js builds the
-   icon grid — keeps the open animation looking clean.
+
+   PATCHED: skip if user is restoring into Database Mode — the
+   intake/DB icons should be the first thing they see.
 ============================================================ */
 document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
+        var savedMode = null;
+        try { savedMode = localStorage.getItem("neoms_active_mode"); } catch (e) {}
+        if (savedMode === "database") return;
         if (typeof openWin === "function") openWin("core");
     }, 200);
 });

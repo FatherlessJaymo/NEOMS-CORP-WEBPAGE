@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/desktop-icons.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/window-manager.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/taskbar.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/database-mode.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/neomix/neomix-player.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/start-menu.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/creators-log/creators-log.css" />
@@ -25,6 +26,17 @@
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/badges/badges.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/etc/etc.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/wallpaper/wallpaper.css" />
+
+    <!-- D3 + TopoJSON for Database Mode wallpaper -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="Neoms~Database/windows/worldmap/world-atlas-loader.js"></script>
+
+    <!-- Highlight.js for the Source Files window in Database Mode -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/green-screen.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   </head>
   <body>
     <!-- ===== TOP LABEL BAR ===== -->
@@ -148,7 +160,7 @@
               onerror="this.style.display='none'" />
             NeoMix
           </div>
-          <div class="start-item" onclick="window.open('Neoms~Database/HTML/intake.html','_blank');closeStart()">
+          <div class="start-item" onclick="NeomsDatabase.toggle();closeStart()">
             <img
               class="start-item-icon"
               src="Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg"
@@ -216,7 +228,7 @@
       <div id="taskbar-clock"></div>
     </div>
 
-    <!-- ===== JS — load order matters =====
+    <!-- ===== JS — load order matters ===== -->
     <!-- 1) Data -->
     <script src="Neoms~PrimeDrive/windows/ranking/ranking-data.js"></script>
     <script src="Neoms~PrimeDrive/windows/friend-codes/friend-codes-data.js"></script>
@@ -244,5 +256,8 @@
     <!-- 4) Desktop bootstrap -->
     <script src="Neoms~PrimeDrive/JS/desktop-icons.js"></script>
     <script src="Neoms~PrimeDrive/JS/desktop-core.js"></script>
+
+    <!-- 5) Database mode (after everything else) -->
+    <script src="Neoms~PrimeDrive/JS/database-mode.js"></script>
   </body>
 </html>

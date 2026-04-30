@@ -1,6 +1,7 @@
 /* ============================================================
    NEOMS — TERMINAL WINDOW STYLES
    Neoms~Database/windows/terminal/terminal.css
+   PrimeDrive Win95 MS-DOS prompt look
    ============================================================ */
 
 /* ── Root layout ─────────────────────────────────────────────── */
@@ -8,7 +9,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #000;
+  background: #000040;
   font-family: "Share Tech Mono", monospace;
 }
 
@@ -18,29 +19,37 @@
   overflow-y: auto;
   padding: 10px;
   font-size: 12px;
-  color: #00cc88;
+  color: #c0c0ff;
   line-height: 1.7;
+  background: #000040;
 }
 
-#term-out::-webkit-scrollbar        { width: 6px; background: #000; }
-#term-out::-webkit-scrollbar-thumb  { background: #112; }
+#term-out::-webkit-scrollbar       { width: 14px; background: #c0c0c8; }
+#term-out::-webkit-scrollbar-thumb { background: #c0c0c8; border: 2px outset #dfdfdf; }
+
+/* Output line classes (used by termPrint) */
+.t-ok   { color: #66ffff; }
+.t-err  { color: #ff8888; }
+.t-warn { color: #ffdd44; }
+.t-dim  { color: #6666aa; }
 
 /* ── Input row ───────────────────────────────────────────────── */
 .term-input-row {
   display: flex;
   align-items: center;
   padding: 4px 10px;
-  border-top: 1px solid #112;
-  background: #000;
+  border-top: 1px solid #0044bb;
+  background: #000040;
   flex-shrink: 0;
 }
 
 .term-prompt {
-  color: #00cc88;
+  color: #66ffff;
   margin-right: 6px;
   font-size: 12px;
   flex-shrink: 0;
   font-family: "Share Tech Mono", monospace;
+  font-weight: bold;
 }
 
 #term-in {
@@ -48,8 +57,8 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #00cc88;
+  color: #ffffff;
   font-family: "Share Tech Mono", monospace;
   font-size: 12px;
-  caret-color: #00cc88;
+  caret-color: #66ffff;
 }

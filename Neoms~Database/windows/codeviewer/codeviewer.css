@@ -1,6 +1,7 @@
 /* ============================================================
    NEOMS — CODE VIEWER STYLES
    Neoms~Database/windows/codeviewer/codeviewer.css
+   PrimeDrive Win95 — paper sidebar, dark navy code panel
    ============================================================ */
 
 /* ── Root layout ─────────────────────────────────────────────── */
@@ -8,42 +9,45 @@
   display: flex;
   flex-direction: row;
   height: 100%;
-  background: #0a0a14;
+  background: #ffffff;
 }
 
 /* ── Sidebar ─────────────────────────────────────────────────── */
 .cv-sidebar {
   width: 210px;
   flex-shrink: 0;
-  background: #07070f;
-  border-right: 1px solid #0d1520;
+  background: #f0f0f0;
+  border-right: 2px inset #dfdfdf;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 
 .cv-sidebar-header {
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.15em;
-  color: #1a2a3a;
-  padding: 10px 12px 6px;
-  border-bottom: 1px solid #0d1520;
+  color: #fff;
+  padding: 5px 12px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 50%, #000080 100%);
+  font-family: "Share Tech Mono", monospace;
+  font-weight: bold;
 }
 
-.cv-file-list {
-  flex: 1;
-}
+.cv-file-list { flex: 1; }
 
 .cv-sidebar-footer {
   padding: 10px 12px;
-  border-top: 1px solid #0d1520;
-  font-size: 8px;
-  color: #1a2a3a;
+  border-top: 1px solid #c0c0c8;
+  font-size: 9px;
+  color: #555577;
   line-height: 1.8;
+  background: #e4e4ec;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .cv-sidebar-footer-note {
-  color: #112233;
+  color: #888;
+  font-style: italic;
 }
 
 /* ── Main code area ──────────────────────────────────────────── */
@@ -59,20 +63,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 12px;
-  background: #080810;
-  border-bottom: 1px solid #0d1520;
+  padding: 4px 8px;
+  background: #c0c0c8;
+  border-bottom: 1px solid #808090;
   flex-shrink: 0;
 }
 
 .cv-filepath {
-  background: #0d1a26;
-  border: 1px solid #1a2a3a;
-  border-radius: 2px;
-  padding: 2px 10px;
-  color: #6699aa;
+  background: #ffffff;
+  border: 2px inset #dfdfdf;
+  padding: 2px 8px;
+  color: #000040;
   font-size: 10px;
   font-family: "Share Tech Mono", monospace;
+  flex: 1;
+  margin-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cv-topbar-right {
@@ -82,49 +90,45 @@
 }
 
 .cv-linecount {
-  font-size: 9px;
-  color: #1a2a3a;
+  font-size: 10px;
+  color: #000040;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .cv-copy-btn {
   font-family: "Share Tech Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.1em;
-  background: transparent;
-  border: 1px solid #1a2a3a;
-  border-radius: 2px;
-  color: #334455;
-  padding: 3px 10px;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  color: #000;
+  padding: 3px 12px;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  font-weight: bold;
 }
 
-.cv-copy-btn:hover {
-  color: #00cccc;
-  border-color: #00cccc;
-  background: rgba(0, 204, 204, 0.06);
-}
+.cv-copy-btn:hover { background: #d4d4dc; }
+.cv-copy-btn:active { border-style: inset; }
 
 /* ── Code scroll area ────────────────────────────────────────── */
 .cv-scroll {
   flex: 1;
   overflow: auto;
-  background: #070710;
+  background: #000040;
 }
 
 .cv-scroll::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  background: #07070f;
+  width: 14px;
+  height: 14px;
+  background: #c0c0c8;
 }
 
 .cv-scroll::-webkit-scrollbar-thumb {
-  background: #0d1520;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
 }
 
-.cv-scroll::-webkit-scrollbar-corner {
-  background: #07070f;
-}
+.cv-scroll::-webkit-scrollbar-corner { background: #c0c0c8; }
 
 .cv-pre {
   margin: 0;
@@ -137,8 +141,8 @@
   line-height: 1.65;
   padding: 14px;
   display: block;
-  background: #070710;
-  color: #7799aa;
+  background: #000040;
+  color: #c0c0ff;
   white-space: pre;
 }
 
@@ -147,74 +151,76 @@
   display: block;
   width: 100%;
   text-align: left;
-  padding: 8px 12px;
+  padding: 6px 12px;
   font-family: "Share Tech Mono", monospace;
   font-size: 10px;
   background: transparent;
   border: none;
-  border-left: 2px solid transparent;
-  color: #2a4455;
+  border-left: 3px solid transparent;
+  color: #000040;
   cursor: pointer;
   line-height: 1.45;
   transition: background 0.1s, color 0.1s, border-color 0.1s;
 }
 
 .cv-file-btn:hover {
-  background: #0d1520;
-  color: #4a7788;
+  background: rgba(0, 109, 255, 0.18);
+  color: #000080;
 }
 
 .cv-file-btn.cv-active {
-  background: #0d1a26;
-  color: #00cccc;
-  border-left-color: #00cccc;
+  background: #000080;
+  color: #fff;
+  border-left-color: #00eaff;
 }
 
 .cv-file-btn .cv-dir {
-  color: #1a3344;
+  color: #555577;
   font-size: 9px;
   display: block;
   margin-bottom: 1px;
+  letter-spacing: 1px;
 }
 
 .cv-file-btn.cv-active .cv-dir {
-  color: #225566;
+  color: #aaccff;
 }
 
 .cv-file-btn .cv-fdesc {
   font-size: 9px;
-  color: #112233;
+  color: #888;
   display: block;
   margin-top: 1px;
+  font-style: italic;
 }
 
 .cv-file-btn.cv-active .cv-fdesc {
-  color: #1a4455;
+  color: #99bbee;
 }
 
-/* ── Highlight.js NeoMS re-skin ──────────────────────────────── */
+/* ── Highlight.js NeoMS / PrimeDrive re-skin ─────────────────── */
 #cv-code-display.hljs,
 #cv-code-display {
-  background: #070710 !important;
-  color: #7799aa !important;
+  background: #000040 !important;
+  color: #c0c0ff !important;
   font-family: "Share Tech Mono", monospace !important;
   font-size: 11px !important;
   line-height: 1.65 !important;
   padding: 14px !important;
 }
 
-#cv-code-display .hljs-keyword        { color: #00cccc !important; font-weight: bold; }
-#cv-code-display .hljs-string         { color: #88ddaa !important; }
-#cv-code-display .hljs-comment        { color: #1a3a3a !important; font-style: italic; }
+#cv-code-display .hljs-keyword        { color: #00eaff !important; font-weight: bold; }
+#cv-code-display .hljs-string         { color: #88ff88 !important; }
+#cv-code-display .hljs-comment        { color: #6666aa !important; font-style: italic; }
 #cv-code-display .hljs-number         { color: #ffcc44 !important; }
-#cv-code-display .hljs-attr           { color: #6699cc !important; }
-#cv-code-display .hljs-tag            { color: #00aa66 !important; }
-#cv-code-display .hljs-name           { color: #00cccc !important; }
-#cv-code-display .hljs-built_in       { color: #4488bb !important; }
-#cv-code-display .hljs-variable       { color: #9ab8cc !important; }
-#cv-code-display .hljs-function       { color: #00aa88 !important; }
-#cv-code-display .hljs-title          { color: #00bb77 !important; }
-#cv-code-display .hljs-property       { color: #6699cc !important; }
-#cv-code-display .hljs-selector-tag   { color: #00aa66 !important; }
-#cv-code-display .hljs-selector-class { color: #6699cc !important; }
+#cv-code-display .hljs-attr           { color: #88aaff !important; }
+#cv-code-display .hljs-tag            { color: #66ffaa !important; }
+#cv-code-display .hljs-name           { color: #00eaff !important; }
+#cv-code-display .hljs-built_in       { color: #88aaff !important; }
+#cv-code-display .hljs-variable       { color: #ddccff !important; }
+#cv-code-display .hljs-function       { color: #66ffaa !important; }
+#cv-code-display .hljs-title          { color: #66ffaa !important; }
+#cv-code-display .hljs-property       { color: #88aaff !important; }
+#cv-code-display .hljs-selector-tag   { color: #66ffaa !important; }
+#cv-code-display .hljs-selector-class { color: #88aaff !important; }
 #cv-code-display .hljs-selector-id    { color: #ffcc44 !important; }

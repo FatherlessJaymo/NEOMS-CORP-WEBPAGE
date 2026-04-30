@@ -1,6 +1,7 @@
 /* ============================================================
    NEOMS — ENTITY SCHEME WINDOW STYLES
    Neoms~Database/windows/entity-scheme/entity-scheme.css
+   PrimeDrive Win95 paper palette
    ============================================================ */
 
 .scheme-pad {
@@ -20,8 +21,9 @@
 }
 
 .scheme-class-card {
-  background: #0d1020;
-  border: 1px solid;
+  background: var(--paper-2);
+  border: 2px outset var(--win-border);
+  border-left-width: 4px;
   padding: 10px 12px;
 }
 
@@ -34,12 +36,13 @@
 
 .scheme-class-name {
   font-family: var(--pixel);
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .scheme-class-desc {
   font-size: 11px;
-  color: #b0c8dc;
+  color: var(--ink);
   line-height: 1.7;
   font-family: var(--mono);
 }
@@ -47,7 +50,7 @@
 /* ── Power scale ───────────────────────────────────────────── */
 .scheme-ps-subtitle {
   font-size: 10px;
-  color: #6a8faa;
+  color: var(--ink-mute);
   margin-bottom: 10px;
   font-family: var(--mono);
 }
@@ -57,15 +60,16 @@
   align-items: flex-start;
   gap: 10px;
   padding: 7px 0;
-  border-bottom: 1px solid #0d1520;
+  border-bottom: 1px solid var(--paper-line);
 }
 
 .scheme-ps-tier {
   min-width: 64px;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
   font-family: var(--mono);
   padding-top: 4px;
+  font-weight: bold;
 }
 
 .scheme-ps-right {
@@ -81,16 +85,17 @@
 .scheme-ps-pill {
   display: inline-block;
   padding: 2px 7px;
-  background: #0a0a14;
+  background: var(--paper);
   border: 1px solid;
   font-size: 10px;
   font-family: var(--mono);
   letter-spacing: 0.5px;
+  font-weight: bold;
 }
 
 .scheme-ps-note {
-  font-size: 9px;
-  color: #6a8faa;
+  font-size: 10px;
+  color: var(--ink-mute);
   margin-top: 3px;
   font-family: var(--mono);
 }

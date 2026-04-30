@@ -1,6 +1,7 @@
 /* ============================================================
    NEOMS — WORLD MAP STYLES
    Neoms~Database/windows/worldmap/worldmap.css
+   PrimeDrive blue palette
    ============================================================ */
 
 /* ── Root layout ─────────────────────────────────────────────── */
@@ -8,7 +9,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #04060f;
+  background: #001a4a;
   position: relative;
 }
 
@@ -29,21 +30,21 @@
 .nm-header-title {
   font-family: "VT323", monospace;
   font-size: 22px;
-  color: #00cccc;
-  text-shadow: 0 0 10px rgba(0, 204, 204, 0.6), 0 0 24px rgba(0, 204, 204, 0.2);
+  color: #00eaff;
+  text-shadow: 0 0 10px rgba(0, 234, 255, 0.7), 0 0 24px rgba(0, 109, 255, 0.3);
   letter-spacing: 0.08em;
 }
 
 .nm-header-sub1 {
   font-size: 9px;
-  color: #0d2a2a;
+  color: #99bbff;
   letter-spacing: 0.2em;
   margin-top: 2px;
 }
 
 .nm-header-sub2 {
   font-size: 8px;
-  color: #081818;
+  color: #6688cc;
   letter-spacing: 0.12em;
   margin-top: 2px;
 }
@@ -56,31 +57,22 @@
 
 .nm-stat {
   font-size: 9px;
-  color: #0d2a2a;
+  color: #99bbff;
+  letter-spacing: 0.05em;
 }
 
-.nm-zoom-val {
-  color: #00aa66;
-}
+.nm-zoom-val { color: #00eaff; }
 
 .nm-header-meta {
   text-align: right;
   font-size: 9px;
   line-height: 1.7;
-  color: #081818;
+  color: #6688cc;
 }
 
-.nm-header-build {
-  color: #1a3a3a;
-}
-
-.nm-header-clock {
-  color: #0a2020;
-}
-
-.nm-header-schema {
-  color: #081818;
-}
+.nm-header-build  { color: #00eaff; }
+.nm-header-clock  { color: #aaccff; }
+.nm-header-schema { color: #6688cc; }
 
 /* ── D3 SVG ──────────────────────────────────────────────────── */
 .nm-d3-svg {
@@ -91,6 +83,26 @@
   height: 100%;
 }
 
+.nm-d3-svg .land {
+  fill: #003a8a;
+  stroke: #00eaff;
+  stroke-width: 0.4;
+}
+
+.nm-d3-svg .graticule {
+  fill: none;
+  stroke: #0044bb;
+  stroke-opacity: 0.5;
+  stroke-width: 0.3;
+}
+
+.nm-d3-svg .sphere {
+  fill: none;
+  stroke: #00eaff;
+  stroke-opacity: 0.6;
+  stroke-width: 0.5;
+}
+
 /* ── Site info panel ─────────────────────────────────────────── */
 .nm-panel {
   position: absolute;
@@ -98,9 +110,9 @@
   right: 14px;
   width: 280px;
   z-index: 200;
-  background: rgba(3, 8, 16, 0.97);
-  border: 1px solid #0a2a2a;
-  border-radius: 2px;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
   overflow: hidden;
   opacity: 0;
   transform: translateY(-8px);
@@ -108,49 +120,64 @@
   pointer-events: none;
 }
 
+.nm-panel.nm-panel-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
 .nm-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
-  border-bottom: 1px solid #0a2a2a;
-  font-size: 9px;
+  padding: 4px 10px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 50%, #000080 100%);
+  font-size: 10px;
   letter-spacing: 0.1em;
-  color: #00aa66;
-  background: rgba(0, 170, 102, 0.06);
+  color: #fff;
+  font-weight: bold;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .nm-panel-close {
-  background: none;
-  border: none;
+  background: #c0c0c8;
+  border: 2px outset #dfdfdf;
   cursor: pointer;
-  font-size: 13px;
-  color: #00aa66;
-  opacity: 0.6;
+  font-size: 11px;
+  color: #000;
   font-family: "Share Tech Mono", monospace;
   pointer-events: all;
+  width: 18px;
+  height: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.nm-panel-close:hover {
-  opacity: 1;
-}
+.nm-panel-close:hover { background: #cc0000; color: #fff; }
+.nm-panel-close:active { border-style: inset; }
 
 .nm-panel-body {
   padding: 10px 12px;
+  background: #fff;
+  margin: 2px;
+  border: 1px solid #808090;
 }
 
 .nm-pname {
   font-family: "VT323", monospace;
   font-size: 24px;
-  color: #00cccc;
+  color: #000080;
   letter-spacing: 0.06em;
   margin-bottom: 2px;
 }
 
 .nm-ploc {
   font-size: 10px;
-  color: #00aa66;
+  color: #003388;
   margin-bottom: 8px;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .nm-pstats-grid {
@@ -163,57 +190,66 @@
 .nm-pstat-label {
   font-size: 8px;
   letter-spacing: 0.12em;
-  color: #1a4a3a;
+  color: #555577;
   margin-bottom: 2px;
+  font-family: "Share Tech Mono", monospace;
+  text-transform: uppercase;
 }
 
 .nm-pstat-val {
   font-size: 13px;
   font-weight: bold;
+  font-family: "Share Tech Mono", monospace;
 }
 
-.nm-pstat-teal  { color: #00cccc; }
-.nm-pstat-green { color: #00aa66; }
+.nm-pstat-teal  { color: #000080; }
+.nm-pstat-green { color: #006622; }
 
 .nm-pdesc-label {
   font-size: 8px;
   letter-spacing: 0.15em;
-  color: #1a4a3a;
+  color: #555577;
   margin-bottom: 4px;
+  font-family: "Share Tech Mono", monospace;
+  text-transform: uppercase;
 }
 
 .nm-pdesc {
   font-size: 10px;
-  color: #5a8870;
+  color: #000040;
   line-height: 1.55;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .nm-pbreach {
   margin-top: 8px;
   padding: 6px 8px;
-  background: #1a0000;
-  border-left: 2px solid #ff3333;
+  background: #ffe6e6;
+  border: 1px solid #cc0000;
+  border-left: 3px solid #cc0000;
 }
 
 .nm-pbreach-title {
   font-size: 9px;
-  color: #ff3333;
+  color: #aa0000;
   letter-spacing: 0.08em;
+  font-weight: bold;
 }
 
 .nm-pbreach-ents {
   font-size: 9px;
-  color: #aa4444;
+  color: #770000;
   margin-top: 2px;
 }
 
 .nm-pfooter {
   margin-top: 8px;
   padding-top: 6px;
-  border-top: 1px solid #0a2a2a;
+  border-top: 1px solid #c0c0c8;
   font-size: 8px;
-  color: #0d2a2a;
+  color: #555577;
   letter-spacing: 0.04em;
+  font-family: "Share Tech Mono", monospace;
 }
 
 /* ── Legend ──────────────────────────────────────────────────── */
@@ -221,9 +257,8 @@
   position: absolute;
   bottom: 12px;
   left: 12px;
-  background: rgba(3, 8, 16, 0.92);
-  border: 1px solid #091818;
-  border-radius: 2px;
+  background: rgba(0, 26, 74, 0.92);
+  border: 1px solid #0044bb;
   padding: 8px 12px;
   z-index: 100;
   pointer-events: none;
@@ -232,8 +267,9 @@
 .nm-legend-title {
   font-size: 8px;
   letter-spacing: 0.15em;
-  color: #0d2a2a;
+  color: #99bbff;
   margin-bottom: 6px;
+  font-family: "Share Tech Mono", monospace;
 }
 
 .nm-legend-row {
@@ -243,9 +279,7 @@
   margin-bottom: 3px;
 }
 
-.nm-legend-row:last-child {
-  margin-bottom: 0;
-}
+.nm-legend-row:last-child { margin-bottom: 0; }
 
 .nm-legend-dot {
   width: 7px;
@@ -254,21 +288,23 @@
   flex-shrink: 0;
 }
 
-.nm-legend-dot-active { background: #00cccc; }
-.nm-legend-dot-breach { background: #ff3333; }
+.nm-legend-dot-active { background: #00eaff; box-shadow: 0 0 4px #00eaff; }
+.nm-legend-dot-breach { background: #ff3333; box-shadow: 0 0 4px #ff3333; }
 
 .nm-legend-status {
   font-size: 9px;
   font-weight: bold;
   min-width: 60px;
+  font-family: "Share Tech Mono", monospace;
 }
 
-.nm-legend-active { color: #00cccc; }
+.nm-legend-active { color: #00eaff; }
 .nm-legend-breach { color: #ff3333; }
 
 .nm-legend-desc {
   font-size: 8px;
-  color: #1a3a3a;
+  color: #99bbff;
+  font-family: "Share Tech Mono", monospace;
 }
 
 /* ── Hints ───────────────────────────────────────────────────── */
@@ -277,11 +313,13 @@
   bottom: 12px;
   right: 12px;
   font-size: 8px;
-  color: #091818;
+  color: #6688cc;
   text-align: right;
   line-height: 1.7;
   pointer-events: none;
   z-index: 100;
+  font-family: "Share Tech Mono", monospace;
+  letter-spacing: 0.05em;
 }
 
 /* ── Site marker animations ──────────────────────────────────── */

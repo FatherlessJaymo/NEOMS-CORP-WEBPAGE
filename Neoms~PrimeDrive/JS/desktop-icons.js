@@ -3,7 +3,10 @@
    Absolute-positioned, draggable icons with snap-to-grid and
    localStorage position persistence.
 
-   
+   PATCHED: the `database` icon now triggers Database Mode
+   (handled by Neoms~PrimeDrive/JS/database-mode.js) instead of
+   opening a new tab. The url field is removed; the icon dispatches
+   to window.NeomsDatabase.toggle() on dblclick.
 ============================================================ */
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
@@ -23,7 +26,10 @@ var ICONS = [
     id: "database",
     label: "Neoms~\nDatabase",
     img: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
-    url: "Neoms~Database/HTML/intake.html"
+    /* PATCHED: removed `url` and added `action: "database-mode"` so   */
+    /* makeDraggableIcon dispatches to window.NeomsDatabase.toggle()  */
+    /* instead of opening intake.html in a new tab.                   */
+    action: "database-mode"
   }
 ];
 
@@ -79,12 +85,14 @@ function buildIcons() {
     el.style.left = (pos ? pos.x : defX) + "px";
     el.style.top = (pos ? pos.y : defY) + "px";
 
-    makeDraggableIcon(el, ic.id, ic.url);
+    /* PATCHED: pass ic.action through alongside ic.url */
+    makeDraggableIcon(el, ic.id, ic.url, ic.action);
     grid.appendChild(el);
   });
 }
 
-function makeDraggableIcon(el, id, url) {
+/* PATCHED: signature now accepts `action` for special launch behavior */
+function makeDraggableIcon(el, id, url, action) {
   var startX, startY, origLeft, origTop;
   var dragging = false,
     moved = false;
@@ -151,6 +159,16 @@ function makeDraggableIcon(el, id, url) {
 
   el.addEventListener("dblclick", function () {
     if (moved) return;
+    /* PATCHED: action takes precedence over url */
+    if (action === "database-mode") {
+      if (window.NeomsDatabase && typeof window.NeomsDatabase.toggle === "function") {
+        window.NeomsDatabase.toggle();
+      } else {
+        console.warn("[icons] NeomsDatabase not loaded — falling back to tab");
+        window.open("Neoms~Database/HTML/intake.html", "_blank");
+      }
+      return;
+    }
     if (url) {
       window.open(url, "_blank");
       return;
