@@ -1,13 +1,9 @@
 /* ============================================================
    DESKTOP CORE
-   Handles: clock, start menu toggle, context menu, global click.
+   Handles: clock, start menu toggle, context menu,
+            global click/keydown, VM terminal.
 
-   PATCHED: the old VM Terminal block has been removed.
-   The terminal now lives in its own window:
-     Neoms~PrimeDrive/windows/terminal-database/terminal-database.js
-   Open it via the Terminal-Database desktop icon
-   or `openWin('terminaldb')`.
-============================================================ */
+ =========================================================== */
 
 /* ---- Clock ---- */
 function updateClock() {

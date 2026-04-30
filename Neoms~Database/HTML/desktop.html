@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="NeoMS — Containment Log Desktop" />
+    <meta name="theme-color" content="#00cccc" />
+    <title>NeoMs | Containment Log</title>
+    <link rel="icon" type="image/png" href="/Neoms~Universal-Fonts+Images/Icons/NEOMS-CORP-1.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet" />
+    <!-- D3 + TopoJSON for live desktop background map -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script src="/Neoms~Database/windows/worldmap/world-atlas-loader.js"></script>
+    <!-- Highlight.js for code viewer window -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/green-screen.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="/Neoms~Database/CSS/Databaselog.css" />
+    <link rel="stylesheet" href="/Neoms~Database/CSS/desktop.css" />
+    <!-- Reuse PrimeDrive taskbar/menu/player styles for visual parity -->
+    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/taskbar.css" />
+    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/start-menu.css" />
+    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/neomix-player.css" />
+    <link rel="stylesheet" href="/Neoms~Database/CSS/theme-override.css" />
+  </head>
+  <body>
+    <div id="desk">
+      <!-- ── DESKTOP AREA ────────────────────────────────────── -->
+      <div id="desktop-area">
+        <!-- Live D3 map as desktop wallpaper (styled via desktop.css #desktop-map-svg) -->
+        <svg id="desktop-map-svg"></svg>
+
+        <!-- Desktop icons -->
+        <div id="desktop-icons">
+          <div class="desk-icon" onclick="openWin('main')">
+            <div class="di-img">&#128196;</div>
+            <div class="di-label">Containment Log</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('entities')">
+            <div class="di-img">&#9888;</div>
+            <div class="di-label">Entity Registry</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('entity-scheme')">
+            <div class="di-img">&#128213;</div>
+            <div class="di-label">Entity Scheme</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('staff')">
+            <div class="di-img">&#128101;</div>
+            <div class="di-label">Staff Records</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('staff-scheme')">
+            <div class="di-img">&#128218;</div>
+            <div class="di-label">Staff Scheme</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('sites')">
+            <div class="di-img">&#127963;</div>
+            <div class="di-label">Sites</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('terminal')">
+            <div class="di-img">&#9654;</div>
+            <div class="di-label">Terminal</div>
+          </div>
+          <div class="desk-icon" onclick="openWin('codeviewer')">
+            <div class="di-img">&#128196;</div>
+            <div class="di-label">Source Files</div>
+          </div>
+        </div>
+
+        <!-- Windows mount point -->
+        <div id="wins-container"></div>
+      </div>
+
+      <!-- ── TASKBAR (PrimeDrive-style) ───────────────────────── -->
+      <div id="taskbar">
+        <button id="start-btn" onclick="toggleStartMenu()" title="NeoMS Start">&#9670; NEOMS</button>
+        <div
+          id="taskbar-wins"
+          style="display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; max-width: 300px; flex-shrink: 1"></div>
+        <div style="flex: 1; min-width: 0"></div>
+        <!-- CLR clearance indicator -->
+        <div id="clearance-indicator" title="Click to cycle clearance level">
+          <span class="clr-label">CLR</span>
+          <div class="clr-dot active" id="cd1"></div>
+          <div class="clr-dot" id="cd2"></div>
+          <div class="clr-dot" id="cd3"></div>
+          <div class="clr-dot" id="cd4"></div>
+          <div class="clr-dot" id="cd5"></div>
+        </div>
+
+        <div id="taskbar-clock"><span id="sys-clock">--:--</span></div>
+      </div>
+
+      <!-- ── START MENU (PrimeDrive-style two-column) ─────────── -->
+      <div id="start-menu">
+        <div class="start-header">NEOMS</div>
+        <div class="start-body">
+          <div class="start-user">
+            <img
+              src="/Neoms~Universal-Fonts+Images/Icons/NEOMS-CORP-1.png"
+              class="start-avatar"
+              alt="Avatar"
+              onerror="this.style.display='none'" />
+            <div class="start-username" id="sm-username">OPERATOR</div>
+            <div class="start-usertag" id="sm-userclr">CLR-1</div>
+            <div class="start-sep"></div>
+            <a class="start-social" href="/" target="_blank">
+              <img
+                src="/Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png"
+                onerror="this.style.display='none'" />
+              <span class="start-social-name">PrimeDrive</span>
+            </a>
+            <a class="start-social" href="#" onclick="doLogout();return false;">
+              <span
+                style="
+                  width: 18px;
+                  height: 18px;
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #9ac8f6;
+                "
+                >&#8592;</span
+              >
+              <span class="start-social-name">Logout</span>
+            </a>
+          </div>
+
+          <div class="start-apps">
+            <div class="start-apps-title">menu</div>
+            <div class="start-item" onclick="openWin('main');closeMenu()">
+              <span class="start-item-icon db-ico">&#9744;</span>Containment Log
+            </div>
+            <div class="start-item" onclick="openWin('entities');closeMenu()">
+              <span class="start-item-icon db-ico">&#9888;</span>Entity Registry
+            </div>
+            <div class="start-item" onclick="openWin('entity-scheme');closeMenu()">
+              <span class="start-item-icon db-ico">&#9783;</span>Entity Scheme
+            </div>
+            <div class="start-item" onclick="openWin('staff');closeMenu()">
+              <span class="start-item-icon db-ico">&#9670;</span>Staff Records
+            </div>
+            <div class="start-item" onclick="openWin('staff-scheme');closeMenu()">
+              <span class="start-item-icon db-ico">&#9671;</span>Staff Scheme
+            </div>
+            <div class="start-item" onclick="openWin('sites');closeMenu()">
+              <span class="start-item-icon db-ico">&#9632;</span>Containment Sites
+            </div>
+            <div class="start-item" onclick="openWin('worldmap');closeMenu()">
+              <span class="start-item-icon db-ico">&#9737;</span>Facility Map
+            </div>
+            <div class="start-item" onclick="openWin('terminal');closeMenu()">
+              <span class="start-item-icon db-ico">&#9654;</span>Terminal
+            </div>
+            <div class="start-item" id="sm-logout" onclick="doLogout()">
+              <span class="start-item-icon db-ico">&#8592;</span>Logout / Re-Intake
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- #desk -->
+    <script src="/Neoms~Database/windows/entities/Entities-Data.js"></script>
+    <script src="/Neoms~Database/windows/staff/Staff-Data.js"></script>
+    <script src="/Neoms~Database/windows/sites/Sites-Data.js"></script>
+    <script src="/Neoms~Database/JS/desktop.js"></script>
+  </body>
+</html>

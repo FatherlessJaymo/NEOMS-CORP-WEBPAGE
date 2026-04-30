@@ -1,0 +1,33 @@
+<div class="win-page-root">
+  <div class="page-header page-header--compact">
+    <div class="page-breadcrumb">NEOMS_OS &gt; CONTAINMENT_LOG &gt; ENTITY_REGISTRY</div>
+    <div class="page-title">Entity Registry</div>
+  </div>
+  <div class="search-bar-wrap">
+    <span class="search-label">FILTER:</span>
+    <button class="filter-btn active-filter" onclick="setEntFilter('ALL',this)">ALL</button>
+    <button class="filter-btn" onclick="setEntFilter('HD',this)">HD</button>
+    <button class="filter-btn" onclick="setEntFilter('EU',this)">EU</button>
+    <button class="filter-btn" onclick="setEntFilter('AR',this)">AR</button>
+    <button class="filter-btn" onclick="setEntFilter('NM',this)">NM</button>
+    <button class="filter-btn" onclick="setEntFilter('AP',this)">AP</button>
+    <button class="filter-btn" onclick="setEntFilter('KT',this)">KT</button>
+    <span class="search-label search-label--spaced">SEARCH:</span>
+    <input class="search-input search-input--sm" id="ent-search" placeholder="name or id..." oninput="renderEntList()" />
+  </div>
+  <div class="scroll-area">
+    <table class="entity-list-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>DESIGNATION</th>
+          <th>CLASS</th>
+          <th>POWER SCALE</th>
+          <th>STATUS</th>
+          <th>SITE</th>
+        </tr>
+      </thead>
+      <tbody id="ent-tbody"></tbody>
+    </table>
+  </div>
+</div>

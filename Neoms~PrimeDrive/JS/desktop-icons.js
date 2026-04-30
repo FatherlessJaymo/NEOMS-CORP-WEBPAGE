@@ -3,14 +3,11 @@
    Absolute-positioned, draggable icons with snap-to-grid and
    localStorage position persistence.
 
-   PATCHED: icons now actually OPEN on click (launchIcon).
-   PATCHED: added "terminaldb" icon for the Terminal-Database
-            window (replaces the old standalone-tab database icon).
+   
 ============================================================ */
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
 var ETC_IMG = "Neoms~Universal-Fonts+Images/Icons/App_Icons/Opera.png";
-var VM_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg";
 
 var ICONS = [
   { id: "prime", label: "Creator's\nLog", img: FOLDER_IMG },
@@ -22,10 +19,12 @@ var ICONS = [
   { id: "ranking", label: "Rankings", img: FOLDER_IMG },
   { id: "etc", label: "Etc", img: ETC_IMG },
   { id: "friendcodes", label: "Game\nCodes", img: FOLDER_IMG },
-  /* PATCHED: replaces the old "database" tab-launcher icon.
-     Now opens an in-desktop Terminal-Database window instead
-     of a separate browser tab. */
-  { id: "terminaldb", label: "Terminal\nDatabase", img: VM_IMG }
+  {
+    id: "database",
+    label: "Neoms~\nDatabase",
+    img: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
+    url: "Neoms~Database/HTML/intake.html"
+  }
 ];
 
 var ICON_POSITIONS_KEY = "neoms_icon_positions_v2";
@@ -80,14 +79,12 @@ function buildIcons() {
     el.style.left = (pos ? pos.x : defX) + "px";
     el.style.top = (pos ? pos.y : defY) + "px";
 
-    makeDraggableIcon(el, ic.id, ic.url, ic.action);
+    makeDraggableIcon(el, ic.id, ic.url);
     grid.appendChild(el);
   });
 }
 
-/* PATCHED: signature accepts `action`. On mouseup-without-drag we
-   actually LAUNCH the icon — that logic was missing previously. */
-function makeDraggableIcon(el, id, url, action) {
+function makeDraggableIcon(el, id, url) {
   var startX, startY, origLeft, origTop;
   var dragging = false,
     moved = false;
@@ -145,43 +142,21 @@ function makeDraggableIcon(el, id, url, action) {
         el.style.left = snapX + "px";
         el.style.top = snapY + "px";
         saveIconPositions();
-      } else {
-        launchIcon(id, url, action);
       }
     }
 
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
   });
-}
 
-/* PATCHED: centralised launch logic. */
-function launchIcon(id, url, action) {
-  if (typeof action === "function") {
-    try {
-      action(id);
-    } catch (e) {
-      console.error("[desktop-icons] action failed:", e);
+  el.addEventListener("dblclick", function () {
+    if (moved) return;
+    if (url) {
+      window.open(url, "_blank");
+      return;
     }
-    return;
-  }
-  if (typeof action === "string" && typeof window[action] === "function") {
-    try {
-      window[action](id);
-    } catch (e) {
-      console.error("[desktop-icons] action failed:", e);
-    }
-    return;
-  }
-  if (url) {
-    window.open(url, "_blank", "noopener");
-    return;
-  }
-  if (typeof openWin === "function") {
     openWin(id);
-  } else {
-    console.warn("[desktop-icons] openWin() not loaded yet; can't open:", id);
-  }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", buildIcons);

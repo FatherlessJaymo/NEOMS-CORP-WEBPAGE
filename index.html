@@ -25,7 +25,6 @@
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/badges/badges.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/etc/etc.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/wallpaper/wallpaper.css" />
-    <link rel="stylesheet" href="Neoms~PrimeDrive/windows/terminal-database/terminal-database.css" />
   </head>
   <body>
     <!-- ===== TOP LABEL BAR ===== -->
@@ -149,7 +148,7 @@
               onerror="this.style.display='none'" />
             NeoMix
           </div>
-          <div class="start-item" onclick="openWin('terminaldb');closeStart()">
+          <div class="start-item" onclick="window.open('Neoms~Database/HTML/intake.html','_blank');closeStart()">
             <img
               class="start-item-icon"
               src="Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg"
@@ -157,7 +156,7 @@
               height="16"
               alt=""
               onerror="this.style.display='none'" />
-            Terminal-Database
+            Neoms~Database
           </div>
           <div class="start-item" onclick="openWin('ranking');closeStart()">
             <img
@@ -217,7 +216,7 @@
       <div id="taskbar-clock"></div>
     </div>
 
-    <!-- ===== JS — load order matters ===== -->
+    <!-- ===== JS — load order matters =====
     <!-- 1) Data -->
     <script src="Neoms~PrimeDrive/windows/ranking/ranking-data.js"></script>
     <script src="Neoms~PrimeDrive/windows/friend-codes/friend-codes-data.js"></script>
@@ -235,7 +234,6 @@
     <script src="Neoms~PrimeDrive/windows/wallpaper/wallpaper.js"></script>
     <script src="Neoms~PrimeDrive/windows/ranking/ranking-window.js"></script>
     <script src="Neoms~PrimeDrive/windows/friend-codes/friend-codes.js"></script>
-    <script src="Neoms~PrimeDrive/windows/terminal-database/terminal-database.js"></script>
     <script src="Neoms~PrimeDrive/windows/neomix/neomix-builder.js"></script>
     <script src="Neoms~PrimeDrive/windows/neomix/neomix-player.js"></script>
     <script src="Neoms~PrimeDrive/windows/sticker-hq/sticker-hq-builder.js"></script>

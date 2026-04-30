@@ -3,8 +3,6 @@
    Window plumbing only. Open / close / minimize / maximize,
    drag, resize, taskbar buttons, and the content router.
 
-   PATCHED: registers the new "terminaldb" window
-   (Terminal-Database — combines old VM terminal + intake session).
 ============================================================ */
 var zTop = 200;
 var wins = {};
@@ -14,8 +12,6 @@ var tbBtns = {};
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
 var ETC_IMG = "Neoms~Universal-Fonts+Images/Icons/App_Icons/Opera.png";
-var TERMDB_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg";
-
 /* ============================================================
    WINDOW DEFINITIONS
    Each entry: title, default size, icon id (for iconImg lookup).
@@ -30,9 +26,7 @@ var WIN_DEFS = {
     ranking: { title: "RANKING VIEWER", w: 560, h: 500, icon: "ranking", iconImg: FOLDER_IMG },
     etc: { title: "ETC / OTHER SITES", w: 440, h: 360, icon: "etc", iconImg: ETC_IMG },
     wallpaper: { title: "WALLPAPER SETTINGS", w: 360, h: 280, icon: "wallpaper", iconImg: FOLDER_IMG },
-    friendcodes: { title: "GAME CODES", w: 480, h: 480, icon: "friendcodes", iconImg: FOLDER_IMG },
-    /* PATCHED: new window */
-    terminaldb: { title: "TERMINAL // NEOMSDB", w: 600, h: 440, icon: "terminaldb", iconImg: TERMDB_IMG }
+    friendcodes: { title: "GAME CODES", w: 480, h: 480, icon: "friendcodes", iconImg: FOLDER_IMG }
 };
 
 /* ---- Icon image lookup ----
@@ -48,9 +42,7 @@ var WIN_ICONS = {
     ranking: FOLDER_IMG,
     etc: ETC_IMG,
     wallpaper: FOLDER_IMG,
-    friendcodes: FOLDER_IMG,
-    /* PATCHED: new window */
-    terminaldb: TERMDB_IMG
+    friendcodes: FOLDER_IMG
 };
 
 function iconImg(id) {
@@ -202,6 +194,7 @@ function maxWin(id) {
         w.oy = parseInt(w.el.style.top);
         w.ow = parseInt(w.el.style.width);
         w.oh = parseInt(w.el.style.height);
+        /* Leave the 22px top label bar visible above the maximized window */
         w.el.style.cssText = "left:0;top:22px;width:100%;height:calc(100% - 22px);" + "z-index:" + zTop + ";";
         w.maximized = true;
     }
@@ -237,13 +230,57 @@ function addTBBtn(id, title, icon, iconSrc) {
 }
 
 /* ============================================================
-   AFTER OPEN — per-window init hooks
-   Each window's init function lives in its own folder; we
-   just call it here.
+   DRAG & RESIZE
+============================================================ */
+function makeDraggable(win, bar) {
+    var sx, sy, sl, st;
+    bar.addEventListener("mousedown", function (e) {
+        if (e.target.classList.contains("win-btn")) return;
+        var id = win.id.replace("win-", "");
+        focusWin(id);
+        sx = e.clientX;
+        sy = e.clientY;
+        sl = parseInt(win.style.left) || 0;
+        st = parseInt(win.style.top) || 0;
+        function mv(e) {
+            win.style.left = Math.max(0, sl + (e.clientX - sx)) + "px";
+            win.style.top = Math.max(24, st + (e.clientY - sy)) + "px";
+        }
+        function up() {
+            document.removeEventListener("mousemove", mv);
+            document.removeEventListener("mouseup", up);
+        }
+        document.addEventListener("mousemove", mv);
+        document.addEventListener("mouseup", up);
+        e.preventDefault();
+    });
+}
 
-   PATCHED: consults window.DB_AFTER_OPEN first so external
-   modules can hook the lifecycle for their own ids.
-   PATCHED: registers terminaldb -> initTerminalDB.
+function makeResizable(win, handle) {
+    handle.addEventListener("mousedown", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var sw = parseInt(win.style.width);
+        var sh = parseInt(win.style.height);
+        var sx = e.clientX,
+            sy = e.clientY;
+        function mv(e) {
+            win.style.width = Math.max(320, sw + (e.clientX - sx)) + "px";
+            win.style.height = Math.max(180, sh + (e.clientY - sy)) + "px";
+        }
+        function up() {
+            document.removeEventListener("mousemove", mv);
+            document.removeEventListener("mouseup", up);
+        }
+        document.addEventListener("mousemove", mv);
+        document.addEventListener("mouseup", up);
+    });
+}
+
+/* ============================================================
+   AFTER-OPEN HOOKS
+   Called once a window is mounted. Each window's init function
+   lives in its own folder; we just call it here.
 ============================================================ */
 function afterOpen(id) {
     if (id === "neomix") setTimeout(initNeomixInWin, 50);
@@ -262,11 +299,6 @@ function afterOpen(id) {
             renderRank(getDefaultRankCat());
         }, 50);
     if (id === "friendcodes") setTimeout(initFriendCodes, 50);
-    /* PATCHED: new window */
-    if (id === "terminaldb")
-        setTimeout(function () {
-            if (typeof initTerminalDB === "function") initTerminalDB();
-        }, 50);
 }
 
 /* First key of NEOMS_RANK_DATA, falls back to "Art" if data missing */
@@ -281,17 +313,8 @@ function getDefaultRankCat() {
    Each case calls a builder function defined in the matching
    per-window folder. If a builder is missing (script not loaded
    in time, etc.) we render a graceful error.
-
-   PATCHED: consults window.DB_BUILD_OVERRIDES first so external
-   modules can register their own ids.
-   PATCHED: terminaldb -> buildTerminalDB.
 ============================================================ */
 function buildContent(id) {
-    /* External-module hook (database-mode.js etc.) */
-    if (window.DB_BUILD_OVERRIDES && typeof window.DB_BUILD_OVERRIDES[id] === "function") {
-        return window.DB_BUILD_OVERRIDES[id](id);
-    }
-
     var fn;
     switch (id) {
         case "prime":
@@ -324,16 +347,12 @@ function buildContent(id) {
         case "friendcodes":
             fn = window.buildFriendCodes;
             break;
-        /* PATCHED: new window */
-        case "terminaldb":
-            fn = window.buildTerminalDB;
-            break;
     }
     if (typeof fn === "function") return fn();
     return (
         '<p style="color:var(--text-dim);font-size:9px;">// BUILDER MISSING: ' +
         id +
-        " &mdash; check that its window file is loaded before window-manager.js</p>"
+        " — check that its window file is loaded before window-manager.js</p>"
     );
 }
 
@@ -361,17 +380,11 @@ function toast(msg, dur) {
 /* ============================================================
    AUTO-OPEN ON STARTUP
    Show the Core Directive guide once the desktop is ready.
-
-   PATCHED: skip if user is restoring into Database Mode — the
-   intake/DB icons should be the first thing they see.
+   Slight delay so it lands AFTER desktop-icons.js builds the
+   icon grid — keeps the open animation looking clean.
 ============================================================ */
 document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
-        var savedMode = null;
-        try {
-            savedMode = localStorage.getItem("neoms_active_mode");
-        } catch (e) {}
-        if (savedMode === "database") return;
         if (typeof openWin === "function") openWin("core");
     }, 200);
 });
