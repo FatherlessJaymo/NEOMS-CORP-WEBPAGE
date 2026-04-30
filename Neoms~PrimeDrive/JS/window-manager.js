@@ -3,14 +3,6 @@
    Window plumbing only. Open / close / minimize / maximize,
    drag, resize, taskbar buttons, and the content router.
 
-   PATCHED: Added a lightweight extension point so external
-   modules (like database-mode.js) can register their own window
-   builders without editing this file's switch statement. See
-   the buildContent function below — it consults
-   window.DB_BUILD_OVERRIDES first.
-
-   PATCHED: Auto-open of the "core" Creator's Log window on boot
-   is now skipped if the user is restoring into Database Mode.
 ============================================================ */
 var zTop = 200;
 var wins = {};
@@ -294,12 +286,6 @@ function makeResizable(win, handle) {
    modules can hook the lifecycle for their own ids.
 ============================================================ */
 function afterOpen(id) {
-    /* External-module hook (database-mode.js etc.) */
-    if (window.DB_AFTER_OPEN && typeof window.DB_AFTER_OPEN[id] === "function") {
-        window.DB_AFTER_OPEN[id](id);
-        return;
-    }
-
     if (id === "neomix") setTimeout(initNeomixInWin, 50);
     if (id === "prime")
         setTimeout(function () {

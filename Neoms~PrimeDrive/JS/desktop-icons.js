@@ -2,11 +2,6 @@
    DESKTOP ICONS
    Absolute-positioned, draggable icons with snap-to-grid and
    localStorage position persistence.
-
-   PATCHED: the `database` icon now triggers Database Mode
-   (handled by Neoms~PrimeDrive/JS/database-mode.js) instead of
-   opening a new tab. The url field is removed; the icon dispatches
-   to window.NeomsDatabase.toggle() on dblclick.
 ============================================================ */
 var FOLDER_IMG = "Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 var NEOMIX_IMG = "Neoms~Universal-Fonts+Images/Icons/Neomix/Neomix-Sonic.jpg";
@@ -26,10 +21,7 @@ var ICONS = [
     id: "database",
     label: "Neoms~\nDatabase",
     img: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
-    /* PATCHED: removed `url` and added `action: "database-mode"` so   */
-    /* makeDraggableIcon dispatches to window.NeomsDatabase.toggle()  */
-    /* instead of opening intake.html in a new tab.                   */
-    action: "database-mode"
+    url: ""
   }
 ];
 
@@ -155,25 +147,6 @@ function makeDraggableIcon(el, id, url, action) {
 
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
-  });
-
-  el.addEventListener("dblclick", function () {
-    if (moved) return;
-    /* PATCHED: action takes precedence over url */
-    if (action === "database-mode") {
-      if (window.NeomsDatabase && typeof window.NeomsDatabase.toggle === "function") {
-        window.NeomsDatabase.toggle();
-      } else {
-        console.warn("[icons] NeomsDatabase not loaded — falling back to tab");
-        window.open("Neoms~Database/HTML/intake.html", "_blank");
-      }
-      return;
-    }
-    if (url) {
-      window.open(url, "_blank");
-      return;
-    }
-    openWin(id);
   });
 }
 

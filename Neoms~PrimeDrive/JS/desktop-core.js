@@ -82,7 +82,6 @@ var vmCmds = {
   rewrite: function () { return ["Initiating REWRITE.EXE protocol...", "[WARN] Protocol requires clearance ALPHA", "[ERR] Insufficient permissions \u2014 contact NeoMS Admin"]; },
   exit:    function () { setTimeout(function () { closeWin("neomsdatabase"); }, 300); return ["Terminating session...", "[BYE]"]; },
 };
-
 function initVM() {
   var shell = document.getElementById("vm-shell");
   var input = document.getElementById("vm-input");
