@@ -60,30 +60,30 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
   badge.className = "class-badge class-" + e.cls;
   badge.innerHTML = e.cls + '<br><span class="class-badge__sub">' + (clsNames[e.cls] || "") + "</span>";
 
-  /* ── Staff card builder ── */
-  function buildStaffCard(sid) {
+  /* ── personnel card builder ── */
+  function buildpersonnelCard(sid) {
     const s =
-      typeof STAFF !== "undefined"
-        ? STAFF.find(function (x) {
+      typeof personnel !== "undefined"
+        ? personnel.find(function (x) {
             return x.id === sid;
           })
         : null;
     if (!s)
       return `
-      <div class="ed-disc-staff-card ed-disc-staff-redacted">
-        <div class="ed-disc-staff-id">S-${sid}</div>
-        <div class="ed-disc-staff-name">[RECORD NOT FOUND]</div>
+      <div class="ed-disc-personnel-card ed-disc-personnel-redacted">
+        <div class="ed-disc-personnel-id">S-${sid}</div>
+        <div class="ed-disc-personnel-name">[RECORD NOT FOUND]</div>
       </div>`;
     return `
-      <div class="ed-disc-staff-card">
-        <div class="ed-disc-staff-id">S-${s.id}</div>
-        <div class="ed-disc-staff-name">${s.fname} ${s.lname}</div>
-        <div class="ed-disc-staff-meta">
+      <div class="ed-disc-personnel-card">
+        <div class="ed-disc-personnel-id">S-${s.id}</div>
+        <div class="ed-disc-personnel-name">${s.fname} ${s.lname}</div>
+        <div class="ed-disc-personnel-meta">
           <span>${s.pos}</span>
           <span class="clr-pip clr-${s.clr}" title="CL-${s.clr}"></span>
-          <span class="ed-disc-staff-clr">CL-${s.clr}</span>
+          <span class="ed-disc-personnel-clr">CL-${s.clr}</span>
         </div>
-        <div class="ed-disc-staff-dept">${s.dept}</div>
+        <div class="ed-disc-personnel-dept">${s.dept}</div>
       </div>`;
   }
 
@@ -220,7 +220,7 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
       <div class="protocol-meta">
         ${proto.equipment ? `<div class="protocol-meta-item">EQUIPMENT: <span class="protocol-meta-val">${proto.equipment}</span></div>` : ""}
         ${proto.duration ? `<div class="protocol-meta-item">DURATION: <span class="protocol-meta-val">${proto.duration} min</span></div>` : ""}
-        ${proto.staff ? `<div class="protocol-meta-item">PERSONNEL: <span class="protocol-meta-val">${proto.staff}</span></div>` : ""}
+        ${proto.personnel ? `<div class="protocol-meta-item">PERSONNEL: <span class="protocol-meta-val">${proto.personnel}</span></div>` : ""}
       </div>
     </div>`;
     })
@@ -332,7 +332,7 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
       parts.push(`
         <div class="page-section">
           <div class="page-section-title">Original Creator / Source</div>
-          <div class="ed-disc-staff-grid">${buildStaffCard(e.discoveredBy)}</div>
+          <div class="ed-disc-personnel-grid">${buildpersonnelCard(e.discoveredBy)}</div>
         </div>`);
     }
 
@@ -345,7 +345,7 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
       parts.push(`
         <div class="page-section">
           <div class="page-section-title">Contributors</div>
-          <div class="ed-disc-staff-grid">${contribs.map(buildStaffCard).join("")}</div>
+          <div class="ed-disc-personnel-grid">${contribs.map(buildpersonnelCard).join("")}</div>
         </div>`);
     }
 
@@ -419,8 +419,8 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
       const col = TYPE_COLORS[r.type] || "#667788";
       const locked = r.clr && clr < r.clr;
       const author =
-        r.author && typeof STAFF !== "undefined"
-          ? STAFF.find(function (x) {
+        r.author && typeof personnel !== "undefined"
+          ? personnel.find(function (x) {
               return x.id === r.author;
             })
           : null;
@@ -440,8 +440,8 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
           ? `<span class="ed-report-contribs">With: ${r.contributors
               .map(function (sid) {
                 const s =
-                  typeof STAFF !== "undefined"
-                    ? STAFF.find(function (x) {
+                  typeof personnel !== "undefined"
+                    ? personnel.find(function (x) {
                         return x.id === sid;
                       })
                     : null;

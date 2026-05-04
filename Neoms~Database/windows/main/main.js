@@ -5,7 +5,7 @@
 
 const breached     = ENTITIES.filter(e => e.status === "BREACHED").length;
 const contained    = ENTITIES.filter(e => e.status === "CONTAINED").length;
-const activeStaff  = STAFF.filter(s => s.active === "Y").length;
+const activepersonnel  = personnel.filter(s => s.active === "Y").length;
 const activeSites  = SITES.filter(s => s.status === "ACTIVE").length;
 const breachEvents = ENTITIES.reduce((acc, e) =>
   acc + (e.reports ? e.reports.filter(r => r.type === "BREACH").length : 0), 0);
@@ -32,7 +32,7 @@ if (statsEl) {
     <div class="stat-box"><div class="stat-label">ACTIVE BREACHES</div><div class="stat-val danger">${breached} ACTIVE</div></div>
     <div class="stat-box"><div class="stat-label">BREACH EVENTS</div><div class="stat-val danger">${breachEvents}</div></div>
     <div class="stat-box"><div class="stat-label">ACTIVE SITES</div><div class="stat-val ok">${activeSites}</div></div>
-    <div class="stat-box"><div class="stat-label">ACTIVE STAFF</div><div class="stat-val ok">${activeStaff}</div></div>`;
+    <div class="stat-box"><div class="stat-label">ACTIVE personnel</div><div class="stat-val ok">${activepersonnel}</div></div>`;
 }
 
 /* Cards */
@@ -44,10 +44,10 @@ if (cardsEl) {
       <div class="home-card-desc">Browse all documented anomalous entities. Classification, containment status, protocols, and biological profiles.</div>
       <div class="home-card-count">${ENTITIES.length} ENTRIES</div>
     </div>
-    <div class="home-card" onclick="openWin('staff')">
-      <div class="home-card-title">Staff Records</div>
-      <div class="home-card-desc">Personnel database. All active and inactive staff, departmental assignments, and security clearances.</div>
-      <div class="home-card-count">${STAFF.length} RECORDS</div>
+    <div class="home-card" onclick="openWin('personnel')">
+      <div class="home-card-title">Personnel Records</div>
+      <div class="home-card-desc">Personnel database. All active and inactive personnel, departmental assignments, and security clearances.</div>
+      <div class="home-card-count">${personnel.length} RECORDS</div>
     </div>
     <div class="home-card" onclick="openWin('sites')">
       <div class="home-card-title">Containment Sites</div>

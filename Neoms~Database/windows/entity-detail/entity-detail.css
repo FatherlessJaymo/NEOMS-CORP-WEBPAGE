@@ -243,35 +243,35 @@
 .ed-disc-table {
     margin-bottom: 0;
 }
-.ed-disc-staff-grid {
+.ed-disc-personnel-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 8px;
 }
-.ed-disc-staff-card {
+.ed-disc-personnel-card {
     background: #0d1520;
     border: 1px solid #1a2a4a;
     padding: 10px 12px;
 }
-.ed-disc-staff-card.ed-disc-staff-redacted {
+.ed-disc-personnel-card.ed-disc-personnel-redacted {
     border-color: #2a1a1a;
     background: #0a0810;
     opacity: 0.6;
 }
-.ed-disc-staff-id {
+.ed-disc-personnel-id {
     font-size: 9px;
     color: #445566;
     letter-spacing: 1px;
     margin-bottom: 4px;
     font-family: var(--mono);
 }
-.ed-disc-staff-name {
+.ed-disc-personnel-name {
     font-family: var(--pixel);
     font-size: 15px;
     color: #aabbcc;
     margin-bottom: 6px;
 }
-.ed-disc-staff-meta {
+.ed-disc-personnel-meta {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -280,11 +280,11 @@
     font-family: var(--mono);
     margin-bottom: 3px;
 }
-.ed-disc-staff-clr {
+.ed-disc-personnel-clr {
     font-size: 9px;
     color: #445566;
 }
-.ed-disc-staff-dept {
+.ed-disc-personnel-dept {
     font-size: 9px;
     letter-spacing: 1px;
     color: #334;

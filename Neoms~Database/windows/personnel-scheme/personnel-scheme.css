@@ -1,42 +1,37 @@
 /* ============================================================
-   NEOMS — STAFF SCHEME WINDOW STYLES
-   Neoms~Database/windows/staff-scheme/staff-scheme.css
-   PrimeDrive Win95 paper palette
+   NEOMS — personnel SCHEME WINDOW STYLES
+   Neoms~Database/windows/personnel-scheme/personnel-scheme.css
    ============================================================ */
 
 /* ── Department group ──────────────────────────────────────── */
 .ss-dept-group {
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .ss-dept-header {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 3px;
-  padding: 8px 12px;
-  border-bottom: 2px solid;
+  padding: 10px 0 6px;
+  border-bottom: 1px solid;
   margin-bottom: 10px;
   font-family: var(--mono);
-  background: var(--paper-3);
-  color: var(--teal-ink);
-  font-weight: bold;
 }
 
 /* ── Role card ─────────────────────────────────────────────── */
 .ss-role-card {
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   padding: 10px 12px;
-  background: var(--paper-2);
-  border: 2px outset var(--win-border);
-  border-left-width: 4px;
+  background: #0d1020;
+  border-left: 2px solid;
+  border-bottom: 1px solid #0d1a2a;
 }
 
 .ss-role-title {
   font-family: var(--pixel);
-  font-size: 14px;
-  color: var(--teal-ink);
+  font-size: 13px;
+  color: #ccdde8;
   margin-bottom: 2px;
   letter-spacing: 0.5px;
-  font-weight: bold;
 }
 
 .ss-role-dept {
@@ -44,12 +39,11 @@
   letter-spacing: 2px;
   margin-bottom: 8px;
   font-family: var(--mono);
-  font-weight: bold;
 }
 
 .ss-role-bio {
   font-size: 11px;
-  color: var(--ink);
+  color: #b0c8dc;
   line-height: 1.75;
   font-family: var(--mono);
 }

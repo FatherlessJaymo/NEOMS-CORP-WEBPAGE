@@ -967,14 +967,14 @@ body::after {
     color: var(--red-b);
 }
 
-/* ── STAFF TABLE ───────────────────────────────────────────── */
-.staff-table {
+/* ── personnel TABLE ───────────────────────────────────────────── */
+.personnel-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 11px;
 }
 
-.staff-table th {
+.personnel-table th {
     font-size: 9px;
     letter-spacing: 1px;
     color: #445566;
@@ -985,13 +985,13 @@ body::after {
     background: #0a0a14;
 }
 
-.staff-table td {
+.personnel-table td {
     padding: 4px 8px;
     border-bottom: 1px solid #0d1520;
     color: #8899aa;
 }
 
-.staff-table tr:hover td {
+.personnel-table tr:hover td {
     background: rgba(0, 140, 140, 0.06);
 }
 
@@ -1228,37 +1228,37 @@ body::after {
     padding-top: 10px;
 }
 
-/* ── Staff table cell classes ────────────────────────────────── */
-.staff-id {
+/* ── personnel table cell classes ────────────────────────────────── */
+.personnel-id {
     color: #445566;
     font-size: 10px;
 }
-.staff-name {
+.personnel-name {
     color: #aabbcc;
 }
-.staff-pos {
+.personnel-pos {
     font-size: 10px;
     color: #778899;
 }
-.staff-dept {
+.personnel-dept {
     font-size: 10px;
     color: #556677;
 }
-.staff-clr-label {
+.personnel-clr-label {
     font-size: 10px;
     color: #556677;
 }
-.staff-site {
+.personnel-site {
     font-size: 10px;
     color: #445566;
 }
-.staff-status {
+.personnel-status {
     font-size: 10px;
 }
-.staff-active {
+.personnel-active {
     color: #00aa44;
 }
-.staff-inactive {
+.personnel-inactive {
     color: #666;
 }
 

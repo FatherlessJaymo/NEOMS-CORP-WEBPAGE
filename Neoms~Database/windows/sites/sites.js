@@ -68,7 +68,7 @@ const cardsHTML = SITES.map(s => {
         <tr><th>LOCATION</th><td class="site-loc-val">${s.loc}</td></tr>
         <tr><th>SITE ID</th><td>${s.id}</td></tr>
         <tr><th>ENTITIES</th><td>${s.entities}</td></tr>
-        <tr><th>STAFF</th><td>${s.staff}</td></tr>
+        <tr><th>personnel</th><td>${s.personnel}</td></tr>
         <tr><th>EST.</th><td>${s.est}</td></tr>
       </table>
       <details class="manifest-details">

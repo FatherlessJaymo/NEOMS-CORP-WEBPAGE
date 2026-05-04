@@ -1,6 +1,6 @@
 /* ============================================================
-   NEOMS — STAFF POSITION SCHEME WINDOW
-   Neoms~Database/windows/staff-scheme/staff-scheme.js
+   NEOMS — personnel POSITION SCHEME WINDOW
+   Neoms~Database/windows/personnel-scheme/personnel-scheme.js
    ============================================================ */
 
 const ROLES = [

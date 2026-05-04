@@ -3,7 +3,7 @@
 ![NEOMS Banner](../Neoms~Universal-Fonts+Images/Banner/Banner-1.png)
 
 > **NEO Monitoring System — Containment Log & Personal Wiki Database** A retro-OS styled, dual-deployable knowledge
-> platform for organizing structured anomaly, staff, and site records.
+> platform for organizing structured anomaly, personnel, and site records.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Schema](https://img.shields.io/badge/Schema-v2.1-00cccc)](#-database-schema)
@@ -31,7 +31,7 @@
 
 1. **PrimeDrive** — a retro Windows-style portfolio / homepage shell with a working taskbar, start menu, NEOMIX media
    player, blog, and guestbook.
-2. **Neoms~Database** — a containment-log "operating system" UI for browsing **Entities**, **Staff**, **Sites**, an
+2. **Neoms~Database** — a containment-log "operating system" UI for browsing **Entities**, **personnel**, **Sites**, an
    interactive D3 **World Map**, a **Terminal**, and a **Source Viewer** — all gated behind a 5-tier clearance system.
 
 All data lives in plaintext JS arrays (no backend required), so the site runs anywhere static files can be hosted.
@@ -64,7 +64,7 @@ All data lives in plaintext JS arrays (no backend required), so the site runs an
 | Feature                         | Description                                                                              |
 | ------------------------------- | ---------------------------------------------------------------------------------------- |
 | 🖥️ **Retro-OS Window Manager**  | Drag, resize, minimize, and z-stack windows just like a desktop OS.                      |
-| 📚 **Containment Log Database** | Wiki-style records for Entities, Staff, and Sites with cross-references.                 |
+| 📚 **Containment Log Database** | Wiki-style records for Entities, personnel, and Sites with cross-references.                 |
 | 🌐 **Interactive World Map**    | Live D3 + TopoJSON facility map with breach indicators and dossier panels.               |
 | 🔐 **5-Tier Clearance System**  | CL-1 through CL-5 access gating; restricted records redact automatically.                |
 | 🎵 **NEOMIX Media Player**      | Embedded YouTube playlist player with shuffle, video toggle, and seek.                   |
@@ -92,8 +92,8 @@ NEOMS-CORP-WEBPAGE/
 │       ├── entities/                   # Entity Registry
 │       ├── entity-detail/              # Single-entity dossier
 │       ├── entity-scheme/              # Classification & power scale reference
-│       ├── staff/                      # Staff Records
-│       ├── staff-scheme/               # Personnel Position Scheme
+│       ├── personnel/                      # personnel Records
+│       ├── personnel-scheme/               # Personnel Position Scheme
 │       ├── sites/                      # Containment Sites
 │       ├── worldmap/                   # D3 facility map + world-atlas-loader.js
 │       ├── terminal/                   # In-OS terminal
@@ -131,14 +131,14 @@ The NeoMS database uses three primary record types, all stored as plaintext JS o
 }
 ```
 
-### Staff Record
+### personnel Record
 
 ```js
 {
   id:    Number,    // S-#### display
   fname: String,
   lname: String,
-  pos:   String,    // position title (matches a role in staff-scheme)
+  pos:   String,    // position title (matches a role in personnel-scheme)
   dept:  String,    // SYNTHETICS | FACILITY UNITS | FACILITY COMMAND |
                     // CONTAINMENT ENFORCEMENT | CONTAINMENT RESEARCH | PRIME DIRECTOR
   clr:   Number,    // 1–5
@@ -157,7 +157,7 @@ The NeoMS database uses three primary record types, all stored as plaintext JS o
   lng:      Number,
   status:   String,    // OPERATIONAL | LOCKDOWN | OFFLINE
   entities: Number,    // count cached for header (auto-derivable)
-  staff:    Number,    // count cached for header
+  personnel:    Number,    // count cached for header
   est:      String,    // establishment date
   desc:     String
 }
@@ -207,14 +207,14 @@ Append a new object to the `ENTITIES` array following the schema:
 -   Choose `cls` and `ps` honestly — see `entity-scheme.js` for full definitions.
 -   Keep `desc` lore-consistent. The in-universe voice is clinical, terse, redacted where appropriate.
 
-#### Adding a Staff Member
+#### Adding a personnel Member
 
 ```js
 {
   id:    87,
   fname: "Vera",
   lname: "Solanke",
-  pos:   "Containment Specialist",         // must match a title in staff-scheme.js
+  pos:   "Containment Specialist",         // must match a title in personnel-scheme.js
   dept:  "CONTAINMENT RESEARCH",
   clr:   3,
   site:  62656
@@ -232,13 +232,13 @@ Append a new object to the `ENTITIES` array following the schema:
   lng:      73.51,
   status:   "OPERATIONAL",
   entities: 0,
-  staff:    0,
+  personnel:    0,
   est:      "2025.07.19",
   desc:     "Cold-storage installation tasked with long-term cryo-suspension of dormant AP-class anomalies."
 }
 ```
 
-After adding a site, register its coordinates so the world map renders the marker, and update `entities`/`staff` counts
+After adding a site, register its coordinates so the world map renders the marker, and update `entities`/`personnel` counts
 (these are also auto-derivable, but cached for the header).
 
 #### Extending the Schema

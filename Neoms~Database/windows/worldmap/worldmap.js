@@ -45,8 +45,8 @@ function nmShowPanel(site, breached, color) {
   g("nm-ploc").style.color = breached ? "#ff6666" : "#00aa66";
   g("nm-pents").textContent = site.entities;
   g("nm-pents").style.color = color;
-  g("nm-pstaff").textContent = site.staff;
-  g("nm-pstaff").style.color = color;
+  g("nm-ppersonnel").textContent = site.personnel;
+  g("nm-ppersonnel").style.color = color;
   g("nm-pstatus").textContent = site.status;
   g("nm-pstatus").style.color = breached ? "#ff3333" : "#00cc66";
   g("nm-pest").textContent = site.est;

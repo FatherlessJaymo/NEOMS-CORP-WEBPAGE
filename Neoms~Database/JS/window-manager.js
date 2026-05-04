@@ -6,28 +6,28 @@
    ============================================================ */
 "use strict";
 
-var WIN_BASE  = "/Neoms~Database/windows/";
+var WIN_BASE = "/Neoms~Database/windows/";
 var FOLDER_IMG = "/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 
-var zTop  = 200;
-var wins  = {};
+var zTop = 200;
+var wins = {};
 var tbBtns = {};
 
 /* Session + clearance globals (set by desktop-core.js) */
-var sessionStaff  = null;
+var sessionpersonnel = null;
 var userClearance = 1;
 
 /* ── WINDOW DEFINITIONS ──────────────────────────────────────── */
 var WIN_DEFS = {
-  main:           { title: "CONTAINMENT LOG",        w: 720, h: 560 },
-  entities:       { title: "ENTITY REGISTRY",         w: 680, h: 480, clr: 3 },
-  "entity-scheme":{ title: "ENTITY CLASS. SCHEME",    w: 760, h: 580 },
-  staff:          { title: "STAFF RECORDS",           w: 750, h: 480 },
-  "staff-scheme": { title: "PERSONNEL SCHEME",        w: 700, h: 560 },
-  sites:          { title: "CONTAINMENT SITES",       w: 680, h: 560 },
-  worldmap:       { title: "GLOBAL FACILITY MAP",     w: 960, h: 600 },
-  terminal:       { title: "NEOMS TERMINAL v1.0",     w: 580, h: 400 },
-  entitycreator:  { title: "ENTITY CREATOR",           w: 860, h: 580 }
+  main: { title: "CONTAINMENT LOG", w: 720, h: 560, clr: 1 },
+  entities: { title: "ENTITY REGISTRY", w: 680, h: 480, clr: 3 },
+  "entity-scheme": { title: "ENTITY CLASS. SCHEME", w: 760, h: 580, clr: 2 },
+  personnel: { title: "PERSONNEL RECORDS", w: 750, h: 480, clr: 3 },
+  "personnel-scheme": { title: "PERSONNEL SCHEME", w: 700, h: 560, clr: 2 },
+  sites: { title: "CONTAINMENT SITES", w: 680, h: 560, clr: 1 },
+  worldmap: { title: "GLOBAL FACILITY MAP", w: 960, h: 600, clr: 1 },
+  terminal: { title: "NEOMS TERMINAL v1.0", w: 580, h: 400, clr: 4 },
+  entitycreator: { title: "ENTITY CREATOR", w: 860, h: 580, clr: 4 }
 };
 
 /* ── OPEN ────────────────────────────────────────────────────── */
@@ -35,12 +35,18 @@ function openWin(type, data) {
   /* Entity sub-window (detail view) */
   if (type === "entity" && data !== undefined) {
     var eid = "entity_" + data;
-    if (wins[eid]) { focusWin(eid); return; }
+    if (wins[eid]) {
+      focusWin(eid);
+      return;
+    }
     _spawnWin(eid, "ENTITY " + String(data).padStart(4, "0"), 660, 560, "entity-detail", data);
     return;
   }
 
-  if (wins[type]) { focusWin(type); return; }
+  if (wins[type]) {
+    focusWin(type);
+    return;
+  }
 
   var def = WIN_DEFS[type];
   if (!def) return;
@@ -59,30 +65,36 @@ function openWin(type, data) {
 function _spawnWin(id, title, w, h, winType, data) {
   var vw = window.innerWidth;
   var vh = window.innerHeight - 48 - 24;
-  var x  = Math.max(10, Math.min(vw - w - 10, 60 + Object.keys(wins).length * 22));
-  var y  = Math.max(28, Math.min(vh - h - 10, 60 + Object.keys(wins).length * 22));
+  var x = Math.max(10, Math.min(vw - w - 10, 60 + Object.keys(wins).length * 22));
+  var y = Math.max(28, Math.min(vh - h - 10, 60 + Object.keys(wins).length * 22));
 
   var win = document.createElement("div");
   win.className = "win opening";
   win.id = "win-" + id;
-  win.style.cssText =
-    "left:" + x + "px;" +
-    "top:"  + (y + 24) + "px;" +
-    "width:" + w + "px;" +
-    "height:" + h + "px;";
+  win.style.cssText = "left:" + x + "px;" + "top:" + (y + 24) + "px;" + "width:" + w + "px;" + "height:" + h + "px;";
 
   /* Title bar */
   var bar = document.createElement("div");
   bar.className = "win-bar";
   bar.innerHTML =
-    '<img src="' + FOLDER_IMG + '" class="win-bar-img" alt="" ' +
+    '<img src="' +
+    FOLDER_IMG +
+    '" class="win-bar-img" alt="" ' +
     'style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;">' +
-    '<span class="win-title">' + title + '</span>' +
+    '<span class="win-title">' +
+    title +
+    "</span>" +
     '<div class="win-btns">' +
-    '<button class="win-btn win-min"   onclick="minWin(\'' + id + '\')">-</button>' +
-    '<button class="win-btn win-max"   onclick="maxWin(\'' + id + '\')">&#9633;</button>' +
-    '<button class="win-btn win-close" onclick="closeWin(\'' + id + '\')">&#215;</button>' +
-    '</div>';
+    '<button class="win-btn win-min"   onclick="minWin(\'' +
+    id +
+    "')\">-</button>" +
+    '<button class="win-btn win-max"   onclick="maxWin(\'' +
+    id +
+    "')\">&#9633;</button>" +
+    '<button class="win-btn win-close" onclick="closeWin(\'' +
+    id +
+    "')\">&#215;</button>" +
+    "</div>";
   win.appendChild(bar);
 
   /* Body */
@@ -92,7 +104,7 @@ function _spawnWin(id, title, w, h, winType, data) {
   scroll.className = "win-scroll";
   scroll.id = "wbody_" + id;
   scroll.innerHTML =
-    '<div style="padding:20px;color:#00cccc;font-family:\'Share Tech Mono\',monospace;' +
+    "<div style=\"padding:20px;color:#00cccc;font-family:'Share Tech Mono',monospace;" +
     'font-size:11px;letter-spacing:1px;">LOADING&#8230;</div>';
   body.appendChild(scroll);
   win.appendChild(body);
@@ -104,11 +116,18 @@ function _spawnWin(id, title, w, h, winType, data) {
 
   document.getElementById("desktop").appendChild(win);
   wins[id] = {
-    el: win, minimized: false, maximized: false,
-    ox: x, oy: y + 24, ow: w, oh: h
+    el: win,
+    minimized: false,
+    maximized: false,
+    ox: x,
+    oy: y + 24,
+    ow: w,
+    oh: h
   };
 
-  setTimeout(function () { win.classList.remove("opening"); }, 260);
+  setTimeout(function () {
+    win.classList.remove("opening");
+  }, 260);
   makeDraggable(win, bar);
   makeResizable(win, rsz);
   focusWin(id);
@@ -133,7 +152,7 @@ function _loadContent(id, winType, data) {
       var cssId = "wincss_" + winType;
       if (!document.getElementById(cssId)) {
         var lnk = document.createElement("link");
-        lnk.id  = cssId;
+        lnk.id = cssId;
         lnk.rel = "stylesheet";
         lnk.href = WIN_BASE + winType + "/" + winType + ".css";
         document.head.appendChild(lnk);
@@ -147,21 +166,35 @@ function _loadContent(id, winType, data) {
         })
         .then(function (js) {
           var fn = new Function(
-            "winId", "winData",
-            "ENTITIES", "STAFF", "SITES", "DEPTS", "CLS_LABELS",
-            "sessionStaff", "userClearance",
-            "openWin", "closeWin", "termPrint", "termRun",
+            "winId",
+            "winData",
+            "ENTITIES",
+            "personnel",
+            "SITES",
+            "DEPTS",
+            "CLS_LABELS",
+            "sessionpersonnel",
+            "userClearance",
+            "openWin",
+            "closeWin",
+            "termPrint",
+            "termRun",
             js
           );
           fn(
-            id, data,
-            typeof ENTITIES    !== "undefined" ? ENTITIES    : [],
-            typeof STAFF       !== "undefined" ? STAFF       : [],
-            typeof SITES       !== "undefined" ? SITES       : [],
-            typeof DEPTS       !== "undefined" ? DEPTS       : {},
-            typeof CLS_LABELS  !== "undefined" ? CLS_LABELS  : {},
-            sessionStaff, userClearance,
-            openWin, closeWin, termPrint, termRun
+            id,
+            data,
+            typeof ENTITIES !== "undefined" ? ENTITIES : [],
+            typeof personnel !== "undefined" ? personnel : [],
+            typeof SITES !== "undefined" ? SITES : [],
+            typeof DEPTS !== "undefined" ? DEPTS : {},
+            typeof CLS_LABELS !== "undefined" ? CLS_LABELS : {},
+            sessionpersonnel,
+            userClearance,
+            openWin,
+            closeWin,
+            termPrint,
+            termRun
           );
         })
         .catch(function (err) {
@@ -172,10 +205,14 @@ function _loadContent(id, winType, data) {
       var body = document.getElementById("wbody_" + id);
       if (body)
         body.innerHTML =
-          '<div style="padding:20px;font-family:\'Share Tech Mono\',monospace;' +
+          "<div style=\"padding:20px;font-family:'Share Tech Mono',monospace;" +
           'font-size:11px;color:#553333;">WINDOW UNAVAILABLE<br>' +
-          '<span style="color:#2a2a3a;">' + err.message + '</span><br>' +
-          '<span style="color:#1a2a2a;">Path: ' + htmlUrl + '</span></div>';
+          '<span style="color:#2a2a3a;">' +
+          err.message +
+          "</span><br>" +
+          '<span style="color:#1a2a2a;">Path: ' +
+          htmlUrl +
+          "</span></div>";
     });
 }
 
@@ -234,18 +271,26 @@ function maxWin(id) {
   var w = wins[id];
   if (w.maximized) {
     w.el.style.cssText =
-      "left:" + w.ox + "px;top:" + w.oy + "px;" +
-      "width:" + w.ow + "px;height:" + w.oh + "px;" +
-      "z-index:" + zTop + ";";
+      "left:" +
+      w.ox +
+      "px;top:" +
+      w.oy +
+      "px;" +
+      "width:" +
+      w.ow +
+      "px;height:" +
+      w.oh +
+      "px;" +
+      "z-index:" +
+      zTop +
+      ";";
     w.maximized = false;
   } else {
-    w.ox = parseInt(w.el.style.left)   || 0;
-    w.oy = parseInt(w.el.style.top)    || 0;
-    w.ow = parseInt(w.el.style.width)  || 600;
+    w.ox = parseInt(w.el.style.left) || 0;
+    w.oy = parseInt(w.el.style.top) || 0;
+    w.ow = parseInt(w.el.style.width) || 600;
     w.oh = parseInt(w.el.style.height) || 400;
-    w.el.style.cssText =
-      "left:0;top:22px;width:100%;height:calc(100% - 22px);" +
-      "z-index:" + zTop + ";";
+    w.el.style.cssText = "left:0;top:22px;width:100%;height:calc(100% - 22px);" + "z-index:" + zTop + ";";
     w.maximized = true;
   }
   w.el.classList.add("focused");
@@ -256,10 +301,14 @@ function addTBBtn(id, title) {
   var btn = document.createElement("button");
   btn.className = "tb-btn active";
   btn.innerHTML =
-    '<img src="' + FOLDER_IMG + '" alt="" ' +
+    '<img src="' +
+    FOLDER_IMG +
+    '" alt="" ' +
     'style="width:14px;height:14px;object-fit:contain;border-radius:2px;flex-shrink:0;">' +
     '<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;' +
-    'white-space:nowrap;">' + title.slice(0, 14) + '</span>';
+    'white-space:nowrap;">' +
+    title.slice(0, 14) +
+    "</span>";
   btn.addEventListener("click", function () {
     if (!wins[id]) return;
     if (wins[id].minimized) minWin(id);
@@ -274,16 +323,16 @@ function addTBBtn(id, title) {
 function makeDraggable(win, bar) {
   var sx, sy, sl, st;
   bar.addEventListener("mousedown", function (e) {
-    if (e.target.classList.contains("win-btn") ||
-        e.target.closest(".win-btns")) return;
+    if (e.target.classList.contains("win-btn") || e.target.closest(".win-btns")) return;
     var id = win.id.replace("win-", "");
     focusWin(id);
-    sx = e.clientX; sy = e.clientY;
+    sx = e.clientX;
+    sy = e.clientY;
     sl = parseInt(win.style.left) || 0;
-    st = parseInt(win.style.top)  || 0;
+    st = parseInt(win.style.top) || 0;
     function mv(e) {
       win.style.left = Math.max(0, sl + (e.clientX - sx)) + "px";
-      win.style.top  = Math.max(24, st + (e.clientY - sy)) + "px";
+      win.style.top = Math.max(24, st + (e.clientY - sy)) + "px";
     }
     function up() {
       document.removeEventListener("mousemove", mv);
@@ -295,22 +344,31 @@ function makeDraggable(win, bar) {
   });
 
   /* Touch support */
-  bar.addEventListener("touchstart", function (e) {
-    if (e.target.closest(".win-btns")) return;
-    var id = win.id.replace("win-", "");
-    focusWin(id);
-    var t = e.touches[0];
-    sx = t.clientX; sy = t.clientY;
-    sl = parseInt(win.style.left) || 0;
-    st = parseInt(win.style.top)  || 0;
-    e.preventDefault();
-  }, { passive: false });
-  bar.addEventListener("touchmove", function (e) {
-    var t = e.touches[0];
-    win.style.left = Math.max(0, sl + (t.clientX - sx)) + "px";
-    win.style.top  = Math.max(24, st + (t.clientY - sy)) + "px";
-    e.preventDefault();
-  }, { passive: false });
+  bar.addEventListener(
+    "touchstart",
+    function (e) {
+      if (e.target.closest(".win-btns")) return;
+      var id = win.id.replace("win-", "");
+      focusWin(id);
+      var t = e.touches[0];
+      sx = t.clientX;
+      sy = t.clientY;
+      sl = parseInt(win.style.left) || 0;
+      st = parseInt(win.style.top) || 0;
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+  bar.addEventListener(
+    "touchmove",
+    function (e) {
+      var t = e.touches[0];
+      win.style.left = Math.max(0, sl + (t.clientX - sx)) + "px";
+      win.style.top = Math.max(24, st + (t.clientY - sy)) + "px";
+      e.preventDefault();
+    },
+    { passive: false }
+  );
 }
 
 /* ── RESIZE ──────────────────────────────────────────────────── */
@@ -318,11 +376,12 @@ function makeResizable(win, handle) {
   handle.addEventListener("mousedown", function (e) {
     e.stopPropagation();
     e.preventDefault();
-    var sw = parseInt(win.style.width)  || 400;
+    var sw = parseInt(win.style.width) || 400;
     var sh = parseInt(win.style.height) || 300;
-    var sx = e.clientX, sy = e.clientY;
+    var sx = e.clientX,
+      sy = e.clientY;
     function mv(e) {
-      win.style.width  = Math.max(320, sw + (e.clientX - sx)) + "px";
+      win.style.width = Math.max(320, sw + (e.clientX - sx)) + "px";
       win.style.height = Math.max(180, sh + (e.clientY - sy)) + "px";
     }
     function up() {
@@ -350,7 +409,7 @@ document.addEventListener("click", function (e) {
 
 /* ── TERMINAL FUNCTIONS (globals needed by window HTML) ───────── */
 var termHistory = [];
-var termHIdx    = -1;
+var termHIdx = -1;
 
 function termKey(e) {
   var inp = document.getElementById("term-in");
@@ -375,10 +434,10 @@ function termPrint(txt, cls) {
   var out = document.getElementById("term-out");
   if (!out) return;
   var d = document.createElement("div");
-  if      (cls === "err")  d.style.color = "#ff4444";
+  if (cls === "err") d.style.color = "#ff4444";
   else if (cls === "warn") d.style.color = "#ffaa00";
-  else if (cls === "ok")   d.style.color = "#00ee88";
-  else if (cls === "dim")  d.style.color = "#335544";
+  else if (cls === "ok") d.style.color = "#00ee88";
+  else if (cls === "dim") d.style.color = "#335544";
   d.textContent = txt;
   out.appendChild(d);
   out.scrollTop = out.scrollHeight;
@@ -386,17 +445,17 @@ function termPrint(txt, cls) {
 
 function termRun(raw) {
   var parts = raw.split(" ");
-  var cmd   = parts[0].toUpperCase();
-  var args  = parts.slice(1);
-  var ENT   = typeof ENTITIES !== "undefined" ? ENTITIES : [];
-  var STF   = typeof STAFF    !== "undefined" ? STAFF    : [];
-  var SIT   = typeof SITES    !== "undefined" ? SITES    : [];
+  var cmd = parts[0].toUpperCase();
+  var args = parts.slice(1);
+  var ENT = typeof ENTITIES !== "undefined" ? ENTITIES : [];
+  var STF = typeof personnel !== "undefined" ? personnel : [];
+  var SIT = typeof SITES !== "undefined" ? SITES : [];
 
   switch (cmd) {
     case "HELP":
       [
         "HELP              — show this list",
-        "LIST              — list records  (LIST ENTITIES | LIST STAFF | LIST SITES)",
+        "LIST              — list records  (LIST ENTITIES | LIST personnel | LIST SITES)",
         "GET               — get entity by ID  (GET ENTITY <id>)",
         "OPEN              — open entity window  (OPEN ENTITY <id>)",
         "STATUS            — overall system status",
@@ -405,12 +464,14 @@ function termRun(raw) {
         "CODE              — open source file viewer",
         "CLEAR             — clear terminal output",
         "VER               — version info",
-        "SETCLR <1-4>      — set clearance level (CL-5: OVERRIDE CLEARANCE OMEGA)",
+        "SETCLR <1-4>      — set clearance level (CL-5:Enter Code)",
         "CLRINFO           — show current clearance",
         "WHOAMI            — show session identity",
         "TRANSMIT          — send record to NeoMS Registry",
         "LOGOUT            — wipe session and return to intake"
-      ].forEach(function (l) { termPrint("  " + l, "dim"); });
+      ].forEach(function (l) {
+        termPrint("  " + l, "dim");
+      });
       break;
 
     case "VER":
@@ -427,16 +488,23 @@ function termRun(raw) {
       termPrint("SYSTEM STATUS:", "ok");
       ENT.forEach(function (e) {
         termPrint(
-          "  E-" + String(e.id).padStart(4, "0") +
-          " [" + e.cls + "] " + e.name.padEnd(32, " ") +
-          " STATUS: " + e.status,
+          "  E-" +
+            String(e.id).padStart(4, "0") +
+            " [" +
+            e.cls +
+            "] " +
+            e.name.padEnd(32, " ") +
+            " STATUS: " +
+            e.status,
           e.status === "BREACHED" ? "err" : e.status === "MONITORED" ? "warn" : "dim"
         );
       });
       break;
 
     case "BREACH": {
-      var br = ENT.filter(function (e) { return e.status === "BREACHED"; });
+      var br = ENT.filter(function (e) {
+        return e.status === "BREACHED";
+      });
       if (br.length) {
         br.forEach(function (e) {
           termPrint("  [BREACH] E-" + String(e.id).padStart(4, "0") + " — " + e.name, "err");
@@ -461,20 +529,18 @@ function termRun(raw) {
       var sub = (args[0] || "").toUpperCase();
       if (sub === "ENTITIES" || sub === "") {
         ENT.forEach(function (e) {
-          termPrint("  E-" + String(e.id).padStart(4, "0") +
-            " [" + e.cls + "/" + e.ps + "] " + e.name);
+          termPrint("  E-" + String(e.id).padStart(4, "0") + " [" + e.cls + "/" + e.ps + "] " + e.name);
         });
-      } else if (sub === "STAFF") {
+      } else if (sub === "personnel") {
         STF.forEach(function (s) {
-          termPrint("  S-" + s.id + " [CL-" + s.clr + "] " +
-            s.fname + " " + s.lname + " — " + s.pos);
+          termPrint("  S-" + s.id + " [CL-" + s.clr + "] " + s.fname + " " + s.lname + " — " + s.pos);
         });
       } else if (sub === "SITES") {
         SIT.forEach(function (s) {
           termPrint("  " + s.name + " — " + s.loc + " (" + s.status + ")");
         });
       } else {
-        termPrint("Unknown target. Try: LIST ENTITIES | LIST STAFF | LIST SITES", "err");
+        termPrint("Unknown target. Try: LIST ENTITIES | LIST personnel | LIST SITES", "err");
       }
       break;
     }
@@ -483,12 +549,16 @@ function termRun(raw) {
       var gs = (args[0] || "").toUpperCase();
       var gi = parseInt(args[1]);
       if (gs === "ENTITY" && !isNaN(gi)) {
-        var ent = ENT.find(function (x) { return x.id === gi; });
+        var ent = ENT.find(function (x) {
+          return x.id === gi;
+        });
         if (ent) {
           ["name", "cls", "ps", "status", "site", "protocols"].forEach(function (k) {
             termPrint(
-              "  " + k.padEnd(10, " ") + ": " +
-              (k === "site" ? "Site-" + ent[k] : k === "protocols" ? ent[k].length : ent[k]),
+              "  " +
+                k.padEnd(10, " ") +
+                ": " +
+                (k === "site" ? "Site-" + ent[k] : k === "protocols" ? ent[k].length : ent[k]),
               ent.status === "BREACHED" && k === "status" ? "err" : ""
             );
           });
@@ -506,7 +576,9 @@ function termRun(raw) {
       var os = (args[0] || "").toUpperCase();
       var oi = parseInt(args[1]);
       if (os === "ENTITY" && !isNaN(oi)) {
-        var oe = ENT.find(function (x) { return x.id === oi; });
+        var oe = ENT.find(function (x) {
+          return x.id === oi;
+        });
         if (oe) {
           openWin("entity", oi);
           termPrint("Opening E-" + String(oi).padStart(4, "0") + "...", "ok");
@@ -542,46 +614,51 @@ function termRun(raw) {
 
     case "CLRINFO":
       termPrint("Current clearance: CL-" + userClearance, "ok");
-      termPrint(
-        userClearance < 5 ? "  Access restricted." : "  Full access granted.", "dim"
-      );
+      termPrint(userClearance < 5 ? "  Access restricted." : "  Full access granted.", "dim");
       break;
 
     case "WHOAMI":
-      if (sessionStaff) {
+      if (sessionpersonnel) {
         termPrint("Session identity:", "ok");
-        termPrint("  ID   : S-" + sessionStaff.id);
-        termPrint("  Name : " + sessionStaff.fname + " " + sessionStaff.lname);
-        termPrint("  Dept : " + sessionStaff.dept);
-        termPrint("  CLR  : CL-" + sessionStaff.clr);
-        termPrint("  Site : Site-" + sessionStaff.site);
+        termPrint("  ID   : S-" + sessionpersonnel.id);
+        termPrint("  Name : " + sessionpersonnel.fname + " " + sessionpersonnel.lname);
+        termPrint("  Dept : " + sessionpersonnel.dept);
+        termPrint("  CLR  : CL-" + sessionpersonnel.clr);
+        termPrint("  Site : Site-" + sessionpersonnel.site);
       } else {
         termPrint("No session identity on record.", "warn");
       }
       break;
 
     case "TRANSMIT":
-      if (!sessionStaff) { termPrint("No session identity. Complete intake first.", "err"); break; }
+      if (!sessionpersonnel) {
+        termPrint("No session identity. Complete intake first.", "err");
+        break;
+      }
       termPrint("Transmitting to NeoMS Registry...", "warn");
       fetch("https://formspree.io/f/xwvwybya", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          staff_id:   "S-" + sessionStaff.id,
-          first_name: sessionStaff.fname,
-          last_name:  sessionStaff.lname,
-          department: sessionStaff.dept,
-          clearance:  "CL-" + sessionStaff.clr,
-          site:       "Site-" + sessionStaff.site,
-          timestamp:  new Date().toISOString()
+          personnel_id: "S-" + sessionpersonnel.id,
+          first_name: sessionpersonnel.fname,
+          last_name: sessionpersonnel.lname,
+          department: sessionpersonnel.dept,
+          clearance: "CL-" + sessionpersonnel.clr,
+          site: "Site-" + sessionpersonnel.site,
+          timestamp: new Date().toISOString()
         })
       })
         .then(function (r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
           return r.json();
         })
-        .then(function () { termPrint("TRANSMISSION COMPLETE.", "ok"); })
-        .catch(function (err) { termPrint("TRANSMISSION FAILED — " + err.message, "err"); });
+        .then(function () {
+          termPrint("TRANSMISSION COMPLETE.", "ok");
+        })
+        .catch(function (err) {
+          termPrint("TRANSMISSION FAILED — " + err.message, "err");
+        });
       break;
 
     case "DEPTREQ":
@@ -589,7 +666,9 @@ function termRun(raw) {
       break;
 
     case "LOGOUT":
-      try { localStorage.removeItem("neoms_session_staff"); } catch (e) {}
+      try {
+        localStorage.removeItem("neoms_session_personnel");
+      } catch (e) {}
       termPrint("Session terminated. Redirecting to intake...", "warn");
       setTimeout(function () {
         window.location.href = "/Neoms~Database/HTML/intake.html";
@@ -607,13 +686,13 @@ function toast(msg, dur) {
   if (!t) return;
   t.textContent = msg;
   t.classList.add("show");
-  setTimeout(function () { t.classList.remove("show"); }, dur || 2500);
+  setTimeout(function () {
+    t.classList.remove("show");
+  }, dur || 2500);
 }
 
 function escHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /* ── AUTO-OPEN: Containment Log on startup ───────────────────── */

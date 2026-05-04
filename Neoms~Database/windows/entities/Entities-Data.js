@@ -72,7 +72,7 @@ const ENTITIES = [
                 equipment:
                     "Anomaly-grade observation array, soul-coherence monitors, media-isolation Faraday enclosure",
                 duration: null,
-                staff: 10
+                personnel: 10
             },
             {
                 type: "INTERACTION",
@@ -80,7 +80,7 @@ const ENTITIES = [
                 desc: "No direct interaction authorised at any clearance level. If REWRITE initiates contact, do not respond to personal questions. Do not provide your name. Terminate session immediately by speaking the phrase: 'Protocol Exit — Sincere.' Entity is contractually bound to honour this phrase. Do not attempt to outplay, outsmart, or beat the entity — it treats this as engagement and escalates. If entity enters Midareta state during contact, evacuate the digital environment immediately.",
                 equipment: "Memetic filter headgear (Class-3), soul-coherence personal monitor",
                 duration: 5,
-                staff: 5
+                personnel: 5
             },
             {
                 type: "BREACH",
@@ -88,7 +88,7 @@ const ENTITIES = [
                 desc: "In the event of boundary dissolution event: immediately evacuate all vessels from SOUL_CACHE. Do not attempt to close the program — entity will interpret this as continued engagement. Initiate Rule-6 invocation. If entity has entered Wurugashikoi state, personnel exposure to the anomaly must be considered total — assume soul-coherence failure. Cordon Site-62656 entirely. Casualties should be expected. Note: entity's true target is always the observer.",
                 equipment: "Emergency evacuation units, Class-A memetic barriers, observer-layer isolation protocol",
                 duration: null,
-                staff: "ALL FACILITY UNITS"
+                personnel: "ALL FACILITY UNITS"
             }
         ],
         reports: [
@@ -193,11 +193,11 @@ const ENTITIES = [
             {
                 type: "CONTAINMENT",
                 clr: 4,
-                desc: "Entity is held under provisional exorcism-ritual binding. This containment is NOT guaranteed to hold indefinitely. Under no circumstances should the summoning incantation ('Furube Yurayura...') be spoken within Site-10081 perimeter. The entity's Dharma wheel must be monitored at all times — any unprompted rotation constitutes a PRE-BREACH condition and must be reported to CL-4 staff immediately.",
+                desc: "Entity is held under provisional exorcism-ritual binding. This containment is NOT guaranteed to hold indefinitely. Under no circumstances should the summoning incantation ('Furube Yurayura...') be spoken within Site-10081 perimeter. The entity's Dharma wheel must be monitored at all times — any unprompted rotation constitutes a PRE-BREACH condition and must be reported to CL-4 personnel immediately.",
                 equipment:
                     "Anomaly-spin sensor array, positive-energy field emitters (Class-4), full-perimeter cursed barrier, exorcism-ritual binding anchors (x8)",
                 duration: null,
-                staff: 16
+                personnel: 16
             },
             {
                 type: "INTERACTION",
@@ -206,7 +206,7 @@ const ENTITIES = [
                 equipment:
                     "Positive-energy containment suit, cursed-energy suppression monitoring array, remote failsafe detonator",
                 duration: 10,
-                staff: 4
+                personnel: 4
             },
             {
                 type: "BREACH",
@@ -215,7 +215,7 @@ const ENTITIES = [
                 equipment:
                     "Maximum-output anomaly strike units, Site-wide barrier collapse switch, Class-A evacuation units",
                 duration: null,
-                staff: "ALL FACILITY UNITS"
+                personnel: "ALL FACILITY UNITS"
             }
         ],
         reports: [
@@ -329,7 +329,7 @@ const ENTITIES = [
                 equipment:
                     "Ritual disruption units, broadcast signal isolation array, CODC-grade memetic shielding, cross-site demolition teams",
                 duration: null,
-                staff: null
+                personnel: null
             },
             {
                 type: "INTERACTION",
@@ -338,7 +338,7 @@ const ENTITIES = [
                 equipment:
                     "Class-5 memetic filter headgear, psychological monitoring band, broadcast-isolating field emitter",
                 duration: 15,
-                staff: 20
+                personnel: 20
             },
             {
                 type: "BREACH",
@@ -347,7 +347,7 @@ const ENTITIES = [
                 equipment:
                     "Civilian evacuation units, broadcast blackout relays, Godzilla-class engagement coordination, Mothra-signal detection array",
                 duration: null,
-                staff: "ALL AVAILABLE"
+                personnel: "ALL AVAILABLE"
             }
         ],
         reports: [

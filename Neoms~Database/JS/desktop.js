@@ -11,74 +11,321 @@
    ============================================================ */
 "use strict";
 
-const LS_KEY     = "neoms_session_staff";
+const LS_KEY = "neoms_session_personnel";
 const INTAKE_URL = "/Neoms~Database/HTML/intake.html";
-const WIN_BASE   = "/Neoms~Database/windows/";
+const WIN_BASE = "/Neoms~Database/windows/";
 
 /* ── Session guard ──────────────────────────────────────────── */
-let sessionStaff = null;
+let sessionpersonnel = null;
 (function () {
   try {
-    sessionStaff = JSON.parse(localStorage.getItem(LS_KEY));
+    sessionpersonnel = JSON.parse(localStorage.getItem(LS_KEY));
   } catch (e) {}
   /* Allow ?guest=1 to skip intake for previews */
-  if ((!sessionStaff || !sessionStaff.fname) && /[?&]guest=1/.test(location.search)) {
-    sessionStaff = { fname: "Guest", lname: "Operator", id: "G-0000", clearance: 1 };
-    try { localStorage.setItem(LS_KEY, JSON.stringify(sessionStaff)); } catch (e) {}
+  if ((!sessionpersonnel || !sessionpersonnel.fname) && /[?&]guest=1/.test(location.search)) {
+    sessionpersonnel = { fname: "Guest", lname: "Operator", id: "G-0000", clearance: 1 };
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(sessionpersonnel));
+    } catch (e) {}
   }
-  if (!sessionStaff || !sessionStaff.fname) {
+  if (!sessionpersonnel || !sessionpersonnel.fname) {
     window.location.replace(INTAKE_URL);
   }
 })();
 
 /* ── State ──────────────────────────────────────────────────── */
-let wins          = {};
-let winZ          = 50;
-let activeWin     = null;
+let wins = {};
+let winZ = 50;
+let activeWin = null;
 let userClearance = 1;
 
 /* ── CV_FILES — source file list for the code viewer ────────── */
 window.CV_FILES = [
   /* ── Data files ── */
-  { label: "Entities-Data.js", path: "/Neoms~Database/windows/entities/Entities-Data.js", lang: "js",  clr: 3, dir: "windows/entities",      desc: "Entity records + classification labels" },
-  { label: "Staff-Data.js",    path: "/Neoms~Database/windows/staff/Staff-Data.js",        lang: "js",  clr: 3, dir: "windows/staff",          desc: "Staff roster + departments" },
-  { label: "Sites-Data.js",    path: "/Neoms~Database/windows/sites/Sites-Data.js",        lang: "js",  clr: 3, dir: "windows/sites",          desc: "Containment site records" },
+  {
+    label: "Entities-Data.js",
+    path: "/Neoms~Database/windows/entities/Entities-Data.js",
+    lang: "js",
+    clr: 3,
+    dir: "windows/entities",
+    desc: "Entity records + classification labels"
+  },
+  {
+    label: "Personnel-Data.js",
+    path: "/Neoms~Database/windows/personnel/Personnel-Data.js",
+    lang: "js",
+    clr: 3,
+    dir: "windows/personnel",
+    desc: "personnel roster + departments"
+  },
+  {
+    label: "Sites-Data.js",
+    path: "/Neoms~Database/windows/sites/Sites-Data.js",
+    lang: "js",
+    clr: 3,
+    dir: "windows/sites",
+    desc: "Containment site records"
+  },
   /* ── Core JS ── */
-  { label: "desktop.js",  path: "/Neoms~Database/JS/desktop.js",  lang: "js",  clr: 2, dir: "JS", desc: "Desktop shell core" },
-  { label: "intake.js",   path: "/Neoms~Database/JS/intake.js",   lang: "js",  clr: 2, dir: "JS", desc: "Intake terminal logic" },
+  {
+    label: "desktop.js",
+    path: "/Neoms~Database/JS/desktop.js",
+    lang: "js",
+    clr: 2,
+    dir: "JS",
+    desc: "Desktop shell core"
+  },
+  {
+    label: "intake.js",
+    path: "/Neoms~Database/JS/intake.js",
+    lang: "js",
+    clr: 2,
+    dir: "JS",
+    desc: "Intake terminal logic"
+  },
   /* ── HTML ── */
-  { label: "desktop.html", path: "/Neoms~Database/HTML/desktop.html", lang: "html", clr: 1, dir: "HTML", desc: "Desktop shell markup" },
-  { label: "intake.html",  path: "/Neoms~Database/HTML/intake.html",  lang: "html", clr: 1, dir: "HTML", desc: "Intake terminal markup" },
+  {
+    label: "desktop.html",
+    path: "/Neoms~Database/HTML/desktop.html",
+    lang: "html",
+    clr: 1,
+    dir: "HTML",
+    desc: "Desktop shell markup"
+  },
+  {
+    label: "intake.html",
+    path: "/Neoms~Database/HTML/intake.html",
+    lang: "html",
+    clr: 1,
+    dir: "HTML",
+    desc: "Intake terminal markup"
+  },
   /* ── CSS ── */
-  { label: "Databaselog.css", path: "/Neoms~Database/CSS/Databaselog.css", lang: "css", clr: 1, dir: "CSS", desc: "Main stylesheet" },
-  { label: "desktop.css",     path: "/Neoms~Database/CSS/desktop.css",     lang: "css", clr: 1, dir: "CSS", desc: "Desktop shell styles" },
-  { label: "intake.css",      path: "/Neoms~Database/CSS/intake.css",      lang: "css", clr: 1, dir: "CSS", desc: "Intake terminal styles" },
+  {
+    label: "Databaselog.css",
+    path: "/Neoms~Database/CSS/Databaselog.css",
+    lang: "css",
+    clr: 1,
+    dir: "CSS",
+    desc: "Main stylesheet"
+  },
+  {
+    label: "desktop.css",
+    path: "/Neoms~Database/CSS/desktop.css",
+    lang: "css",
+    clr: 1,
+    dir: "CSS",
+    desc: "Desktop shell styles"
+  },
+  {
+    label: "intake.css",
+    path: "/Neoms~Database/CSS/intake.css",
+    lang: "css",
+    clr: 1,
+    dir: "CSS",
+    desc: "Intake terminal styles"
+  },
   /* ── Windows ── */
-  { label: "main.html",           path: "/Neoms~Database/windows/main/main.html",                       lang: "html", clr: 1, dir: "windows/main",          desc: "Containment Log window" },
-  { label: "main.js",             path: "/Neoms~Database/windows/main/main.js",                         lang: "js",   clr: 2, dir: "windows/main",          desc: "Containment Log logic" },
-  { label: "entities.html",       path: "/Neoms~Database/windows/entities/entities.html",               lang: "html", clr: 1, dir: "windows/entities",      desc: "Entity Registry window" },
-  { label: "entities.js",         path: "/Neoms~Database/windows/entities/entities.js",                 lang: "js",   clr: 2, dir: "windows/entities",      desc: "Entity Registry logic" },
-  { label: "entity-detail.html",  path: "/Neoms~Database/windows/entity-detail/entity-detail.html",    lang: "html", clr: 1, dir: "windows/entity-detail", desc: "Entity Detail window" },
-  { label: "entity-detail.js",    path: "/Neoms~Database/windows/entity-detail/entity-detail.js",      lang: "js",   clr: 2, dir: "windows/entity-detail", desc: "Entity Detail logic" },
-  { label: "entity-scheme.html",  path: "/Neoms~Database/windows/entity-scheme/entity-scheme.html",    lang: "html", clr: 1, dir: "windows/entity-scheme", desc: "Entity Classification Scheme window" },
-  { label: "entity-scheme.js",    path: "/Neoms~Database/windows/entity-scheme/entity-scheme.js",      lang: "js",   clr: 2, dir: "windows/entity-scheme", desc: "Entity Classification Scheme logic" },
-  { label: "entity-scheme.css",   path: "/Neoms~Database/windows/entity-scheme/entity-scheme.css",     lang: "css",  clr: 1, dir: "windows/entity-scheme", desc: "Entity Classification Scheme styles" },
-  { label: "staff.html",          path: "/Neoms~Database/windows/staff/staff.html",                     lang: "html", clr: 1, dir: "windows/staff",         desc: "Staff Records window" },
-  { label: "staff.js",            path: "/Neoms~Database/windows/staff/staff.js",                       lang: "js",   clr: 2, dir: "windows/staff",         desc: "Staff Records logic" },
-  { label: "staff-scheme.html",   path: "/Neoms~Database/windows/staff-scheme/staff-scheme.html",      lang: "html", clr: 1, dir: "windows/staff-scheme",  desc: "Personnel Position Scheme window" },
-  { label: "staff-scheme.js",     path: "/Neoms~Database/windows/staff-scheme/staff-scheme.js",        lang: "js",   clr: 2, dir: "windows/staff-scheme",  desc: "Personnel Position Scheme logic" },
-  { label: "staff-scheme.css",    path: "/Neoms~Database/windows/staff-scheme/staff-scheme.css",       lang: "css",  clr: 1, dir: "windows/staff-scheme",  desc: "Personnel Position Scheme styles" },
-  { label: "sites.html",          path: "/Neoms~Database/windows/sites/sites.html",                     lang: "html", clr: 1, dir: "windows/sites",         desc: "Sites window" },
-  { label: "sites.js",            path: "/Neoms~Database/windows/sites/sites.js",                       lang: "js",   clr: 2, dir: "windows/sites",         desc: "Sites logic" },
-  { label: "terminal.html",       path: "/Neoms~Database/windows/terminal/terminal.html",               lang: "html", clr: 1, dir: "windows/terminal",      desc: "Terminal window" },
-  { label: "terminal.js",         path: "/Neoms~Database/windows/terminal/terminal.js",                 lang: "js",   clr: 2, dir: "windows/terminal",      desc: "Terminal logic" },
-  { label: "terminal.css",        path: "/Neoms~Database/windows/terminal/terminal.css",                lang: "css",  clr: 1, dir: "windows/terminal",      desc: "Terminal styles" },
-  { label: "worldmap.html",       path: "/Neoms~Database/windows/worldmap/worldmap.html",               lang: "html", clr: 1, dir: "windows/worldmap",      desc: "World Map window" },
-  { label: "worldmap.js",         path: "/Neoms~Database/windows/worldmap/worldmap.js",                 lang: "js",   clr: 2, dir: "windows/worldmap",      desc: "World Map logic" },
-  { label: "worldmap.css",        path: "/Neoms~Database/windows/worldmap/worldmap.css",                lang: "css",  clr: 1, dir: "windows/worldmap",      desc: "World Map styles" },
-  { label: "codeviewer.html",     path: "/Neoms~Database/windows/codeviewer/codeviewer.html",           lang: "html", clr: 1, dir: "windows/codeviewer",    desc: "Code Viewer window" },
-  { label: "codeviewer.js",       path: "/Neoms~Database/windows/codeviewer/codeviewer.js",             lang: "js",   clr: 2, dir: "windows/codeviewer",    desc: "Code Viewer logic" },
-  { label: "codeviewer.css",      path: "/Neoms~Database/windows/codeviewer/codeviewer.css",            lang: "css",  clr: 1, dir: "windows/codeviewer",    desc: "Code Viewer styles" }
+  {
+    label: "main.html",
+    path: "/Neoms~Database/windows/main/main.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/main",
+    desc: "Containment Log window"
+  },
+  {
+    label: "main.js",
+    path: "/Neoms~Database/windows/main/main.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/main",
+    desc: "Containment Log logic"
+  },
+  {
+    label: "entities.html",
+    path: "/Neoms~Database/windows/entities/entities.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/entities",
+    desc: "Entity Registry window"
+  },
+  {
+    label: "entities.js",
+    path: "/Neoms~Database/windows/entities/entities.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/entities",
+    desc: "Entity Registry logic"
+  },
+  {
+    label: "entity-detail.html",
+    path: "/Neoms~Database/windows/entity-detail/entity-detail.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/entity-detail",
+    desc: "Entity Detail window"
+  },
+  {
+    label: "entity-detail.js",
+    path: "/Neoms~Database/windows/entity-detail/entity-detail.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/entity-detail",
+    desc: "Entity Detail logic"
+  },
+  {
+    label: "entity-scheme.html",
+    path: "/Neoms~Database/windows/entity-scheme/entity-scheme.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/entity-scheme",
+    desc: "Entity Classification Scheme window"
+  },
+  {
+    label: "entity-scheme.js",
+    path: "/Neoms~Database/windows/entity-scheme/entity-scheme.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/entity-scheme",
+    desc: "Entity Classification Scheme logic"
+  },
+  {
+    label: "entity-scheme.css",
+    path: "/Neoms~Database/windows/entity-scheme/entity-scheme.css",
+    lang: "css",
+    clr: 1,
+    dir: "windows/entity-scheme",
+    desc: "Entity Classification Scheme styles"
+  },
+  {
+    label: "personnel.html",
+    path: "/Neoms~Database/windows/personnel/personnel.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/personnel",
+    desc: "Personnel Records window"
+  },
+  {
+    label: "personnel.js",
+    path: "/Neoms~Database/windows/personnel/personnel.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/personnel",
+    desc: "Personnel Records logic"
+  },
+  {
+    label: "personnel-scheme.html",
+    path: "/Neoms~Database/windows/personnel-scheme/personnel-scheme.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/personnel-scheme",
+    desc: "Personnel Position Scheme window"
+  },
+  {
+    label: "personnel-scheme.js",
+    path: "/Neoms~Database/windows/personnel-scheme/personnel-scheme.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/personnel-scheme",
+    desc: "Personnel Position Scheme logic"
+  },
+  {
+    label: "personnel-scheme.css",
+    path: "/Neoms~Database/windows/personnel-scheme/personnel-scheme.css",
+    lang: "css",
+    clr: 1,
+    dir: "windows/personnel-scheme",
+    desc: "Personnel Position Scheme styles"
+  },
+  {
+    label: "sites.html",
+    path: "/Neoms~Database/windows/sites/sites.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/sites",
+    desc: "Sites window"
+  },
+  {
+    label: "sites.js",
+    path: "/Neoms~Database/windows/sites/sites.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/sites",
+    desc: "Sites logic"
+  },
+  {
+    label: "terminal.html",
+    path: "/Neoms~Database/windows/terminal/terminal.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/terminal",
+    desc: "Terminal window"
+  },
+  {
+    label: "terminal.js",
+    path: "/Neoms~Database/windows/terminal/terminal.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/terminal",
+    desc: "Terminal logic"
+  },
+  {
+    label: "terminal.css",
+    path: "/Neoms~Database/windows/terminal/terminal.css",
+    lang: "css",
+    clr: 1,
+    dir: "windows/terminal",
+    desc: "Terminal styles"
+  },
+  {
+    label: "worldmap.html",
+    path: "/Neoms~Database/windows/worldmap/worldmap.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/worldmap",
+    desc: "World Map window"
+  },
+  {
+    label: "worldmap.js",
+    path: "/Neoms~Database/windows/worldmap/worldmap.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/worldmap",
+    desc: "World Map logic"
+  },
+  {
+    label: "worldmap.css",
+    path: "/Neoms~Database/windows/worldmap/worldmap.css",
+    lang: "css",
+    clr: 1,
+    dir: "windows/worldmap",
+    desc: "World Map styles"
+  },
+  {
+    label: "codeviewer.html",
+    path: "/Neoms~Database/windows/codeviewer/codeviewer.html",
+    lang: "html",
+    clr: 1,
+    dir: "windows/codeviewer",
+    desc: "Code Viewer window"
+  },
+  {
+    label: "codeviewer.js",
+    path: "/Neoms~Database/windows/codeviewer/codeviewer.js",
+    lang: "js",
+    clr: 2,
+    dir: "windows/codeviewer",
+    desc: "Code Viewer logic"
+  },
+  {
+    label: "codeviewer.css",
+    path: "/Neoms~Database/windows/codeviewer/codeviewer.css",
+    lang: "css",
+    clr: 1,
+    dir: "windows/codeviewer",
+    desc: "Code Viewer styles"
+  }
 ];
 
 /* ── Clearance ──────────────────────────────────────────────── */
@@ -91,7 +338,9 @@ function setClearance(level) {
     const d = document.getElementById("cd" + i);
     if (d) d.classList.toggle("active", i <= level);
   }
-  try { localStorage.setItem(LS_CLR_KEY, String(level)); } catch (e) {}
+  try {
+    localStorage.setItem(LS_CLR_KEY, String(level));
+  } catch (e) {}
 }
 
 function cycleClearance() {
@@ -105,11 +354,9 @@ function cycleClearance() {
 
 /* ── Clock ──────────────────────────────────────────────────── */
 function updateClock() {
-  const n  = new Date();
+  const n = new Date();
   const el = document.getElementById("sys-clock");
-  if (el)
-    el.textContent =
-      String(n.getHours()).padStart(2, "0") + ":" + String(n.getMinutes()).padStart(2, "0");
+  if (el) el.textContent = String(n.getHours()).padStart(2, "0") + ":" + String(n.getMinutes()).padStart(2, "0");
 }
 updateClock();
 setInterval(updateClock, 10000);
@@ -127,7 +374,9 @@ document.addEventListener("click", function (e) {
 
 /* ── Logout ─────────────────────────────────────────────────── */
 function doLogout() {
-  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  try {
+    localStorage.removeItem(LS_KEY);
+  } catch (e) {}
   window.location.href = INTAKE_URL;
 }
 
@@ -143,7 +392,7 @@ function initDesktopBgMap() {
   if (!svgEl) return;
 
   function draw() {
-    const W = svgEl.clientWidth  || svgEl.getBoundingClientRect().width  || window.innerWidth;
+    const W = svgEl.clientWidth || svgEl.getBoundingClientRect().width || window.innerWidth;
     const H = svgEl.clientHeight || svgEl.getBoundingClientRect().height || window.innerHeight - 30;
 
     if (W < 10 || H < 10) {
@@ -154,18 +403,22 @@ function initDesktopBgMap() {
     const svg = d3.select(svgEl);
     svg.selectAll("*").remove();
 
-    const proj    = d3.geoNaturalEarth1().fitSize([W, H], { type: "Sphere" });
+    const proj = d3.geoNaturalEarth1().fitSize([W, H], { type: "Sphere" });
     const geoPath = d3.geoPath().projection(proj);
-    const g       = svg.append("g");
+    const g = svg.append("g");
 
     g.append("path")
       .datum({ type: "Sphere" })
-      .attr("fill", "#020608").attr("stroke", "#061010").attr("stroke-width", 0.3)
+      .attr("fill", "#020608")
+      .attr("stroke", "#061010")
+      .attr("stroke-width", 0.3)
       .attr("d", geoPath);
 
     g.append("path")
       .datum(d3.geoGraticule()())
-      .attr("fill", "none").attr("stroke", "#041008").attr("stroke-width", 0.2)
+      .attr("fill", "none")
+      .attr("stroke", "#041008")
+      .attr("stroke-width", 0.2)
       .attr("d", geoPath);
 
     /* Use preloaded atlas data (set by world-atlas-loader.js) to
@@ -173,9 +426,12 @@ function initDesktopBgMap() {
     function drawBgCountries(world) {
       g.selectAll(".bg-country")
         .data(topojson.feature(world, world.objects.countries).features)
-        .enter().append("path")
+        .enter()
+        .append("path")
         .attr("class", "bg-country")
-        .attr("fill", "#060e0a").attr("stroke", "#081408").attr("stroke-width", 0.25)
+        .attr("fill", "#060e0a")
+        .attr("stroke", "#081408")
+        .attr("stroke-width", 0.25)
         .attr("d", geoPath);
 
       if (typeof SITES !== "undefined") {
@@ -188,8 +444,11 @@ function initDesktopBgMap() {
               return e.site === site.id && e.status === "BREACHED";
             });
           g.append("circle")
-            .attr("cx", xy[0]).attr("cy", xy[1]).attr("r", 3)
-            .attr("fill", breached ? "#550000" : "#004040").attr("opacity", 0.6);
+            .attr("cx", xy[0])
+            .attr("cy", xy[1])
+            .attr("r", 3)
+            .attr("fill", breached ? "#550000" : "#004040")
+            .attr("opacity", 0.6);
         });
       }
     }
@@ -204,11 +463,15 @@ function initDesktopBgMap() {
   }
 
   /* Double rAF — guarantees layout is complete before reading dimensions */
-  requestAnimationFrame(function () { requestAnimationFrame(draw); });
+  requestAnimationFrame(function () {
+    requestAnimationFrame(draw);
+  });
 
   /* Redraw on resize */
   if (typeof ResizeObserver !== "undefined") {
-    new ResizeObserver(function () { requestAnimationFrame(draw); }).observe(svgEl);
+    new ResizeObserver(function () {
+      requestAnimationFrame(draw);
+    }).observe(svgEl);
   }
 }
 
@@ -218,11 +481,13 @@ function initDesktopBgMap() {
 
 /* ── makeDraggable — mouse + touch (FIX #1) ─────────────────── */
 function makeDraggable(win, titlebar) {
-  let dragging = false, ox = 0, oy = 0;
+  let dragging = false,
+    ox = 0,
+    oy = 0;
 
   function applyMove(clientX, clientY) {
-    win.style.left = Math.max(0, Math.min(clientX - ox, window.innerWidth  - 60)) + "px";
-    win.style.top  = Math.max(0, Math.min(clientY - oy, window.innerHeight - 80)) + "px";
+    win.style.left = Math.max(0, Math.min(clientX - ox, window.innerWidth - 60)) + "px";
+    win.style.top = Math.max(0, Math.min(clientY - oy, window.innerHeight - 80)) + "px";
   }
 
   /* ── Mouse ── */
@@ -235,28 +500,45 @@ function makeDraggable(win, titlebar) {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp, { once: true });
   });
-  function onMouseMove(e) { if (dragging) applyMove(e.clientX, e.clientY); }
-  function onMouseUp()    { dragging = false; document.removeEventListener("mousemove", onMouseMove); }
+  function onMouseMove(e) {
+    if (dragging) applyMove(e.clientX, e.clientY);
+  }
+  function onMouseUp() {
+    dragging = false;
+    document.removeEventListener("mousemove", onMouseMove);
+  }
 
   /* ── Touch ── */
-  titlebar.addEventListener("touchstart", function (e) {
-    if (e.target.closest(".win-controls")) return;
-    dragging = true;
-    const t = e.touches[0];
-    ox = t.clientX - win.offsetLeft;
-    oy = t.clientY - win.offsetTop;
-    bringToFront(win.id);
-    e.preventDefault(); /* prevent page scroll stealing the drag */
-  }, { passive: false });
+  titlebar.addEventListener(
+    "touchstart",
+    function (e) {
+      if (e.target.closest(".win-controls")) return;
+      dragging = true;
+      const t = e.touches[0];
+      ox = t.clientX - win.offsetLeft;
+      oy = t.clientY - win.offsetTop;
+      bringToFront(win.id);
+      e.preventDefault(); /* prevent page scroll stealing the drag */
+    },
+    { passive: false }
+  );
 
-  titlebar.addEventListener("touchmove", function (e) {
-    if (!dragging) return;
-    applyMove(e.touches[0].clientX, e.touches[0].clientY);
-    e.preventDefault();
-  }, { passive: false });
+  titlebar.addEventListener(
+    "touchmove",
+    function (e) {
+      if (!dragging) return;
+      applyMove(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault();
+    },
+    { passive: false }
+  );
 
-  titlebar.addEventListener("touchend",    function () { dragging = false; });
-  titlebar.addEventListener("touchcancel", function () { dragging = false; });
+  titlebar.addEventListener("touchend", function () {
+    dragging = false;
+  });
+  titlebar.addEventListener("touchcancel", function () {
+    dragging = false;
+  });
 }
 
 /* ── bringToFront ───────────────────────────────────────────── */
@@ -276,9 +558,9 @@ function updateTaskbar() {
   if (!bar) return;
   bar.innerHTML = "";
   Object.entries(wins).forEach(([id, info]) => {
-    const b       = document.createElement("div");
-    b.className   = "tb-btn tb-win" + (id === activeWin ? " active" : "");
-    b.innerHTML   = info.title;
+    const b = document.createElement("div");
+    b.className = "tb-btn tb-win" + (id === activeWin ? " active" : "");
+    b.innerHTML = info.title;
     b.onclick = function () {
       const el = document.getElementById(id);
       if (el && el.style.height === "22px") el.style.height = wins[id].savedH || "500px";
@@ -296,9 +578,9 @@ function createWin(id, titleHTML, width, height, winType, data) {
   }
 
   const container = document.getElementById("wins-container");
-  const w         = document.createElement("div");
-  w.className     = "win";
-  w.id            = id;
+  const w = document.createElement("div");
+  w.className = "win";
+  w.id = id;
 
   const mobile = window.innerWidth < 600;
   let ow, oh, lx, ly;
@@ -310,10 +592,10 @@ function createWin(id, titleHTML, width, height, winType, data) {
     lx = 0;
     ly = 0;
   } else {
-    ow = Math.min(width,  window.innerWidth  - 40);
+    ow = Math.min(width, window.innerWidth - 40);
     oh = Math.min(height, window.innerHeight - 80);
     /* Clamp cascade offset so windows never open off-screen */
-    lx = Math.max(0, Math.min(80 + Object.keys(wins).length * 22, window.innerWidth  - ow - 10));
+    lx = Math.max(0, Math.min(80 + Object.keys(wins).length * 22, window.innerWidth - ow - 10));
     ly = Math.max(0, Math.min(30 + Object.keys(wins).length * 22, window.innerHeight - oh - 40));
   }
 
@@ -354,7 +636,8 @@ function createWin(id, titleHTML, width, height, winType, data) {
       const cssId = "wincss_" + winType;
       if (!document.getElementById(cssId)) {
         const lnk = document.createElement("link");
-        lnk.id   = cssId; lnk.rel = "stylesheet";
+        lnk.id = cssId;
+        lnk.rel = "stylesheet";
         lnk.href = WIN_BASE + winType + "/" + winType + ".css";
         document.head.appendChild(lnk);
       }
@@ -366,14 +649,36 @@ function createWin(id, titleHTML, width, height, winType, data) {
         })
         .then((js) => {
           const fn = new Function(
-            "winId", "winData",
-            "ENTITIES", "STAFF", "SITES", "DEPTS", "CLS_LABELS",
-            "sessionStaff", "userClearance",
-            "openWin", "closeWin", "termPrint", "termRun",
+            "winId",
+            "winData",
+            "ENTITIES",
+            "personnel",
+            "SITES",
+            "DEPTS",
+            "CLS_LABELS",
+            "sessionpersonnel",
+            "userClearance",
+            "openWin",
+            "closeWin",
+            "termPrint",
+            "termRun",
             js
           );
-          fn(id, data, ENTITIES, STAFF, SITES, DEPTS, CLS_LABELS,
-             sessionStaff, userClearance, openWin, closeWin, termPrint, termRun);
+          fn(
+            id,
+            data,
+            ENTITIES,
+            personnel,
+            SITES,
+            DEPTS,
+            CLS_LABELS,
+            sessionpersonnel,
+            userClearance,
+            openWin,
+            closeWin,
+            termPrint,
+            termRun
+          );
         })
         .catch((err) => console.warn("Window JS load failed:", WIN_BASE + winType, err));
     })
@@ -393,22 +698,22 @@ function toggleMinWin(id) {
   if (!w) return;
   if (w.style.height === "22px") {
     w.style.height = wins[id].savedH || "500px";
-    w.style.width  = wins[id].savedW || "600px";
+    w.style.width = wins[id].savedW || "600px";
   } else {
     wins[id].savedH = w.style.height;
     wins[id].savedW = w.style.width;
-    w.style.height  = "22px";
+    w.style.height = "22px";
   }
 }
 
 function toggleMaxWin(id) {
-  const w    = document.getElementById(id);
+  const w = document.getElementById(id);
   const area = document.getElementById("desktop-area");
   if (!w || !area) return;
   if (wins[id].maximised) {
-    w.style.left   = wins[id].savedL || "80px";
-    w.style.top    = wins[id].savedT || "30px";
-    w.style.width  = wins[id].savedW || "600px";
+    w.style.left = wins[id].savedL || "80px";
+    w.style.top = wins[id].savedT || "30px";
+    w.style.width = wins[id].savedW || "600px";
     w.style.height = wins[id].savedH || "500px";
     wins[id].maximised = false;
   } else {
@@ -416,9 +721,9 @@ function toggleMaxWin(id) {
     wins[id].savedT = w.style.top;
     wins[id].savedW = w.style.width;
     wins[id].savedH = w.style.height;
-    w.style.left   = "0px";
-    w.style.top    = "0px";
-    w.style.width  = area.offsetWidth  + "px";
+    w.style.left = "0px";
+    w.style.top = "0px";
+    w.style.width = area.offsetWidth + "px";
     w.style.height = area.offsetHeight + "px";
     wins[id].maximised = true;
     bringToFront(id);
@@ -437,7 +742,10 @@ function switchTab(wid, tab, btn) {
   document.querySelectorAll("#" + wid + "_tabs > div").forEach((d) => (d.style.display = "none"));
   const t = document.getElementById(wid + "_" + tab);
   if (t) t.style.display = "block";
-  btn.closest(".win-tabs").querySelectorAll(".win-tab").forEach((b) => b.classList.remove("active-tab"));
+  btn
+    .closest(".win-tabs")
+    .querySelectorAll(".win-tab")
+    .forEach((b) => b.classList.remove("active-tab"));
   btn.classList.add("active-tab");
 }
 
@@ -461,23 +769,44 @@ function openWin(type, data) {
       createWin(
         "entity_" + data,
         '<span class="win-ico">&#9888;</span> Entity ' + String(data).padStart(4, "0"),
-        660, 560, "entity-detail", data
+        660,
+        560,
+        "entity-detail",
+        data
       );
       break;
     case "entity-scheme":
-      createWin("entity-scheme", '<span class="win-ico">&#128213;</span> Entity Classification Scheme', 760, 580, "entity-scheme");
+      createWin(
+        "entity-scheme",
+        '<span class="win-ico">&#128213;</span> Entity Classification Scheme',
+        760,
+        580,
+        "entity-scheme"
+      );
       break;
-    case "staff":
-      createWin("staff", '<span class="win-ico">&#128101;</span> Staff Records', 750, 480, "staff");
+    case "personnel":
+      createWin("personnel", '<span class="win-ico">&#128101;</span> Personnel Records', 750, 480, "personnel");
       break;
-    case "staff-scheme":
-      createWin("staff-scheme", '<span class="win-ico">&#128218;</span> Personnel Position Scheme', 700, 560, "staff-scheme");
+    case "personnel-scheme":
+      createWin(
+        "personnel-scheme",
+        '<span class="win-ico">&#128218;</span> Personnel Position Scheme',
+        700,
+        560,
+        "personnel-scheme"
+      );
       break;
     case "sites":
       createWin("sites", '<span class="win-ico">&#127963;</span> Containment Sites', 680, 560, "sites");
       break;
     case "worldmap":
-      createWin("worldmap", '<span class="win-ico">&#127760;</span> Global Facility Map — CLASSIFIED', 960, 600, "worldmap");
+      createWin(
+        "worldmap",
+        '<span class="win-ico">&#127760;</span> Global Facility Map — CLASSIFIED',
+        960,
+        600,
+        "worldmap"
+      );
       break;
     case "terminal":
       createWin("terminal", '<span class="win-ico">&#9654;</span> NEOMS Terminal v1.0', 580, 400, "terminal");
@@ -521,10 +850,10 @@ function termPrint(txt, cls) {
   const out = document.getElementById("term-out");
   if (!out) return;
   const d = document.createElement("div");
-  if      (cls === "err")  d.style.color = "#ff4444";
+  if (cls === "err") d.style.color = "#ff4444";
   else if (cls === "warn") d.style.color = "#ffaa00";
-  else if (cls === "ok")   d.style.color = "#00ee88";
-  else if (cls === "dim")  d.style.color = "#335544";
+  else if (cls === "ok") d.style.color = "#00ee88";
+  else if (cls === "dim") d.style.color = "#335544";
   d.textContent = txt;
   out.appendChild(d);
   out.scrollTop = out.scrollHeight;
@@ -532,13 +861,13 @@ function termPrint(txt, cls) {
 
 function termRun(raw) {
   const parts = raw.split(" ");
-  const cmd   = parts[0].toUpperCase();
-  const args  = parts.slice(1);
+  const cmd = parts[0].toUpperCase();
+  const args = parts.slice(1);
   switch (cmd) {
     case "HELP":
       [
         "HELP              — show this list",
-        "LIST              — list records  (LIST ENTITIES | LIST STAFF | LIST SITES)",
+        "LIST              — list records  (LIST ENTITIES | LIST personnel | LIST SITES)",
         "GET               — get entity by ID  (GET ENTITY <id>)",
         "OPEN              — open entity window  (OPEN ENTITY <id>)",
         "STATUS            — overall system status",
@@ -567,9 +896,14 @@ function termRun(raw) {
       termPrint("SYSTEM STATUS:", "ok");
       ENTITIES.forEach((e) =>
         termPrint(
-          "  E-" + String(e.id).padStart(4, "0") +
-          " [" + e.cls + "] " + e.name.padEnd(32, " ") +
-          " STATUS: " + e.status,
+          "  E-" +
+            String(e.id).padStart(4, "0") +
+            " [" +
+            e.cls +
+            "] " +
+            e.name.padEnd(32, " ") +
+            " STATUS: " +
+            e.status,
           e.status === "BREACHED" ? "err" : e.status === "MONITORED" ? "warn" : "dim"
         )
       );
@@ -595,23 +929,25 @@ function termRun(raw) {
         ENTITIES.forEach((e) =>
           termPrint("  E-" + String(e.id).padStart(4, "0") + " [" + e.cls + "/" + e.ps + "] " + e.name)
         );
-      else if (sub === "STAFF")
-        STAFF.forEach((s) =>
+      else if (sub === "personnel")
+        personnel.forEach((s) =>
           termPrint("  S-" + s.id + " [CL-" + s.clr + "] " + s.fname + " " + s.lname + " — " + s.pos)
         );
-      else if (sub === "SITES")
-        SITES.forEach((s) => termPrint("  " + s.name + " — " + s.loc + " (" + s.status + ")"));
-      else termPrint("Unknown target. Try: LIST ENTITIES | LIST STAFF | LIST SITES", "err");
+      else if (sub === "SITES") SITES.forEach((s) => termPrint("  " + s.name + " — " + s.loc + " (" + s.status + ")"));
+      else termPrint("Unknown target. Try: LIST ENTITIES | LIST personnel | LIST SITES", "err");
       break;
     }
     case "GET": {
-      const gs = (args[0] || "").toUpperCase(), gi = parseInt(args[1]);
+      const gs = (args[0] || "").toUpperCase(),
+        gi = parseInt(args[1]);
       if (gs === "ENTITY" && !isNaN(gi)) {
         const e = ENTITIES.find((x) => x.id === gi);
         e
           ? (["name", "cls", "ps", "status", "site", "protocols"].forEach((k) =>
               termPrint(
-                "  " + k.padEnd(10, " ") + ": " +
+                "  " +
+                  k.padEnd(10, " ") +
+                  ": " +
                   (k === "site" ? "Site-" + e[k] : k === "protocols" ? e[k].length : e[k]),
                 e.status === "BREACHED" && k === "status" ? "err" : ""
               )
@@ -622,7 +958,8 @@ function termRun(raw) {
       break;
     }
     case "OPEN": {
-      const os = (args[0] || "").toUpperCase(), oi = parseInt(args[1]);
+      const os = (args[0] || "").toUpperCase(),
+        oi = parseInt(args[1]);
       if (os === "ENTITY" && !isNaN(oi)) {
         const e = ENTITIES.find((x) => x.id === oi);
         e
@@ -658,34 +995,46 @@ function termRun(raw) {
       );
       break;
     case "WHOAMI":
-      if (sessionStaff) {
+      if (sessionpersonnel) {
         termPrint("Session identity:", "ok");
-        termPrint("  ID   : S-" + sessionStaff.id);
-        termPrint("  Name : " + sessionStaff.fname + " " + sessionStaff.lname);
-        termPrint("  Dept : " + sessionStaff.dept);
-        termPrint("  CLR  : CL-" + sessionStaff.clr);
-        termPrint("  Site : Site-" + sessionStaff.site);
+        termPrint("  ID   : S-" + sessionpersonnel.id);
+        termPrint("  Name : " + sessionpersonnel.fname + " " + sessionpersonnel.lname);
+        termPrint("  Dept : " + sessionpersonnel.dept);
+        termPrint("  CLR  : CL-" + sessionpersonnel.clr);
+        termPrint("  Site : Site-" + sessionpersonnel.site);
       } else termPrint("No session identity on record.", "warn");
       break;
     case "TRANSMIT":
-      if (!sessionStaff) { termPrint("No session identity. Complete intake first.", "err"); break; }
+      if (!sessionpersonnel) {
+        termPrint("No session identity. Complete intake first.", "err");
+        break;
+      }
       termPrint("Transmitting to NeoMS Registry...", "warn");
       fetch("https://formspree.io/f/xwvwybya", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          staff_id: "S-" + sessionStaff.id, first_name: sessionStaff.fname,
-          last_name: sessionStaff.lname,    department: sessionStaff.dept,
-          clearance: "CL-" + sessionStaff.clr, site: "Site-" + sessionStaff.site,
+          personnel_id: "S-" + sessionpersonnel.id,
+          first_name: sessionpersonnel.fname,
+          last_name: sessionpersonnel.lname,
+          department: sessionpersonnel.dept,
+          clearance: "CL-" + sessionpersonnel.clr,
+          site: "Site-" + sessionpersonnel.site,
           timestamp: new Date().toISOString()
         })
       })
-        .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then((r) => {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
         .then(() => termPrint("TRANSMISSION COMPLETE.", "ok"))
         .catch((err) => termPrint("TRANSMISSION FAILED — " + err.message, "err"));
       break;
     case "DEPTREQ": {
-      if (!sessionStaff) { termPrint("No session identity. Complete intake first.", "err"); break; }
+      if (!sessionpersonnel) {
+        termPrint("No session identity. Complete intake first.", "err");
+        break;
+      }
       const reqDept = args.join(" ").toUpperCase().trim();
       if (!reqDept) {
         termPrint("Usage: DEPTREQ <department name>", "err");
@@ -697,24 +1046,33 @@ function termRun(raw) {
         DEPTS.forEach((d) => termPrint("  " + d, "dim"));
         break;
       }
-      if (reqDept === sessionStaff.dept) { termPrint("You are already assigned to " + reqDept + ".", "warn"); break; }
+      if (reqDept === sessionpersonnel.dept) {
+        termPrint("You are already assigned to " + reqDept + ".", "warn");
+        break;
+      }
       termPrint("Submitting transfer request to FACILITY COMMAND...", "warn");
       fetch("https://formspree.io/f/xwvwybya", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           request_type: "DEPARTMENT_TRANSFER",
-          staff_id: "S-" + sessionStaff.id, first_name: sessionStaff.fname,
-          last_name: sessionStaff.lname,    current_department: sessionStaff.dept,
-          requested_department: reqDept,    clearance: "CL-" + sessionStaff.clr,
-          site: sessionStaff.site ? "Site-" + sessionStaff.site : "UNASSIGNED",
+          personnel_id: "S-" + sessionpersonnel.id,
+          first_name: sessionpersonnel.fname,
+          last_name: sessionpersonnel.lname,
+          current_department: sessionpersonnel.dept,
+          requested_department: reqDept,
+          clearance: "CL-" + sessionpersonnel.clr,
+          site: sessionpersonnel.site ? "Site-" + sessionpersonnel.site : "UNASSIGNED",
           timestamp: new Date().toISOString()
         })
       })
-        .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then((r) => {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
         .then(() => {
           termPrint("TRANSFER REQUEST SUBMITTED.", "ok");
-          termPrint("  From: " + sessionStaff.dept, "dim");
+          termPrint("  From: " + sessionpersonnel.dept, "dim");
           termPrint("  To:   " + reqDept, "dim");
           termPrint("Pending FACILITY COMMAND approval. Session unchanged.", "dim");
         })
@@ -722,9 +1080,13 @@ function termRun(raw) {
       break;
     }
     case "LOGOUT":
-      try { localStorage.removeItem(LS_KEY); } catch (e) {}
+      try {
+        localStorage.removeItem(LS_KEY);
+      } catch (e) {}
       termPrint("Session cleared. Redirecting to intake...", "warn");
-      setTimeout(() => { window.location.href = INTAKE_URL; }, 1500);
+      setTimeout(() => {
+        window.location.href = INTAKE_URL;
+      }, 1500);
       break;
     case "":
       break;
@@ -739,9 +1101,13 @@ function termRun(raw) {
 document.addEventListener("DOMContentLoaded", function () {
   /* Restore saved clearance */
   let savedClr = 1;
-  try { savedClr = parseInt(localStorage.getItem("neoms_clearance"), 10) || 1; } catch (e) {}
+  try {
+    savedClr = parseInt(localStorage.getItem("neoms_clearance"), 10) || 1;
+  } catch (e) {}
 
-  if (sessionStaff) { STAFF.push(sessionStaff); }
+  if (sessionpersonnel) {
+    personnel.push(sessionpersonnel);
+  }
   setClearance(savedClr);
 
   const clrInd = document.getElementById("clearance-indicator");

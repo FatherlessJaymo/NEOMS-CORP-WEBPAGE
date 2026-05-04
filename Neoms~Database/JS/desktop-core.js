@@ -5,24 +5,24 @@
    ============================================================ */
 "use strict";
 
-var LS_KEY      = "neoms_session_staff";
+var LS_KEY      = "neoms_session_personnel";
 var LS_CLR_KEY  = "neoms_clearance";
 var INTAKE_URL  = "/Neoms~Database/HTML/intake.html";
 
 /* ── SESSION GUARD ───────────────────────────────────────────── */
 (function () {
   try {
-    sessionStaff = JSON.parse(localStorage.getItem(LS_KEY));
+    sessionpersonnel = JSON.parse(localStorage.getItem(LS_KEY));
   } catch (e) {}
 
   /* Allow ?guest=1 to skip intake (preview/dev mode) */
-  if ((!sessionStaff || !sessionStaff.fname) && /[?&]guest=1/.test(location.search)) {
-    sessionStaff = { fname: "Guest", lname: "Operator", id: "G-0000", clr: 1,
+  if ((!sessionpersonnel || !sessionpersonnel.fname) && /[?&]guest=1/.test(location.search)) {
+    sessionpersonnel = { fname: "Guest", lname: "Operator", id: "G-0000", clr: 1,
                      dept: "SYNTHETICS", site: 62656 };
-    try { localStorage.setItem(LS_KEY, JSON.stringify(sessionStaff)); } catch (e) {}
+    try { localStorage.setItem(LS_KEY, JSON.stringify(sessionpersonnel)); } catch (e) {}
   }
 
-  if (!sessionStaff || !sessionStaff.fname) {
+  if (!sessionpersonnel || !sessionpersonnel.fname) {
     window.location.replace(INTAKE_URL);
   }
 
@@ -111,11 +111,11 @@ function doLogout() {
 
 /* ── POPULATE START MENU USER INFO ───────────────────────────── */
 document.addEventListener("DOMContentLoaded", function () {
-  if (sessionStaff) {
+  if (sessionpersonnel) {
     var un = document.getElementById("sm-username");
     var uc = document.getElementById("sm-userclr");
-    if (un) un.textContent = (sessionStaff.fname + " " + sessionStaff.lname).toUpperCase();
-    if (uc) uc.textContent = "CLR-" + (sessionStaff.clr || 1);
+    if (un) un.textContent = (sessionpersonnel.fname + " " + sessionpersonnel.lname).toUpperCase();
+    if (uc) uc.textContent = "CLR-" + (sessionpersonnel.clr || 1);
   }
   /* Sync clearance indicator */
   setClearance(userClearance);

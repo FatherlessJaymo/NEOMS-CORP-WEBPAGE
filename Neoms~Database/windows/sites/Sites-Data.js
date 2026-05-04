@@ -14,8 +14,8 @@ const SITES = [
         est: "2004-02-04",
         desc: "[REDACTED]",
         entities: 1,
-        staff: 12,
-        status: "BREACH",
+        personnel: 12,
+        status: "ACTIVE",
         lat: 41.8,
         lng: -87.6
     },
@@ -26,7 +26,7 @@ const SITES = [
         est: "2009-11-19",
         desc: "[REDACTED]",
         entities: 0,
-        staff: 4,
+        personnel: 4,
         status: "ACTIVE",
         lat: 38.9,
         lng: -77.0
@@ -40,7 +40,7 @@ const SITES = [
         est: "2018-04-07",
         desc: "[REDACTED]",
         entities: 1,
-        staff: 16,
+        personnel: 16,
         status: "ACTIVE",
         lat: 35.6894,
         lng: 139.6917
@@ -52,7 +52,7 @@ const SITES = [
         est: "2016-03-22",
         desc: "[REDACTED]",
         entities: 1,
-        staff: 8,
+        personnel: 8,
         status: "ACTIVE",
         lat: 34.0667,
         lng: 139.5333
@@ -64,7 +64,7 @@ const SITES = [
         est: "2021-09-03",
         desc: "[REDACTED]",
         entities: 0,
-        staff: 9,
+        personnel: 9,
         status: "ACTIVE",
         lat: 35.05,
         lng: 135.01
@@ -76,7 +76,7 @@ const SITES = [
         est: "2013-06-17",
         desc: "[REDACTED]",
         entities: 0,
-        staff: 6,
+        personnel: 6,
         status: "ACTIVE",
         lat: 27.0944,
         lng: 142.1917

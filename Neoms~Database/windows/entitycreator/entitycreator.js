@@ -1,8 +1,8 @@
 /* ============================================================
    NEOMS — ENTITY CREATOR WINDOW
    Neoms~Database/windows/entitycreator/entitycreator.js
-   Globals available: ENTITIES, STAFF, SITES, DEPTS, CLS_LABELS,
-   sessionStaff, userClearance, openWin, closeWin
+   Globals available: ENTITIES, personnel, SITES, DEPTS, CLS_LABELS,
+   sessionpersonnel, userClearance, openWin, closeWin
    ============================================================ */
 
 /* ── Populate site dropdown from live SITES data ─────────── */
@@ -104,8 +104,8 @@ function addProtocol() {
     '" type="number" min="1" placeholder="null">' +
     "</div>" +
     '<div class="ec-field">' +
-    '<label class="ec-label">STAFF REQUIRED</label>' +
-    '<input class="ec-input" id="ec-proto-staff-' +
+    '<label class="ec-label">personnel REQUIRED</label>' +
+    '<input class="ec-input" id="ec-proto-personnel-' +
     idx +
     '" type="text" placeholder="e.g. 5 or ALL FACILITY UNITS">' +
     "</div>" +
@@ -193,7 +193,7 @@ function addReport() {
     '" type="text" placeholder="NMS-XXX-TYPE-001.pdf">' +
     "</div>" +
     '<div class="ec-field">' +
-    '<label class="ec-label">AUTHOR (Staff ID)</label>' +
+    '<label class="ec-label">AUTHOR (personnel ID)</label>' +
     '<input class="ec-input" id="ec-report-author-' +
     idx +
     '" type="number" placeholder="e.g. 1003">' +
@@ -240,7 +240,7 @@ function collectProtocols() {
   for (var i = 1; i <= protocolCount; i++) {
     if (!document.getElementById("ec-proto-" + i)) continue;
     var dur = gv("ec-proto-dur-" + i);
-    var st = gv("ec-proto-staff-" + i);
+    var st = gv("ec-proto-personnel-" + i);
     var stVal = st ? (isNaN(Number(st)) ? st : Number(st)) : null;
     results.push({
       type: gv("ec-proto-type-" + i) || "CONTAINMENT",
@@ -248,7 +248,7 @@ function collectProtocols() {
       desc: gv("ec-proto-desc-" + i) || "",
       equipment: gv("ec-proto-equip-" + i),
       duration: dur ? parseInt(dur, 10) : null,
-      staff: stVal
+      personnel: stVal
     });
   }
   return results;

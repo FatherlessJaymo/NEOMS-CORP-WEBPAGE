@@ -5,7 +5,7 @@
 "use strict";
 
 /* ── CONSTANTS ───────────────────────────────────────────────── */
-const LS_KEY = "neoms_session_staff";
+const LS_KEY = "neoms_session_personnel";
 const FORMSPREE_URL = "https://formspree.io/f/xwvwybya";
 
 /* ── STATE ───────────────────────────────────────────────────── */
@@ -14,7 +14,7 @@ let winZ = 50;
 let activeWin = null;
 let entFilter = "ALL";
 let userClearance = 1;
-let sessionStaff = null;
+let sessionpersonnel = null;
 
 /* ── LOCAL STORAGE HELPERS ───────────────────────────────────── */
 function lsSave(record) {
@@ -250,23 +250,23 @@ function renderEntList() {
             .join("") || `<tr><td colspan="6" class="ent-empty">NO RECORDS MATCH CURRENT FILTER</td></tr>`;
 }
 
-function refreshStaffTable() {
-    const tbody = document.getElementById("staff-tbody");
+function refreshpersonnelTable() {
+    const tbody = document.getElementById("personnel-tbody");
     if (!tbody) return;
-    tbody.innerHTML = STAFF.map(
+    tbody.innerHTML = personnel.map(
         (s) => `
         <tr>
-          <td class="staff-id">${s.id}</td>
-          <td class="staff-name">${s.fname} ${s.lname}</td>
-          <td class="staff-pos">${s.pos}</td>
-          <td class="staff-dept">${s.dept}</td>
+          <td class="personnel-id">${s.id}</td>
+          <td class="personnel-name">${s.fname} ${s.lname}</td>
+          <td class="personnel-pos">${s.pos}</td>
+          <td class="personnel-dept">${s.dept}</td>
           <td>
             <span class="clr-pip clr-${s.clr}"></span>
-            <span class="staff-clr-label">CL-${s.clr}</span>
+            <span class="personnel-clr-label">CL-${s.clr}</span>
           </td>
-          <td class="staff-site">${s.site ? "Site-" + s.site : "—"}</td>
-          <td class="staff-status">
-            <span class="${s.active === "Y" ? "staff-active" : "staff-inactive"}">
+          <td class="personnel-site">${s.site ? "Site-" + s.site : "—"}</td>
+          <td class="personnel-status">
+            <span class="${s.active === "Y" ? "personnel-active" : "personnel-inactive"}">
               ${s.active === "Y" ? "ACTIVE" : "INACTIVE"}
             </span>
           </td>
@@ -279,7 +279,7 @@ function openWin(type, data) {
     if (type === "main") openMainWin();
     else if (type === "entities") openEntitiesWin();
     else if (type === "entity" && data !== undefined) openEntityWin(data);
-    else if (type === "staff") openStaffWin();
+    else if (type === "personnel") openpersonnelWin();
     else if (type === "sites") openSitesWin();
     else if (type === "terminal") openTerminalWin();
     else if (type === "worldmap") openMapWin();
@@ -330,7 +330,7 @@ function termRun(raw) {
         case "HELP":
             [
                 "HELP              — show this list",
-                "LIST              — list records  (LIST ENTITIES | LIST STAFF | LIST SITES)",
+                "LIST              — list records  (LIST ENTITIES | LIST personnel | LIST SITES)",
                 "GET               — get entity by ID  (GET ENTITY ID)",
                 "OPEN              — open entity window  (OPEN ENTITY ID)",
                 "STATUS            — overall system status",
@@ -399,13 +399,13 @@ function termRun(raw) {
                 ENTITIES.forEach((e) =>
                     termPrint("  E-" + String(e.id).padStart(4, "0") + " [" + e.cls + "/" + e.ps + "] " + e.name)
                 );
-            else if (sub === "STAFF")
-                STAFF.forEach((s) =>
+            else if (sub === "personnel")
+                personnel.forEach((s) =>
                     termPrint("  S-" + s.id + " [CL-" + s.clr + "] " + s.fname + " " + s.lname + " — " + s.pos)
                 );
             else if (sub === "SITES")
                 SITES.forEach((s) => termPrint("  " + s.name + " — " + s.loc + " (" + s.status + ")"));
-            else termPrint("Unknown list target. Try: LIST ENTITIES | LIST STAFF | LIST SITES", "err");
+            else termPrint("Unknown list target. Try: LIST ENTITIES | LIST personnel | LIST SITES", "err");
             break;
         }
 
@@ -463,13 +463,13 @@ function termRun(raw) {
             break;
 
         case "WHOAMI":
-            if (sessionStaff) {
+            if (sessionpersonnel) {
                 termPrint("Session identity:", "ok");
-                termPrint("  ID       : S-" + sessionStaff.id);
-                termPrint("  Name     : " + sessionStaff.fname + " " + sessionStaff.lname);
-                termPrint("  Dept     : " + sessionStaff.dept);
-                termPrint("  CLR      : CL-" + sessionStaff.clr);
-                termPrint("  Site     : Site-" + sessionStaff.site);
+                termPrint("  ID       : S-" + sessionpersonnel.id);
+                termPrint("  Name     : " + sessionpersonnel.fname + " " + sessionpersonnel.lname);
+                termPrint("  Dept     : " + sessionpersonnel.dept);
+                termPrint("  CLR      : CL-" + sessionpersonnel.clr);
+                termPrint("  Site     : Site-" + sessionpersonnel.site);
                 termPrint(
                     "  Stored   : " + (lsLoad() ? "YES — session persisted locally" : "NO — session in memory only"),
                     "dim"
@@ -478,15 +478,15 @@ function termRun(raw) {
             break;
 
         case "TRANSMIT":
-            if (!sessionStaff) {
+            if (!sessionpersonnel) {
                 termPrint("No session identity. Complete intake first.", "err");
                 break;
             }
             termPrint("Transmitting record to NeoMS Registry...", "warn");
-            transmitToRegistry(sessionStaff)
+            transmitToRegistry(sessionpersonnel)
                 .then(() => {
                     termPrint("TRANSMISSION COMPLETE — record logged to central registry.", "ok");
-                    termPrint("  S-" + sessionStaff.id + " / " + sessionStaff.fname + " " + sessionStaff.lname, "dim");
+                    termPrint("  S-" + sessionpersonnel.id + " / " + sessionpersonnel.fname + " " + sessionpersonnel.lname, "dim");
                 })
                 .catch((err) => {
                     termPrint("TRANSMISSION FAILED — " + err.message, "err");
@@ -496,7 +496,7 @@ function termRun(raw) {
 
         case "CLEARINTAKE":
             lsClear();
-            sessionStaff = null;
+            sessionpersonnel = null;
             termPrint("Session data cleared from local storage.", "ok");
             termPrint("Reloading intake terminal in 3 seconds...", "warn");
             setTimeout(() => location.reload(), 3000);
@@ -517,7 +517,7 @@ function transmitToRegistry(record) {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-            staff_id: "S-" + record.id,
+            personnel_id: "S-" + record.id,
             first_name: record.fname,
             last_name: record.lname,
             department: record.dept,
@@ -557,7 +557,7 @@ function fastBoot(record) {
         { delay: 900, text: "Soul-coherence arrays: ONLINE" },
         { delay: 1200, text: "────────────────────────────────────────" },
         { delay: 1400, text: "SESSION RECORD FOUND" },
-        { delay: 1600, text: "STAFF ID : S-" + record.id },
+        { delay: 1600, text: "personnel ID : S-" + record.id },
         { delay: 1750, text: "NAME     : " + record.fname + " " + record.lname },
         { delay: 1900, text: "DEPT     : " + record.dept },
         { delay: 2050, text: "CLR      : CL-" + record.clr },
@@ -607,7 +607,7 @@ function startBoot() {
 }
 
 /* ── SUBMIT INTERVIEW FORM ───────────────────────────────────── */
-let nextStaffId = 2000;
+let nextpersonnelId = 2000;
 
 function submitInterview() {
     const fname = document.getElementById("iv-fname").value.trim();
@@ -621,7 +621,7 @@ function submitInterview() {
     err.textContent = "";
 
     const record = {
-        id: nextStaffId++,
+        id: nextpersonnelId++,
         fname,
         lname,
         pos: "Synthetic Intake Unit",
@@ -631,8 +631,8 @@ function submitInterview() {
         active: "Y"
     };
 
-    STAFF.push(record);
-    sessionStaff = record;
+    personnel.push(record);
+    sessionpersonnel = record;
     lsSave(record);
     setClearance(1);
 
@@ -646,7 +646,7 @@ function showTransmitStep(record) {
     [
         "────────────────────────────────────────",
         "REGISTRATION COMPLETE",
-        "STAFF ID : S-" + record.id,
+        "personnel ID : S-" + record.id,
         "NAME     : " + record.fname + " " + record.lname,
         "DEPT     : SYNTHETICS",
         "CLR      : CL-1",
@@ -681,7 +681,7 @@ function doTransmit() {
     status.style.color = "#ffaa00";
     status.textContent = "Establishing link to NeoMS Central Registry...";
 
-    transmitToRegistry(sessionStaff)
+    transmitToRegistry(sessionpersonnel)
         .then(() => {
             status.style.color = "#00ffaa";
             status.textContent = "TRANSMISSION CONFIRMED — record logged to central registry.";
@@ -717,7 +717,7 @@ function proceedToDesktop() {
 
     const l = document.createElement("div");
     l.className = "iv-line iv-line-ok";
-    l.textContent = "Welcome, " + sessionStaff.fname + ". Booting desktop...";
+    l.textContent = "Welcome, " + sessionpersonnel.fname + ". Booting desktop...";
     screen.appendChild(l);
     screen.scrollTop = screen.scrollHeight;
 
@@ -753,8 +753,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const saved = lsLoad();
     if (saved && saved.fname && saved.lname) {
-        sessionStaff = saved;
-        STAFF.push(saved);
+        sessionpersonnel = saved;
+        personnel.push(saved);
         setClearance(savedClr); // use persisted level, not session default
         fastBoot(saved);
     } else {

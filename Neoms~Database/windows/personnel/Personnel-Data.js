@@ -1,6 +1,6 @@
 /* ============================================================
-   NEOMS CONTAINMENT LOG — STAFF DATA
-   Neoms~Database/JS/Staff-Data.js
+   NEOMS CONTAINMENT LOG — personnel DATA
+   Neoms~Database/JS/Personnel-Data.js
    ============================================================ */
 "use strict";
 
@@ -13,7 +13,7 @@ const DEPTS = [
     "PRIME DIRECTOR"
 ];
 
-const STAFF = [
+const personnel = [
     {
         id: 2004,
         fname: "Fatherless",
@@ -66,5 +66,5 @@ const STAFF = [
     }
 ];
 
-/* Auto-incrementing staff ID for interview intake */
-let nextStaffId = 2000;
+/* Auto-incrementing personnel ID for interview intake */
+let nextpersonnelId = 2000;

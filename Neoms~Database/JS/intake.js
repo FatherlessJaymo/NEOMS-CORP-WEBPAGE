@@ -3,7 +3,7 @@
    Neoms~Database/JS/intake.js
 
    FIXES applied:
-   1. nextStaffId persisted in localStorage — IDs no longer reset
+   1. nextpersonnelId persisted in localStorage — IDs no longer reset
       on page refresh and two users won't share the same S-ID.
    2. window._pendingRecord removed — record passed directly as
       a closure parameter to doTransmit(), eliminating the stale-
@@ -15,8 +15,8 @@
 ============================================================ */
 "use strict";
 
-const LS_KEY = "neoms_session_staff";
-const LS_ID_KEY = "neoms_next_staff_id";
+const LS_KEY = "neoms_session_personnel";
+const LS_ID_KEY = "neoms_next_personnel_id";
 const FORMSPREE_URL = "https://formspree.io/f/xwvwybya";
 const DESKTOP_URL = "/Neoms~Database/HTML/desktop.html";
 
@@ -34,7 +34,7 @@ function lsLoad() {
   }
 }
 
-/* ── Persistent staff ID counter ─────────────────────────── */
+/* ── Persistent personnel ID counter ─────────────────────────── */
 function loadNextId() {
   try {
     var stored = parseInt(localStorage.getItem(LS_ID_KEY), 10);
@@ -49,7 +49,7 @@ function saveNextId(id) {
   } catch (e) {}
 }
 
-var nextStaffId = loadNextId();
+var nextpersonnelId = loadNextId();
 
 /* ── On page load ─────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", function () {
@@ -100,7 +100,7 @@ function startBoot() {
   });
   setTimeout(() => {
     const previewEl = document.getElementById("iv-preview-id");
-    if (previewEl) previewEl.textContent = nextStaffId;
+    if (previewEl) previewEl.textContent = nextpersonnelId;
     document.getElementById("iv-form").classList.add("visible");
   }, maxDelay + 600);
 }
@@ -125,7 +125,7 @@ function fastBoot(record) {
     { delay: 900, text: "Soul-coherence arrays: ONLINE" },
     { delay: 1200, text: "────────────────────────────────────────" },
     { delay: 1400, text: "SESSION RECORD FOUND" },
-    { delay: 1600, text: "STAFF ID : S-" + record.id },
+    { delay: 1600, text: "personnel ID : S-" + record.id },
     { delay: 1750, text: "NAME     : " + record.fname + " " + record.lname },
     { delay: 1900, text: "DEPT     : " + record.dept },
     { delay: 2050, text: "CLR      : CL-" + record.clr },
@@ -155,8 +155,8 @@ function submitInterview() {
   }
   err.textContent = "";
 
-  const newId = nextStaffId++;
-  saveNextId(nextStaffId);
+  const newId = nextpersonnelId++;
+  saveNextId(nextpersonnelId);
 
   const record = {
     id: newId,
@@ -179,7 +179,7 @@ function showTransmitStep(record) {
   const confirmLines = [
     "────────────────────────────────────────",
     "REGISTRATION COMPLETE",
-    "STAFF ID : S-" + record.id,
+    "personnel ID : S-" + record.id,
     "NAME     : " + record.fname + " " + record.lname,
     "DEPT     : SYNTHETICS",
     "CLR      : CL-1",
@@ -216,7 +216,7 @@ function transmitToRegistry(record) {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
-      staff_id: "S-" + record.id,
+      personnel_id: "S-" + record.id,
       first_name: record.fname,
       last_name: record.lname,
       department: record.dept,
