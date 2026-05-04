@@ -1,0 +1,200 @@
+<div class="win-page-root ec-root">
+  <div class="page-header">
+    <div class="page-breadcrumb">NEOMS_OS &gt; ENTITY_CREATOR</div>
+    <div class="page-title">Entity Creator</div>
+    <div class="page-subtitle">Build a new entity entry — fill in all fields then export the object.</div>
+  </div>
+
+  <div class="ec-tabs" id="ec-tabs">
+    <button class="ec-tab ec-tab--active" data-tab="profile">PROFILE</button>
+    <button class="ec-tab" data-tab="desc">DESCRIPTIONS</button>
+    <button class="ec-tab" data-tab="protocols">PROTOCOLS</button>
+    <button class="ec-tab" data-tab="reports">REPORTS</button>
+    <button class="ec-tab ec-tab--output" data-tab="output">&#9654; OUTPUT</button>
+  </div>
+
+  <div class="scroll-area ec-body">
+    <!-- ── PROFILE ──────────────────────────────────────── -->
+    <div class="ec-panel" id="ec-panel-profile">
+      <div class="ec-grid">
+        <div class="ec-field">
+          <label class="ec-label">ENTITY ID <span class="ec-req">*</span></label>
+          <input class="ec-input" id="ec-id" type="number" min="1" placeholder="e.g. 138" />
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">CLEARANCE LEVEL <span class="ec-req">*</span></label>
+          <select class="ec-input" id="ec-clr">
+            <option value="1">CL-1</option>
+            <option value="2">CL-2</option>
+            <option value="3">CL-3</option>
+            <option value="4">CL-4</option>
+            <option value="5">CL-5</option>
+          </select>
+        </div>
+
+        <div class="ec-field ec-span2">
+          <label class="ec-label">DESIGNATION / NAME <span class="ec-req">*</span></label>
+          <input class="ec-input" id="ec-name" type="text" placeholder="e.g. REWRITE SONIC" />
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">ASSIGNED SITE</label>
+          <select class="ec-input" id="ec-site">
+            <option value="">— UNASSIGNED —</option>
+          </select>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">CLASSIFICATION <span class="ec-req">*</span></label>
+          <select class="ec-input" id="ec-cls">
+            <option value="HD">HD — Hedonia</option>
+            <option value="EU">EU — Eudaimonia</option>
+            <option value="AR">AR — Arete</option>
+            <option value="NM">NM — Nemesis</option>
+            <option value="AP">AP — Aporia</option>
+            <option value="KT">KT — Katastroph</option>
+          </select>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">CONTAINMENT STATUS <span class="ec-req">*</span></label>
+          <select class="ec-input" id="ec-status">
+            <option value="CONTAINED">CONTAINED</option>
+            <option value="BREACHED">BREACHED</option>
+            <option value="MONITORED">MONITORED</option>
+            <option value="PENDING">PENDING</option>
+          </select>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">POWER SCALING</label>
+          <input class="ec-input" id="ec-ps" type="text" placeholder="e.g. High 8-C" />
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">DISCOVERY DATE</label>
+          <input class="ec-input" id="ec-disc" type="text" placeholder="20██-██-██" />
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">GLYPH (unicode symbol)</label>
+          <input class="ec-input ec-glyph-input" id="ec-glyph" type="text" maxlength="2" placeholder="○" />
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">SENTIENT</label>
+          <select class="ec-input" id="ec-sentient">
+            <option value="Y">Y — Yes</option>
+            <option value="N">N — No</option>
+            <option value="U">U — Unknown</option>
+          </select>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">HOSTILE</label>
+          <select class="ec-input" id="ec-hostile">
+            <option value="Y">Y — Yes</option>
+            <option value="N">N — No</option>
+            <option value="U">U — Unknown</option>
+          </select>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">SAFETY RATING</label>
+          <select class="ec-input" id="ec-safety">
+            <option value="LETHAL">LETHAL</option>
+            <option value="HAZARDOUS">HAZARDOUS</option>
+            <option value="RESTRICTED">RESTRICTED</option>
+            <option value="SAFE">SAFE</option>
+          </select>
+        </div>
+
+        <div class="ec-field ec-span2">
+          <label class="ec-label">PROFILE IMAGE PATH</label>
+          <input class="ec-input" id="ec-img" type="text" placeholder="/Neoms~Universal-Fonts+Images/Entities-Data/…" />
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">DISCOVERED BY (Staff ID)</label>
+          <input class="ec-input" id="ec-discoveredby" type="number" placeholder="e.g. 1003" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DESCRIPTIONS ──────────────────────────────────── -->
+    <div class="ec-panel ec-hidden" id="ec-panel-desc">
+      <div class="ec-desc-grid">
+        <div class="ec-field">
+          <label class="ec-label">ENTITY DESCRIPTION <span class="ec-req">*</span></label>
+          <textarea class="ec-input ec-ta" id="ec-desc" placeholder="Full lore, origin, background…"></textarea>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">ANOMALOUS PROPERTIES</label>
+          <textarea class="ec-input ec-ta" id="ec-aprop" placeholder="Powers, abilities, anomalous traits…"></textarea>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">PHYSICAL DESCRIPTION</label>
+          <textarea class="ec-input ec-ta" id="ec-phys" placeholder="Appearance, dimensions, markings…"></textarea>
+        </div>
+
+        <div class="ec-field">
+          <label class="ec-label">DIMENSIONAL DATA</label>
+          <textarea
+            class="ec-input ec-ta"
+            id="ec-dims"
+            placeholder="Spatial properties, dimensional origin…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROTOCOLS ─────────────────────────────────────── -->
+    <div class="ec-panel ec-hidden" id="ec-panel-protocols">
+      <div class="ec-list-header">
+        <span class="ec-list-title">Containment Protocols</span>
+        <button class="ec-add-btn" id="ec-add-protocol">+ ADD PROTOCOL</button>
+      </div>
+      <div id="ec-protocols-list">
+        <div class="ec-empty-msg">No protocols added. Click "+ ADD PROTOCOL" to begin.</div>
+      </div>
+    </div>
+
+    <!-- ── REPORTS ───────────────────────────────────────── -->
+    <div class="ec-panel ec-hidden" id="ec-panel-reports">
+      <div class="ec-list-header">
+        <span class="ec-list-title">Incident Reports</span>
+        <button class="ec-add-btn" id="ec-add-report">+ ADD REPORT</button>
+      </div>
+      <div id="ec-reports-list">
+        <div class="ec-empty-msg">No reports added. Click "+ ADD REPORT" to begin.</div>
+      </div>
+    </div>
+
+    <!-- ── OUTPUT ────────────────────────────────────────── -->
+    <div class="ec-panel ec-hidden" id="ec-panel-output">
+      <div class="ec-output-bar">
+        <span class="ec-output-label">&#128196; Generated Entity Object</span>
+        <div class="ec-output-btns">
+          <button class="ec-gen-btn" id="ec-gen-btn">
+            <span><button class="ec-gen-btn" id="ec-gen-btn">&#9654; GENERATE</button>#9654;</span><span>GENERATE</span>
+          </button>
+          <button class="ec-copy-btn" id="ec-copy-btn">
+            <span><button class="ec-copy-btn" id="ec-copy-btn">&#128203; COPY</button>#128203;</span><span>COPY</span>
+          </button>
+          <button class="ec-submit-btn" id="ec-submit-btn">
+            <span><button class="ec-submit-btn" id="ec-submit-btn">&#8679; SUBMIT</button>#8679;</span
+            ><span>SUBMIT</span>
+          </button>
+        </div>
+      </div>
+      <div class="ec-output-hint">
+        Paste this block into <span class="ec-code">Entities-Data.js</span> inside the
+        <span class="ec-code">ENTITIES</span> array, then add it to <span class="ec-code">Staff-Data.js</span> as
+        discoveredBy if needed.
+      </div>
+      <pre class="ec-output-pre" id="ec-output-pre">// Click ▶ GENERATE to build your entity object.</pre>
+    </div>
+  </div>
+</div>

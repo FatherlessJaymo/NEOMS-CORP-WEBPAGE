@@ -1,0 +1,181 @@
+/* ============================================================
+   NEOMS — SITES WINDOW STYLES
+   ============================================================ */
+
+/* ── GRID LAYOUT ─────────────────────────────────────────────── */
+#sites-cards-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+  padding: 14px;
+  align-items: start;
+}
+
+/* ── SITE CARD ───────────────────────────────────────────────── */
+.site-card {
+  background: #0d1520;
+  border: 1px solid #1a2a4a;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-card-header {
+  background: #0a1020;
+  border-bottom: 1px solid #1a2a4a;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.site-card-name {
+  font-family: var(--pixel, "VT323", monospace);
+  font-size: 20px;
+  color: #aabbcc;
+  line-height: 1;
+}
+
+/* ── STATUS BADGE ────────────────────────────────────────────── */
+.site-status-badge {
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  border: 1px solid;
+  flex-shrink: 0;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+}
+
+.site-status-active {
+  color: #00cc66;
+  border-color: #006633;
+}
+
+.site-status-breach {
+  color: #ff3333;
+  border-color: #880000;
+  animation: blink-red 1s step-start infinite;
+}
+
+/* ── PROFILE TABLE ───────────────────────────────────────────── */
+.site-profile-table {
+  width: 100%;
+  font-size: 11px;
+  border-collapse: collapse;
+}
+
+.site-profile-table tr {
+  border-bottom: 1px solid #0d1a2a;
+}
+
+.site-profile-table th {
+  text-align: left;
+  color: #445566;
+  padding: 5px 12px;
+  width: 88px;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  font-size: 9px;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+}
+
+.site-profile-table td {
+  color: #aabbcc;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+}
+
+.site-loc-val {
+  color: #7a99aa;
+  font-size: 10px;
+}
+
+/* ── ENTITY MANIFEST DROPDOWN ────────────────────────────────── */
+.manifest-details {
+  border-top: 1px solid #1a2a4a;
+}
+
+.manifest-summary {
+  padding: 7px 12px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #556677;
+  cursor: pointer;
+  background: #0a0a14;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+}
+
+.manifest-summary::-webkit-details-marker { display: none; }
+
+.manifest-details[open] .manifest-summary {
+  color: #aabbcc;
+  border-bottom: 1px solid #1a2a4a;
+}
+
+.manifest-summary:hover {
+  color: #aabbcc;
+  background: rgba(0, 140, 140, 0.06);
+}
+
+.manifest-count {
+  color: #334455;
+  font-size: 10px;
+}
+
+.manifest-details[open] .manifest-count {
+  color: #667788;
+}
+
+.manifest-inner {
+  background: #0a0a14;
+}
+
+/* ── CLASSIFIED NOTICE ───────────────────────────────────────── */
+.site-ent-classified {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.site-ent-classified-icon {
+  font-size: 18px;
+  color: #445566;
+  flex-shrink: 0;
+}
+
+.site-ent-classified-label {
+  font-size: 10px;
+  color: #556677;
+  letter-spacing: 2px;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+}
+
+.site-ent-classified-sub {
+  font-size: 10px;
+  color: #334455;
+  margin-top: 3px;
+  line-height: 1.5;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+}
+
+/* ── EMPTY MESSAGE ───────────────────────────────────────────── */
+.site-ent-none {
+  padding: 10px 12px;
+  font-size: 10px;
+  color: #334455;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  letter-spacing: 0.5px;
+}
+
+/* ── DEPT FOOTER (spans full grid width) ─────────────────────── */
+.site-dept-footer {
+  grid-column: 1 / -1;
+}

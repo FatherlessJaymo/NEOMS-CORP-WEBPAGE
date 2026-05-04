@@ -3,9 +3,12 @@
    Neoms~Database/windows/main/main.js
    ============================================================ */
 
-const breached    = ENTITIES.filter(e => e.status === "BREACHED").length;
-const contained   = ENTITIES.filter(e => e.status === "CONTAINED").length;
-const activeStaff = STAFF.filter(s => s.active === "Y").length;
+const breached     = ENTITIES.filter(e => e.status === "BREACHED").length;
+const contained    = ENTITIES.filter(e => e.status === "CONTAINED").length;
+const activeStaff  = STAFF.filter(s => s.active === "Y").length;
+const activeSites  = SITES.filter(s => s.status === "ACTIVE").length;
+const breachEvents = ENTITIES.reduce((acc, e) =>
+  acc + (e.reports ? e.reports.filter(r => r.type === "BREACH").length : 0), 0);
 
 /* Alert banner */
 const alertWrap = document.getElementById("main-alert-wrap");
@@ -25,11 +28,11 @@ const statsEl = document.getElementById("main-stats");
 if (statsEl) {
   statsEl.innerHTML = `
     <div class="stat-box"><div class="stat-label">TOTAL ENTITIES</div><div class="stat-val warn">${ENTITIES.length}</div></div>
-    <div class="stat-box"><div class="stat-label">BREACH STATUS</div><div class="stat-val danger">${breached} ACTIVE</div></div>
-    <div class="stat-box"><div class="stat-label">ACTIVE STAFF</div><div class="stat-val ok">${activeStaff}</div></div>
-    <div class="stat-box"><div class="stat-label">SITES ONLINE</div><div class="stat-val ok">${SITES.length}</div></div>
-    <div class="stat-box"><div class="stat-label">CONTAINED</div><div class="stat-val ok">${contained}</div></div>
-    <div class="stat-box"><div class="stat-label">CLEARANCE REQ'D</div><div class="stat-val warn">CL-1+</div></div>`;
+    <div class="stat-box"><div class="stat-label">ENTITIES CONTAINED</div><div class="stat-val ok">${contained}</div></div>
+    <div class="stat-box"><div class="stat-label">ACTIVE BREACHES</div><div class="stat-val danger">${breached} ACTIVE</div></div>
+    <div class="stat-box"><div class="stat-label">BREACH EVENTS</div><div class="stat-val danger">${breachEvents}</div></div>
+    <div class="stat-box"><div class="stat-label">ACTIVE SITES</div><div class="stat-val ok">${activeSites}</div></div>
+    <div class="stat-box"><div class="stat-label">ACTIVE STAFF</div><div class="stat-val ok">${activeStaff}</div></div>`;
 }
 
 /* Cards */
@@ -61,9 +64,9 @@ if (cardsEl) {
       <div class="home-card-desc">Command-line interface. Query the database directly. Clearance-filtered results only.</div>
       <div class="home-card-count home-card-count--md">C:\\NEOMS&gt;_</div>
     </div>
-    <div class="home-card" onclick="openWin('codeviewer')">
-      <div class="home-card-title">&#128196; Source Files</div>
-      <div class="home-card-desc">Browse NeoMS database source files with syntax highlighting. Authorized personnel only.</div>
-      <div class="home-card-count home-card-count--sm">.JS / .CSS / .HTML</div>
+    <div class="home-card" onclick="openWin('entitycreator')">
+      <div class="home-card-title">&#9998; Entity Creator</div>
+      <div class="home-card-desc">Build and export a new entity entry. Fill in all profile fields, descriptions, protocols, and reports.</div>
+      <div class="home-card-count home-card-count--sm">NEW ENTRY</div>
     </div>`;
 }

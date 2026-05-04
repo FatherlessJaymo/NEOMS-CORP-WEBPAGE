@@ -1,0 +1,349 @@
+/* ============================================================
+   NEOMS — ENTITY CREATOR WINDOW STYLES
+   ============================================================ */
+
+/* ── ROOT ─────────────────────────────────────────────────── */
+.ec-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ec-root .page-header {
+  flex-shrink: 0;
+}
+
+/* ── TAB BAR ──────────────────────────────────────────────── */
+.ec-tabs {
+  display: flex;
+  background: #060c14;
+  border-bottom: 1px solid #1a2a4a;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ec-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ec-tab {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 7px 14px;
+  color: #445566;
+  background: transparent;
+  border: none;
+  border-right: 1px solid #0d1520;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.1s;
+}
+.ec-tab:hover {
+  color: #8899aa;
+}
+.ec-tab--active {
+  color: #00cccc;
+  border-bottom-color: #00cccc;
+  background: rgba(0, 180, 200, 0.06);
+}
+.ec-tab--output {
+  color: #556677;
+}
+.ec-tab--output.ec-tab--active {
+  color: #00eaff;
+  border-bottom-color: #00eaff;
+}
+
+/* ── BODY / SCROLL ────────────────────────────────────────── */
+.ec-body {
+  flex: 1;
+  overflow-y: auto;
+  background: #0a0a14;
+}
+
+/* ── PANELS ───────────────────────────────────────────────── */
+.ec-panel {
+  padding: 14px 16px;
+}
+.ec-hidden {
+  display: none !important;
+}
+
+/* ── PROFILE GRID ─────────────────────────────────────────── */
+.ec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+.ec-span2 {
+  grid-column: span 2;
+}
+
+/* ── DESCRIPTIONS GRID ────────────────────────────────────── */
+.ec-desc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+
+/* ── FORM FIELDS ──────────────────────────────────────────── */
+.ec-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ec-label {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #445566;
+  text-transform: uppercase;
+}
+
+.ec-req {
+  color: #cc3333;
+}
+
+.ec-input {
+  background: #040810;
+  border: 1px solid #1a2a4a;
+  color: #aabbcc;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 11px;
+  padding: 5px 8px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  caret-color: #00cccc;
+  transition: border-color 0.12s;
+}
+.ec-input:focus {
+  border-color: #00aacc;
+  color: #ccddee;
+}
+.ec-input::placeholder {
+  color: #233344;
+}
+
+select.ec-input {
+  cursor: pointer;
+}
+
+.ec-ta {
+  height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.ec-glyph-input {
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+/* ── PROTOCOL / REPORT LIST ───────────────────────────────── */
+.ec-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.ec-list-title {
+  font-family: var(--pixel, "VT323", monospace);
+  font-size: 20px;
+  color: #aabbcc;
+}
+.ec-add-btn {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  background: rgba(0, 140, 160, 0.1);
+  border: 1px solid #00aacc;
+  color: #00cccc;
+  cursor: pointer;
+}
+.ec-add-btn:hover {
+  background: rgba(0, 180, 200, 0.2);
+}
+
+.ec-empty-msg {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 10px;
+  color: #2a3a4a;
+  padding: 16px 0;
+  letter-spacing: 0.5px;
+}
+
+/* ── PROTOCOL / REPORT CARDS ──────────────────────────────── */
+.ec-entry-card {
+  background: #0d1520;
+  border: 1px solid #1a2a4a;
+  margin-bottom: 10px;
+}
+.ec-entry-header {
+  background: #0a1020;
+  border-bottom: 1px solid #1a2a4a;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ec-entry-num {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #334455;
+}
+.ec-entry-remove {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  padding: 2px 8px;
+  background: rgba(136, 0, 0, 0.2);
+  border: 1px solid #550000;
+  color: #cc4444;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.ec-entry-remove:hover {
+  background: rgba(180, 0, 0, 0.3);
+  color: #ff5555;
+}
+.ec-entry-body {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+.ec-entry-body .ec-span2 {
+  grid-column: span 2;
+}
+
+/* ── OUTPUT ───────────────────────────────────────────────── */
+.ec-output-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ec-output-label {
+  font-family: var(--pixel, "VT323", monospace);
+  font-size: 20px;
+  color: #aabbcc;
+}
+.ec-output-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.ec-gen-btn {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  background: rgba(0, 140, 160, 0.15);
+  border: 1px solid #00aacc;
+  color: #00cccc;
+  cursor: pointer;
+}
+.ec-gen-btn:hover {
+  background: rgba(0, 180, 200, 0.25);
+}
+
+.ec-copy-btn {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  background: rgba(0, 80, 40, 0.2);
+  border: 1px solid #006633;
+  color: #00cc66;
+  cursor: pointer;
+}
+.ec-copy-btn:hover {
+  background: rgba(0, 120, 60, 0.3);
+}
+.ec-copy-btn.copied {
+  color: #00ffaa;
+  border-color: #00cc88;
+}
+
+.ec-output-hint {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 10px;
+  color: #334455;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.ec-code {
+  color: #00aacc;
+  background: rgba(0, 140, 160, 0.1);
+  padding: 1px 5px;
+  border: 1px solid #003a4a;
+}
+
+.ec-output-pre {
+  background: #040810;
+  border: 1px solid #1a2a4a;
+  padding: 12px 14px;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 10px;
+  color: #8899aa;
+  line-height: 1.7;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 320px;
+  white-space: pre;
+  margin: 0;
+}
+
+/* ── VALIDATION FLASH ─────────────────────────────────────── */
+.ec-input.ec-invalid {
+  border-color: #880000 !important;
+  box-shadow: 0 0 4px rgba(200, 0, 0, 0.3);
+}
+
+/* ── SUBMIT BUTTON ────────────────────────────────────────── */
+.ec-submit-btn {
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  background: rgba(60, 0, 120, 0.2);
+  border: 1px solid #6600cc;
+  color: #aa66ff;
+  cursor: pointer;
+}
+.ec-submit-btn:hover {
+  background: rgba(90, 0, 180, 0.3);
+}
+.ec-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.ec-submit-btn--ok {
+  color: #00ffaa;
+  border-color: #00cc88;
+  background: rgba(0, 80, 40, 0.2);
+}
+.ec-submit-btn--err {
+  color: #ff5555;
+  border-color: #880000;
+  background: rgba(136, 0, 0, 0.2);
+}
+
+/* ── BUTTON ICON+TEXT STACKED ─────────────────────────────── */
+.ec-gen-btn,
+.ec-copy-btn,
+.ec-submit-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.4;
+}

@@ -17,5 +17,12 @@
        body: "Migrated entries to JS array. Faster cold-load." }
 ============================================================ */
 var NEOMS_BLOG_DATA = [
-  // Add new entries to the TOP of this array (newest first).
+  {
+    date: "2026.01.2",
+    tag: "NEWS",
+    title: "NeomsDatabase V1 Live",
+    body: "NeoMS is officially online. This is where I'll post updates, thoughts, and whatever else needs to be said."
+  },
+  { date: "2026.02.15", tag: "PATCH", title: "Database v1", body: "Moblie View" },
+  { date: "2026.03.5", tag: "UPDATE", title: "Database v1.2", body: "Revamp UI" }
 ];
