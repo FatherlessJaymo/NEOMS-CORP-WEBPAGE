@@ -29,7 +29,7 @@
         if (!categoryList || !mainPane) return;
 
         /* Guard: ranking-data.js must be loaded first */
-        if (typeof NEOMS_RANK_DATA === "undefined") {
+        if (typeof NEOMS_SHOWCASE_DATA === "undefined") {
             console.error("RankingViewer: ranking-data.js not loaded.");
             return;
         }
@@ -64,7 +64,7 @@
         var pane = document.getElementById("RV-Pane");
         if (!pane) return;
 
-        var entries = NEOMS_RANK_DATA[key] || [];
+        var entries = NEOMS_SHOWCASE_DATA[key] || [];
         pane.innerHTML = "";
 
         /* Filter out blank placeholder entries */

@@ -301,10 +301,10 @@ function afterOpen(id) {
     if (id === "friendcodes") setTimeout(initFriendCodes, 50);
 }
 
-/* First key of NEOMS_RANK_DATA, falls back to "Art" if data missing */
+/* First key of NEOMS_SHOWCASE_DATA, falls back to "Art" if data missing */
 function getDefaultRankCat() {
-    if (typeof NEOMS_RANK_DATA === "undefined") return "Art";
-    var keys = Object.keys(NEOMS_RANK_DATA);
+    if (typeof NEOMS_SHOWCASE_DATA === "undefined") return "Art";
+    var keys = Object.keys(NEOMS_SHOWCASE_DATA);
     return keys[0] || "Art";
 }
 

@@ -1,5 +1,5 @@
 /* ============================================================
-   RANKING DATA
+   SHOWCASE DATA
    Edit this file to add / change tier list entries.
 
    IMAGE FIELDS:
@@ -15,7 +15,7 @@
        notes, rank: "SSS" | "SS" | "S" }
 ============================================================ */
 
-var NEOMS_RANK_DATA = {
+var NEOMS_SHOWCASE_DATA = {
     Art: [
         {
             /* Multiple images — user can swipe through them in fullscreen */

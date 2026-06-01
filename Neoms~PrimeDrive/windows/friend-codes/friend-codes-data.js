@@ -15,7 +15,7 @@
 ============================================================ */
 var NEOMS_FRIEND_CODES = [
   { game: "Pocket Mine", platform: "Mobile", code: "" },
-  { game: "Pocket Mine 2", platform: "Mobile", code: "" },
+  { game: "Pocket Mine 2", platform: "Mobile", code: "swpzp9928" },
   { game: "Pocket Mine 3", platform: "Mobile", code: "wzcj2860" },
   { game: "Pokemon Go", platform: "Mobile", code: "3924 9101 1504" }
 ];

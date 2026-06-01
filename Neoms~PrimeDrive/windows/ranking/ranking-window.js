@@ -1,13 +1,13 @@
 /* ============================================================
    RANKING WINDOW (desktop window variant)
    The lightweight ranking viewer shown inside the NeoMS desktop
-   window. Reads from NEOMS_RANK_DATA (defined in ranking-data.js).
+   window. Reads from NEOMS_SHOWCASE_DATA (defined in ranking-data.js).
    Exposed:
      window.buildRanking    — called by window-manager router
      window.renderRank(cat) — render a category in the open window
      window.rankSelect(...) — sidebar click handler
 
-   Categories ALL come from NEOMS_RANK_DATA keys, in their
+   Categories ALL come from NEOMS_SHOWCASE_DATA keys, in their
    declaration order. Add a new category there → it appears here.
 
    IMAGE FIELDS (per entry):
@@ -279,8 +279,8 @@
        CATEGORY HELPERS
     ============================================================ */
     function getCategories() {
-        if (typeof NEOMS_RANK_DATA === "undefined") return [];
-        return Object.keys(NEOMS_RANK_DATA);
+        if (typeof NEOMS_SHOWCASE_DATA === "undefined") return [];
+        return Object.keys(NEOMS_SHOWCASE_DATA);
     }
 
     /* ============================================================
@@ -442,7 +442,7 @@
     window.renderRank = function (cat) {
         var main = document.getElementById("rank-main");
         if (!main) return;
-        var data = (typeof NEOMS_RANK_DATA !== "undefined" && NEOMS_RANK_DATA[cat]) || [];
+        var data = (typeof NEOMS_SHOWCASE_DATA !== "undefined" && NEOMS_SHOWCASE_DATA[cat]) || [];
         var filled = data.filter(function (e) {
             return e.title || e.img || e.imgs;
         });

@@ -18,39 +18,83 @@
    Add a new desktop icon → add an entry here.
 ============================================================ */
 var NEOMS_CORE_GUIDE = [
-    { id: "prime",       name: "Creator's Log",  category: "System",
-      desc: "Blog feed and update log. Posts about NeoMS development, Neoms~Database progress, and general notes. Tag-filterable; new entries can be added via the admin form." },
+  {
+    id: "prime",
+    name: "Creator's Log",
+    category: "System",
+    desc: "Blog feed and update log. Posts about NeoMS development, Neoms~Database progress, and general notes. Tag-filterable; new entries can be added via the admin form."
+  },
 
-    { id: "neomix",      name: "NeoMix",         category: "Apps",
-      desc: "Embedded music player backed by YouTube playlists (NeoMsMix-Main, SinisterMinds, NeoMsMix-Rewrite, and more). Supports shuffle, video mode, and a mini-player in the taskbar." },
+  {
+    id: "neomix",
+    name: "NeoMix",
+    category: "Apps",
+    desc: "Embedded music player backed by YouTube playlists (NeoMsMix-Main, SinisterMinds, NeoMsMix-Rewrite, and more). Supports shuffle, video mode, and a mini-player in the taskbar."
+  },
 
-    { id: "core",        name: "Core Directive", category: "System",
-      desc: "This window. A guide to every desktop icon and what each one contains." },
+  {
+    id: "core",
+    name: "Core Directive",
+    category: "System",
+    desc: "This window. A guide to every desktop icon and what each one contains."
+  },
 
-    { id: "guestbook",   name: "Guest Book",     category: "Social",
-      desc: "Public chat/guestbook (powered by Cbox). Leave a message, say hi, or open the full chat in a new tab." },
+  {
+    id: "guestbook",
+    name: "Guest Book",
+    category: "Social",
+    desc: "Public chat/guestbook (powered by Cbox). Leave a message, say hi, or open the full chat in a new tab."
+  },
 
-    { id: "sticker",     name: "Sticker HQ",     category: "Apps",
-      desc: "Click a sticker in the tray to spawn it on the desktop. Drag stickers anywhere; positions persist across visits. Hover a sticker to remove it." },
+  {
+    id: "sticker",
+    name: "Sticker HQ",
+    category: "Apps",
+    desc: "Click a sticker in the tray to spawn it on the desktop. Drag stickers anywhere; positions persist across visits. Hover a sticker to remove it."
+  },
 
-    { id: "badges",      name: "Badges",         category: "Tools",
-      desc: "Grab the NEOMS badge for your own Neocities site. Copy the embed code and paste it into your page." },
+  {
+    id: "badges",
+    name: "Badges",
+    category: "Tools",
+    desc: "Grab the NEOMS badge for your own Neocities site. Copy the embed code and paste it into your page."
+  },
 
-    { id: "ranking",     name: "Rankings",       category: "Apps",
-      desc: "Tier-list viewer. Categories: Art, Cartoons, Movies, YouTubers. Each entry is ranked SSS / SS / S with notes." },
+  {
+    id: "ranking",
+    name: "Showcase",
+    category: "Apps",
+    desc: "Tier-list viewer. Categories: Art, Cartoons, Movies, YouTubers. Each entry is ranked SSS / SS / S with notes."
+  },
 
-    { id: "etc",         name: "Etc",            category: "Social",
-      desc: "Links to my other profiles around the web (AniList, etc.). Use this for things that don't fit anywhere else." },
+  {
+    id: "etc",
+    name: "Etc",
+    category: "Social",
+    desc: "Links to my other profiles around the web (AniList, etc.). Use this for things that don't fit anywhere else."
+  },
 
-    { id: "friendcodes", name: "Game Codes",     category: "Apps",
-      desc: "Friend codes for the games I play. Each entry shows the game and the code with a one-click copy button." },
+  {
+    id: "friendcodes",
+    name: "Game Codes",
+    category: "Apps",
+    desc: "Friend codes for the games I play. Each entry shows the game and the code with a one-click copy button."
+  },
 
-    { id: "wallpaper",   name: "Wallpaper",      category: "Tools",
-      desc: "Right-click the desktop and choose \"Change Wallpaper\" to swap the background. (Sonic CD / Neo Metal currently available.)" },
+  {
+    id: "wallpaper",
+    name: "Wallpaper",
+    category: "Tools",
+    desc: 'Right-click the desktop and choose "Change Wallpaper" to swap the background. (Sonic CD / Neo Metal currently available.)'
+  },
 
-    /* The Neoms~Database row uses an explicit icon since it isn't a
+  /* The Neoms~Database row uses an explicit icon since it isn't a
        proper window — double-click on the desktop opens it in a new tab. */
-    { id: "database",    name: "Neoms~Database", category: "System",
-      icon: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
-      desc: "Opens the Neoms~Database wiki in a new tab \u2014 the structured knowledge base behind NeoMS. Double-click the icon on the desktop to launch." }
+  {
+    id: "database",
+    name: "Neoms~Database",
+    category: "System",
+    icon: "Neoms~Universal-Fonts+Images/Icons/Desktop/VM.jpg",
+    desc: "Opens the Neoms~Database wiki in a new tab \u2014 the structured knowledge base behind NeoMS. Double-click the icon on the desktop to launch."
+  }
 ];
