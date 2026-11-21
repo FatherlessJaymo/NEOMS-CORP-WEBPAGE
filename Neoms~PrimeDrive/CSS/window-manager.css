@@ -56,6 +56,30 @@
   animation: winClose 0.18s ease forwards;
 }
 
+/* Maximized = top of the page down to the taskbar. While a maximized
+   window is showing, the desktop layer is lifted over the top label
+   bar (9000) but stays under the taskbar (9999), which remains visible.
+   Windows are NOT moved in the DOM, so iframes (NeoMix video,
+   guestbook) don't reload. */
+body.win-max-active #desktop {
+  z-index: 9500;
+}
+.win.maximized {
+  border-width: 0;
+  border-radius: 0;
+  resize: none;
+}
+.win.maximized .win-bar {
+  border-radius: 0;
+  cursor: default;
+}
+.win.maximized .win-body {
+  border-radius: 0;
+}
+.win.maximized .win-resize {
+  display: none;
+}
+
 /* Title bar */
 .win-bar {
   display: flex;

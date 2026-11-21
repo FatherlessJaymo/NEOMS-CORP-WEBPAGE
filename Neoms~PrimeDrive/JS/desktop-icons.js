@@ -46,14 +46,67 @@ function saveIconPositions() {
   } catch (e) {}
 }
 
+/* ---- Grid helpers ----
+   Every icon sits exactly on a grid cell, so two icons share a
+   cell only if their left/top match. Dropping onto an occupied
+   cell swaps the two icons. */
+var CELL_W = 96,
+  CELL_H = 100,
+  PAD_X = 14,
+  PAD_Y = 32,
+  ROWS = 6;
+
+function gridCols() {
+  return Math.max(1, Math.floor((window.innerWidth - 90 - PAD_X) / CELL_W) + 1);
+}
+function gridRows() {
+  return Math.max(1, Math.floor((window.innerHeight - 48 - 90 - PAD_Y) / CELL_H) + 1);
+}
+
+/* Nearest cell to a pixel position, clamped to the visible grid */
+function snapToCell(x, y) {
+  var col = Math.max(0, Math.min(gridCols() - 1, Math.round((x - PAD_X) / CELL_W)));
+  var row = Math.max(0, Math.min(gridRows() - 1, Math.round((y - PAD_Y) / CELL_H)));
+  return { x: PAD_X + col * CELL_W, y: PAD_Y + row * CELL_H };
+}
+
+function iconAt(x, y, except) {
+  var found = null;
+  document.querySelectorAll(".desk-icon").forEach(function (d) {
+    if (d !== except && parseInt(d.style.left) === x && parseInt(d.style.top) === y) found = d;
+  });
+  return found;
+}
+
+/* First free cell, column-major (same order as the default layout) */
+function firstFreeCell(taken) {
+  var cols = gridCols(),
+    rows = gridRows();
+  for (var c = 0; c < cols; c++) {
+    for (var r = 0; r < rows; r++) {
+      var x = PAD_X + c * CELL_W,
+        y = PAD_Y + r * CELL_H;
+      if (!taken[x + "," + y]) return { x: x, y: y };
+    }
+  }
+  return { x: PAD_X, y: PAD_Y };
+}
+
+/* Slide an icon to a cell instead of jumping */
+function moveIconAnimated(el, x, y) {
+  el.classList.add("settling");
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  setTimeout(function () {
+    el.classList.remove("settling");
+  }, 200);
+}
+
 function buildIcons() {
   var grid = document.getElementById("icon-grid");
   var saved = loadIconPositions();
-  var CELL_W = 96,
-    CELL_H = 100,
-    PAD_X = 14,
-    PAD_Y = 32,
-    ROWS = 6;
+  var taken = {};
+  var fixedStacks = false;
 
   ICONS.forEach(function (ic, i) {
     var el = document.createElement("div");
@@ -76,12 +129,22 @@ function buildIcons() {
     var defX = PAD_X + col * CELL_W;
     var defY = PAD_Y + row * CELL_H;
     var pos = saved[ic.id];
-    el.style.left = (pos ? pos.x : defX) + "px";
-    el.style.top = (pos ? pos.y : defY) + "px";
+    var cell = snapToCell(pos ? pos.x : defX, pos ? pos.y : defY);
+
+    /* Un-stack icons left overlapping by older saved positions */
+    if (taken[cell.x + "," + cell.y]) {
+      cell = firstFreeCell(taken);
+      fixedStacks = true;
+    }
+    taken[cell.x + "," + cell.y] = true;
+    el.style.left = cell.x + "px";
+    el.style.top = cell.y + "px";
 
     makeDraggableIcon(el, ic.id, ic.url);
     grid.appendChild(el);
   });
+
+  if (fixedStacks) saveIconPositions();
 }
 
 function makeDraggableIcon(el, id, url) {
@@ -129,18 +192,14 @@ function makeDraggableIcon(el, id, url) {
       document.removeEventListener("mouseup", onUp);
 
       if (moved) {
-        var CELL_W = 96,
-          CELL_H = 100,
-          PAD_X = 14,
-          PAD_Y = 32;
-        var cx = parseInt(el.style.left),
-          cy = parseInt(el.style.top);
-        var snapX = Math.round((cx - PAD_X) / CELL_W) * CELL_W + PAD_X;
-        var snapY = Math.round((cy - PAD_Y) / CELL_H) * CELL_H + PAD_Y;
-        snapX = Math.max(PAD_X, Math.min(window.innerWidth - 90, snapX));
-        snapY = Math.max(PAD_Y, Math.min(window.innerHeight - 48 - 90, snapY));
-        el.style.left = snapX + "px";
-        el.style.top = snapY + "px";
+        var target = snapToCell(parseInt(el.style.left), parseInt(el.style.top));
+        var home = snapToCell(origLeft, origTop);
+
+        /* Switch: the icon already in the target cell takes our old cell */
+        var occupant = iconAt(target.x, target.y, el);
+        if (occupant) moveIconAnimated(occupant, home.x, home.y);
+
+        moveIconAnimated(el, target.x, target.y);
         saveIconPositions();
       }
     }

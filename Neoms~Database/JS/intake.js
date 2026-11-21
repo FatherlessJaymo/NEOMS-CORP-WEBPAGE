@@ -18,7 +18,7 @@
 const LS_KEY = "neoms_session_personnel";
 const LS_ID_KEY = "neoms_next_personnel_id";
 const FORMSPREE_URL = "https://formspree.io/f/xwvwybya";
-const DESKTOP_URL = "/Neoms~Database/HTML/desktop.html";
+const DESKTOP_URL = "desktop.html";
 
 /* ── localStorage helpers ─────────────────────────────────── */
 function lsSave(r) {

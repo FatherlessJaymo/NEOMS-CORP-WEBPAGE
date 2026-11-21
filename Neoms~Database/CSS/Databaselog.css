@@ -54,289 +54,13 @@ body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.18) 3px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.08) 3px);
     pointer-events: none;
     z-index: 9999;
 }
 
-/* ── DESKTOP ───────────────────────────────────────────────── */
-#desk {
-    position: fixed;
-    inset: 0;
-    background: var(--desk);
-    display: flex;
-    flex-direction: column;
-}
-
-#desk::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 100%, rgba(0, 60, 60, 0.25) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-/* ── TASKBAR ───────────────────────────────────────────────── */
-#taskbar {
-    height: 30px;
-    background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
-    border-top: 2px solid var(--teal-d);
-    display: flex;
-    align-items: center;
-    padding: 0 6px;
-    gap: 6px;
-    flex-shrink: 0;
-    z-index: 100;
-    order: 2;
-}
-
-#taskbar-start {
-    font-family: var(--mono);
-    font-size: 11px;
-    background: linear-gradient(180deg, #2a2a4a, #1a1a2e);
-    border: 1px outset #444;
-    color: var(--teal-b);
-    padding: 2px 10px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-}
-
-#taskbar-start:hover {
-    background: linear-gradient(180deg, #3a3a5a, #2a2a3e);
-}
-
-#taskbar-sep {
-    width: 1px;
-    height: 18px;
-    background: #333;
-    margin: 0 2px;
-    flex-shrink: 0;
-}
-
-/* FIX D: scroll horizontally instead of clipping */
-#taskbar-wins {
-    display: flex;
-    gap: 4px;
-    flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-#taskbar-wins::-webkit-scrollbar {
-    display: none;
-}
-
-.tb-win {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 2px 8px;
-    background: #1a1a2e;
-    border: 1px solid #333;
-    color: #888;
-    cursor: pointer;
-    max-width: 130px;
-    min-width: 50px;
-    flex-shrink: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.tb-win.active {
-    background: #0d1117;
-    border-color: var(--teal-d);
-    color: var(--teal-b);
-}
-
-#taskbar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 10px;
-    color: #666;
-    padding: 0 6px;
-    border-left: 1px solid #222;
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-#sys-clock {
-    color: var(--teal-b);
-    font-family: var(--pixel);
-    font-size: 16px;
-}
-
-#clearance-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.clr-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #333;
-    flex-shrink: 0;
-}
-
-.clr-dot.active {
-    background: var(--teal-b);
-}
-
-/* ── DESKTOP AREA ──────────────────────────────────────────── */
-#desktop-area {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    order: 1;
-}
-
-/* ── DESKTOP ICONS ─────────────────────────────────────────── */
-#desktop-icons {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 10;
-}
-
-.desk-icon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 6px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    width: 72px;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-}
-
-.desk-icon:hover,
-.desk-icon:active {
-    background: rgba(0, 140, 140, 0.15);
-    border-color: var(--teal-d);
-}
-
-.desk-icon .di-img {
-    font-size: 26px;
-    line-height: 1;
-    text-align: center;
-}
-
-.desk-icon .di-label {
-    font-size: 9px;
-    color: #aaa;
-    text-align: center;
-    word-break: break-word;
-    line-height: 1.2;
-    font-family: var(--mono);
-}
-
-.desk-icon:hover .di-label,
-.desk-icon:active .di-label {
-    color: var(--teal-b);
-}
-
-/* ── WINDOWS ───────────────────────────────────────────────── */
-/* FIX A: clamp instead of fixed 300px so narrow phones don't overflow */
-.win {
-    position: absolute;
-    background: var(--win-bg);
-    border: 2px outset #dfdfdf;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
-    min-width: clamp(240px, 90vw, 300px);
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    z-index: 50;
-}
-
-.win.active-win {
-    z-index: 60;
-}
-
-/* FIX B: prevent iOS text-selection / scroll competing with drag */
-.win-titlebar {
-    background: var(--titlebar);
-    padding: 3px 4px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: move;
-    flex-shrink: 0;
-    touch-action: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-.win-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: #fff;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-}
-
-.win-title .win-ico {
-    font-size: 12px;
-    flex-shrink: 0;
-}
-
-.win-controls {
-    display: flex;
-    gap: 2px;
-    flex-shrink: 0;
-}
-
-.win-btn {
-    width: 16px;
-    height: 14px;
-    font-size: 9px;
-    font-family: var(--mono);
-    border: 1px outset #dfdfdf;
-    background: var(--win-bg);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.win-btn:active {
-    border: 1px inset #dfdfdf;
-}
-
-.win-btn.close-btn:hover,
-.win-btn.close-btn:active {
-    background: #cc0000;
-    color: #fff;
-}
-
-.win-body {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: #fff;
-}
+/* Desktop shell (taskbar, start menu, icons, window chrome) is styled by
+   Neoms~PrimeDrive/CSS/* with DB theme overrides in desktop-db.css. */
 
 /* ── TABS ──────────────────────────────────────────────────── */
 /* FIX H: scroll instead of wrapping/clipping on small windows */
@@ -354,9 +78,9 @@ body::after {
 }
 
 .win-tab {
-    font-size: 10px;
+    font-size: 11px;
     padding: 5px 12px;
-    color: #556;
+    color: #7b7b91;
     cursor: pointer;
     border-right: 1px solid #0d1520;
     font-family: var(--mono);
@@ -373,7 +97,7 @@ body::after {
 }
 
 .win-tab:hover:not(.active-tab) {
-    color: #889;
+    color: #a8a8c0;
     background: rgba(0, 140, 140, 0.05);
 }
 
@@ -411,17 +135,17 @@ body::after {
 }
 
 .nav-section-head {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 2px;
-    color: #444;
+    color: #7c7c7c;
     padding: 6px 8px 3px;
     text-transform: uppercase;
     font-family: var(--mono);
 }
 
 .nav-item {
-    font-size: 11px;
-    color: #888;
+    font-size: 12px;
+    color: #a8a8a8;
     padding: 5px 8px 5px 16px;
     cursor: pointer;
     font-family: var(--mono);
@@ -445,7 +169,7 @@ body::after {
 }
 
 .nav-item .nav-ico {
-    font-size: 11px;
+    font-size: 12px;
     width: 14px;
     text-align: center;
     flex-shrink: 0;
@@ -453,7 +177,7 @@ body::after {
 
 .nav-badge {
     margin-left: auto;
-    font-size: 8px;
+    font-size: 10px;
     background: var(--red);
     color: #fff;
     padding: 1px 4px;
@@ -500,8 +224,8 @@ body::after {
 }
 
 .page-breadcrumb {
-    font-size: 10px;
-    color: #444;
+    font-size: 11px;
+    color: #7c7c7c;
     letter-spacing: 1px;
     margin-bottom: 6px;
     font-family: var(--mono);
@@ -516,8 +240,8 @@ body::after {
 }
 
 .page-subtitle {
-    font-size: 11px;
-    color: #556;
+    font-size: 12px;
+    color: #7b7b91;
     margin-top: 4px;
     letter-spacing: 0.5px;
 }
@@ -534,7 +258,7 @@ body::after {
 .page-section-title {
     font-family: var(--pixel);
     font-size: 19px;
-    color: #aabbcc;
+    color: #d0dce8;
     border-bottom: 1px solid #1a2a4a;
     padding-bottom: 4px;
     margin-bottom: 10px;
@@ -542,8 +266,8 @@ body::after {
 }
 
 .page-text {
-    font-size: 12px;
-    color: #8899aa;
+    font-size: 13px;
+    color: #b0c0d0;
     line-height: 1.8;
     font-family: var(--mono);
 }
@@ -567,7 +291,7 @@ body::after {
     gap: 5px;
     padding: 4px 10px;
     border: 1px solid;
-    font-size: 11px;
+    font-size: 12px;
     font-family: var(--mono);
     letter-spacing: 1px;
     flex-shrink: 0;
@@ -608,7 +332,7 @@ body::after {
 .status-chip {
     display: inline-block;
     padding: 1px 6px;
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 1px;
     border: 1px solid;
 }
@@ -651,7 +375,7 @@ body::after {
     background: #0a1020;
     border-bottom: 1px solid #1a2a4a;
     padding: 6px 10px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--teal-b);
     letter-spacing: 1px;
     font-family: var(--mono);
@@ -661,7 +385,7 @@ body::after {
     width: 100%;
     height: 140px;
     background-color: #040810;
-    background-image: url("/Neoms~Universal-Fonts+Images/Icons/NEOMS-CORP-4.png");
+    background-image: url("../../Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-4.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
@@ -680,7 +404,7 @@ body::after {
 
 .infobox-table {
     width: 100%;
-    font-size: 10px;
+    font-size: 11px;
     border-collapse: collapse;
 }
 
@@ -690,7 +414,7 @@ body::after {
 
 .infobox-table th {
     text-align: left;
-    color: #445566;
+    color: #67809a;
     padding: 4px 8px;
     width: 80px;
     font-weight: normal;
@@ -698,7 +422,7 @@ body::after {
 }
 
 .infobox-table td {
-    color: #aabbcc;
+    color: #d0dce8;
     padding: 4px 8px;
 }
 
@@ -719,7 +443,7 @@ body::after {
 }
 
 .protocol-type {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 2px;
     font-family: var(--mono);
 }
@@ -738,15 +462,15 @@ body::after {
 }
 
 .protocol-clr {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     letter-spacing: 1px;
 }
 
 .protocol-body {
     padding: 8px 10px;
-    font-size: 11px;
-    color: #8899aa;
+    font-size: 12px;
+    color: #b0c0d0;
     line-height: 1.7;
     font-family: var(--mono);
 }
@@ -760,26 +484,26 @@ body::after {
 }
 
 .protocol-meta-item {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     letter-spacing: 0.5px;
 }
 
 .protocol-meta-val {
-    color: #667788;
+    color: #6d7f91;
 }
 
 /* ── ENTITY LIST TABLE ─────────────────────────────────────── */
 .entity-list-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .entity-list-table th {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 2px;
-    color: #445566;
+    color: #67809a;
     padding: 5px 8px;
     border-bottom: 1px solid #1a2a4a;
     text-align: left;
@@ -790,22 +514,22 @@ body::after {
 .entity-list-table td {
     padding: 5px 8px;
     border-bottom: 1px solid #0d1520;
-    color: #8899aa;
+    color: #b0c0d0;
     cursor: pointer;
 }
 
 .entity-list-table tr:hover td {
     background: rgba(0, 140, 140, 0.08);
-    color: #aabbcc;
+    color: #d0dce8;
 }
 
 .entity-list-table .ent-name {
-    color: #aabbcc;
+    color: #d0dce8;
     font-family: var(--mono);
 }
 .entity-list-table .ent-id {
-    color: #445566;
-    font-size: 10px;
+    color: #67809a;
+    font-size: 11px;
 }
 
 /* ── SEARCH / FILTER BAR ───────────────────────────────────── */
@@ -820,8 +544,8 @@ body::after {
 }
 
 .search-label {
-    font-size: 10px;
-    color: #445566;
+    font-size: 11px;
+    color: #67809a;
     letter-spacing: 1px;
     white-space: nowrap;
 }
@@ -833,7 +557,7 @@ body::after {
     border: 1px inset #333;
     color: var(--teal-b);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     padding: 3px 6px;
     outline: none;
     caret-color: var(--teal-b);
@@ -845,11 +569,11 @@ body::after {
 
 .filter-btn {
     font-family: var(--mono);
-    font-size: 9px;
+    font-size: 10px;
     padding: 3px 8px;
     background: #0d1520;
     border: 1px solid #1a2a4a;
-    color: #667788;
+    color: #6d7f91;
     cursor: pointer;
     letter-spacing: 1px;
     -webkit-tap-highlight-color: transparent;
@@ -863,7 +587,7 @@ body::after {
 
 .filter-btn:hover {
     border-color: #2a3a5a;
-    color: #aabbcc;
+    color: #d0dce8;
 }
 
 /* ── HOME GRID ─────────────────────────────────────────────── */
@@ -895,15 +619,15 @@ body::after {
 }
 
 .home-card-desc {
-    font-size: 10px;
-    color: #556677;
+    font-size: 11px;
+    color: #6a8095;
     line-height: 1.6;
 }
 
 .home-card-count {
     font-family: var(--pixel);
     font-size: 28px;
-    color: #1a3a5a;
+    color: #397fc5;
     margin-top: 6px;
 }
 
@@ -922,8 +646,8 @@ body::after {
 }
 
 .stat-label {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     letter-spacing: 1px;
     margin-bottom: 2px;
 }
@@ -951,7 +675,7 @@ body::after {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .alert-ico {
@@ -971,13 +695,13 @@ body::after {
 .personnel-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .personnel-table th {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 1px;
-    color: #445566;
+    color: #67809a;
     padding: 4px 8px;
     border-bottom: 1px solid #1a2a4a;
     text-align: left;
@@ -988,7 +712,7 @@ body::after {
 .personnel-table td {
     padding: 4px 8px;
     border-bottom: 1px solid #0d1520;
-    color: #8899aa;
+    color: #b0c0d0;
 }
 
 .personnel-table tr:hover td {
@@ -1019,57 +743,6 @@ body::after {
     background: #880000;
 }
 
-/* ── START MENU ────────────────────────────────────────────── */
-#start-menu {
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    width: 220px;
-    background: #0d0d1a;
-    border: 2px outset #333;
-    z-index: 200;
-    display: none;
-}
-
-#start-menu.open {
-    display: block;
-}
-
-.sm-header {
-    background: linear-gradient(90deg, #000080, #1084d0);
-    padding: 8px 10px;
-    font-family: var(--pixel);
-    font-size: 20px;
-    color: #fff;
-    letter-spacing: 2px;
-    border-bottom: 1px solid #1a2a4a;
-}
-
-.sm-item {
-    padding: 6px 12px;
-    font-size: 11px;
-    color: #aaa;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-left: 2px solid transparent;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.sm-item:hover,
-.sm-item:active {
-    background: rgba(0, 140, 140, 0.15);
-    color: var(--teal-b);
-    border-left-color: var(--teal-b);
-}
-
-.sm-sep {
-    height: 1px;
-    background: #1a1a2e;
-    margin: 3px 0;
-}
-
 /* ── ENTITY GLYPH ──────────────────────────────────────────── */
 .entity-img {
     width: 100%;
@@ -1082,10 +755,10 @@ body::after {
 
 /* ── DEPT TAGS ─────────────────────────────────────────────── */
 .dept-tag {
-    font-size: 10px;
+    font-size: 11px;
     padding: 3px 8px;
     border: 1px solid #1a2a4a;
-    color: #556677;
+    color: #6a8095;
     font-family: var(--mono);
     display: inline-block;
 }
@@ -1116,8 +789,8 @@ body::after {
 
 .win-legend {
     padding: 10px 16px;
-    font-size: 10px;
-    color: #334;
+    font-size: 11px;
+    color: #7a7a9b;
     display: flex;
     gap: 12px;
     align-items: center;
@@ -1139,8 +812,8 @@ body::after {
 
 .win-page-footer {
     padding: 0 20px 20px;
-    font-size: 10px;
-    color: #223;
+    font-size: 11px;
+    color: #7a7aa7;
     line-height: 1.8;
     border-top: 1px solid #0d1520;
     margin: 0 20px;
@@ -1163,28 +836,28 @@ body::after {
     font-size: 16px;
 }
 .class-badge--sm {
-    font-size: 9px;
+    font-size: 10px;
     padding: 2px 6px;
 }
 .class-badge__sub {
-    font-size: 8px;
+    font-size: 10px;
 }
 .status-chip--sm {
-    font-size: 9px;
+    font-size: 10px;
 }
 .ent-ps {
-    color: #556677;
-    font-size: 11px;
+    color: #6a8095;
+    font-size: 12px;
 }
 .ent-site {
-    color: #445566;
-    font-size: 10px;
+    color: #67809a;
+    font-size: 11px;
 }
 .ent-empty {
     text-align: center;
-    color: #334;
+    color: #7a7a9b;
     padding: 20px;
-    font-size: 11px;
+    font-size: 12px;
 }
 .ent-row-clickable {
     cursor: pointer;
@@ -1206,19 +879,19 @@ body::after {
 
 .site-status-ok {
     color: var(--green);
-    font-size: 10px;
+    font-size: 11px;
 }
 .page-text-label {
-    color: #aabbcc;
+    color: #d0dce8;
 }
 .page-text--dim {
-    color: #334;
+    color: #7a7a9b;
 }
 
 .site-dept-footer {
     padding: 0 20px 20px;
-    font-size: 10px;
-    color: #334;
+    font-size: 11px;
+    color: #7a7a9b;
     line-height: 1.8;
 }
 
@@ -1230,43 +903,36 @@ body::after {
 
 /* ── personnel table cell classes ────────────────────────────────── */
 .personnel-id {
-    color: #445566;
-    font-size: 10px;
+    color: #67809a;
+    font-size: 11px;
 }
 .personnel-name {
-    color: #aabbcc;
+    color: #d0dce8;
 }
 .personnel-pos {
-    font-size: 10px;
-    color: #778899;
+    font-size: 11px;
+    color: #9cb0c2;
 }
 .personnel-dept {
-    font-size: 10px;
-    color: #556677;
+    font-size: 11px;
+    color: #6a8095;
 }
 .personnel-clr-label {
-    font-size: 10px;
-    color: #556677;
+    font-size: 11px;
+    color: #6a8095;
 }
 .personnel-site {
-    font-size: 10px;
-    color: #445566;
+    font-size: 11px;
+    color: #67809a;
 }
 .personnel-status {
-    font-size: 10px;
+    font-size: 11px;
 }
 .personnel-active {
     color: #00aa44;
 }
 .personnel-inactive {
-    color: #666;
-}
-
-/* ── CLR label in taskbar ────────────────────────────────────── */
-.clr-label {
-    font-size: 9px;
-    color: #445566;
-    letter-spacing: 1px;
+    color: #7d7d7d;
 }
 
 /* ── Sites — classified entity section ───────────────────────── */
@@ -1288,103 +954,51 @@ body::after {
 }
 
 .site-ent-classified-label {
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 3px;
-    color: #445566;
+    color: #67809a;
     margin-bottom: 4px;
     font-family: var(--mono);
 }
 
 .site-ent-classified-sub {
-    font-size: 10px;
-    color: #334;
+    font-size: 11px;
+    color: #7a7a9b;
     line-height: 1.6;
     font-family: var(--mono);
 }
 
 /* ══════════════════════════════════════════════════════════════
    TOUCH DEVICE OVERRIDES  (pointer:coarse = finger input)
-   FIX C: enlarge .win-btn to a tappable size (was 16×14px)
-   FIX F: bigger desktop icons
+   Enlarge window controls to a tappable size
    ══════════════════════════════════════════════════════════════ */
 @media (pointer: coarse) {
-    /* Window control buttons: 16×14 → 32×28 */
     .win-btn {
-        width: 32px;
-        height: 28px;
-        font-size: 11px;
+        width: 28px;
+        height: 26px;
     }
 
-    /* Desktop icons */
-    .desk-icon {
-        width: 80px;
-        padding: 8px 6px;
-    }
-    .desk-icon .di-img {
-        font-size: 32px;
-    }
-    .desk-icon .di-label {
-        font-size: 10px;
-    }
-
-    /* Nav, menu, tabs */
+    /* Nav, tabs */
     .nav-item {
         padding: 9px 8px 9px 16px;
     }
-    .sm-item {
-        padding: 10px 14px;
-        font-size: 12px;
-    }
     .win-tab {
         padding: 8px 14px;
-        font-size: 11px;
+        font-size: 12px;
     }
     .filter-btn {
         padding: 6px 12px;
-        font-size: 10px;
+        font-size: 11px;
     }
 }
 
 /* ══════════════════════════════════════════════════════════════
    NARROW SCREEN (≤ 600px) — phone portrait
-   FIX E, G, and general layout
    ══════════════════════════════════════════════════════════════ */
 @media (max-width: 600px) {
-    /* FIX E: icons in horizontal strip instead of vertical column */
-    #desktop-icons {
-        top: 6px;
-        left: 6px;
-        right: 6px;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-
-    .desk-icon {
-        width: 60px;
-        padding: 4px;
-    }
-    .desk-icon .di-img {
-        font-size: 22px;
-    }
-    .desk-icon .di-label {
-        font-size: 8px;
-    }
-
-    /* FIX G: start menu full width on phones */
+    /* Start menu full width on phones */
     #start-menu {
         width: 100%;
-    }
-
-    /* Hide clock text to save taskbar space, keep dots */
-    #sys-clock {
-        font-size: 12px;
-        letter-spacing: 0;
-    }
-
-    /* Windows fill viewport width on phones */
-    .win {
-        min-width: calc(100vw - 8px);
     }
 
     /* Single-column home grid */
@@ -1444,8 +1058,5 @@ body::after {
     }
     .stat-grid {
         grid-template-columns: repeat(3, 1fr);
-    }
-    .desk-icon {
-        width: 72px;
     }
 }

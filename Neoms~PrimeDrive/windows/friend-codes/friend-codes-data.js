@@ -14,8 +14,6 @@
      { game: "Pokemon Scarlet", platform: "Switch", code: "SW-1234-5678-9012", note: "FatherlessJaymo" }
 ============================================================ */
 var NEOMS_FRIEND_CODES = [
-  { game: "Pocket Mine", platform: "Mobile", code: "" },
-  { game: "Pocket Mine 2", platform: "Mobile", code: "swpzp9928" },
-  { game: "Pocket Mine 3", platform: "Mobile", code: "wzcj2860" },
+  { game: "Cookie Run Kingdom", platform: "Mobile", code: "" },
   { game: "Pokemon Go", platform: "Mobile", code: "3924 9101 1504" }
 ];

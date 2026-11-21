@@ -42,7 +42,7 @@ var NEOMS_SHOWCASE_DATA = {
                     label: "Instagram"
                 }
             ],
-            notes: "Great Artist All Around But This Is One Of My Top 10",
+            notes: "Underrated Artist All Around Recommend You Go Follow",
             rank: "SSS"
         }
     ]

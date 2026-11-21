@@ -11,14 +11,28 @@
   margin-bottom: 10px;
 }
 
-/* ---- Entry card — lowercase (window-manager.js inline HTML) ---- */
+/* ---- Entry card ----
+   --tag-c is the tag colour; it tints the left edge and the pill */
 .blog-entry,
 .Blog-Entry {
-  border-left: 3px solid #a8c8e8;
+  --tag-c: #6ab7ff;
+  border-left: 3px solid var(--tag-c);
   background: rgba(7, 42, 113, 0.4);
   border-radius: 0 8px 8px 0;
   padding: 10px 12px;
   margin-bottom: 10px;
+}
+.Blog-Entry[data-tag="UPDATE"] {
+  --tag-c: #00eaff;
+}
+.Blog-Entry[data-tag="NEWS"] {
+  --tag-c: #ff5fd2;
+}
+.Blog-Entry[data-tag="PATCH"] {
+  --tag-c: #ffb547;
+}
+.Blog-Entry[data-tag="NOTE"] {
+  --tag-c: #5ee08a;
 }
 
 /* ---- Meta row ---- */
@@ -27,7 +41,8 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 
 /* ---- Date ---- */
@@ -35,28 +50,37 @@
 .Blog-Date {
   font-size: 7px;
   letter-spacing: 2px;
-  color: #354a5f;
+  color: #7fa3c7;
 }
 
 /* ---- Tag pill ---- */
 .blog-tag,
 .Blog-Tag {
-  font-size: 7px;
-  font-weight: 700;
+  font-size: 6px;
   letter-spacing: 2px;
-  padding: 2px 6px;
+  padding: 3px 6px;
   border-radius: 3px;
-  background: rgba(0, 109, 255, 0.15);
-  border: 1px solid #a8c8e8;
-  color: #006dff;
+  color: var(--tag-c, #6ab7ff);
+  border: 1px solid var(--tag-c, #6ab7ff);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* "LOCAL" badge — entry only saved in this browser (admin view) */
+.Blog-Local-Badge {
+  font-size: 6px;
+  letter-spacing: 2px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  color: #f25a78;
+  border: 1px dashed #f25a78;
 }
 
 /* ---- Title ---- */
 .blog-title,
 .Blog-Entry-Title {
   font-size: 9px;
-  color: #a8c8e8;
-  margin-bottom: 4px;
+  color: #e6f1fc;
+  margin: 0 0 6px;
   font-family: "Press Start 2P", monospace;
   line-height: 1.5;
 }
@@ -65,9 +89,22 @@
 .blog-body,
 .Blog-Entry-Body {
   font-size: 8px;
-  line-height: 1.6;
-  color: #9ac8f6;
+  line-height: 1.7;
+  color: #a8c8e8;
   font-family: "Press Start 2P", monospace;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.Blog-Entry-Body:last-child {
+  margin-bottom: 0;
+}
+.Blog-Entry-Body a {
+  color: #00eaff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.Blog-Entry-Body a:hover {
+  color: #fff;
 }
 
 /* ---- Copy / action buttons (shared) ---- */
@@ -119,15 +156,31 @@
 }
 .Blog-Entry-Count {
   font-family: "Press Start 2P", monospace;
-  font-size: 6px;
+  font-size: 7px;
   letter-spacing: 1.5px;
-  color: #354a5f;
+  color: #6f93b8;
 }
 .Blog-Header-Right {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+}
+
+/* Admin tools: hidden for visitors. Ctrl+Shift+L or ?admin adds
+   .Blog-Admin-On to #Blog-Root (see creators-log.js). */
+.Blog-Admin-Tools {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.Blog-Admin-On .Blog-Admin-Tools {
+  display: flex;
+}
+.Blog-Root:not(.Blog-Admin-On) .Blog-Admin-Form,
+.Blog-Root:not(.Blog-Admin-On) .Blog-Local-Badge {
+  display: none;
 }
 
 /* Sort button */
@@ -146,6 +199,22 @@
   cursor: pointer;
   transition: 0.15s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+/* Drawn caret — the pixel font has no ▾ glyph */
+.Blog-Sort-Btn::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid currentColor;
+  transition: transform 0.15s;
+}
+.Blog-Sort-Btn.active::after {
+  transform: rotate(180deg);
 }
 .Blog-Sort-Btn:hover {
   border-color: #a8c8e8;
@@ -177,7 +246,7 @@
 .Blog-Dropdown-Section-Title {
   font-size: 6px;
   letter-spacing: 2px;
-  color: #354a5f;
+  color: #6f93b8;
   padding: 6px 12px 4px;
   border-bottom: 1px solid #0f2040;
 }
@@ -334,7 +403,7 @@
   font-family: "Press Start 2P", monospace;
   font-size: 6px;
   letter-spacing: 1.5px;
-  color: #354a5f;
+  color: #6f93b8;
 }
 .Blog-Admin-Input {
   font-family: "Press Start 2P", monospace;
@@ -416,8 +485,9 @@
   font-family: "Press Start 2P", monospace;
   font-size: 7px;
   letter-spacing: 1.5px;
-  color: #354a5f;
+  color: #6f93b8;
   text-align: center;
-  padding: 20px 8px;
-  font-style: italic;
+  padding: 28px 8px;
+  border: 1px dashed rgba(106, 183, 255, 0.25);
+  border-radius: 6px;
 }

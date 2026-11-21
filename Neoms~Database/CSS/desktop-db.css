@@ -32,7 +32,7 @@ body::before {
 }
 .desk-label-item {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   color: rgba(0, 204, 204, 0.65) !important;
   text-shadow: none !important;
   letter-spacing: 1px !important;
@@ -59,7 +59,22 @@ body::before {
     -1px 1px 0 #000,
     1px -1px 0 #000,
     -1px -1px 0 #000 !important;
-  letter-spacing: 1px !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1.05 !important;
+  /* Labels break only at their <br>, never mid-word */
+  white-space: nowrap !important;
+  max-width: none !important;
+}
+/* Fits one 100px grid cell (see DB_CELL_* in desktop-icons.js) */
+.desk-icon {
+  width: 90px !important;
+  gap: 4px !important;
+  padding: 6px 2px !important;
+}
+.desk-icon .icon-img {
+  width: 44px !important;
+  height: 44px !important;
+  filter: drop-shadow(0 0 6px rgba(0, 200, 220, 0.35)) !important;
 }
 .desk-icon:hover .icon-label,
 .desk-icon.selected .icon-label {
@@ -86,8 +101,17 @@ body::before {
     0 2px 8px rgba(0, 0, 0, 0.5) !important;
 }
 .win:not(.focused) {
-  border-color: #004444 !important;
+  border-color: #005a5a !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+}
+.win.maximized {
+  border-width: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.win.maximized .win-bar,
+.win.maximized .win-body {
+  border-radius: 0 !important;
 }
 
 /* ── TITLE BAR ────────────────────────────────────────────────── */
@@ -98,7 +122,7 @@ body::before {
 }
 .win-title {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   letter-spacing: 1.5px !important;
   color: #00eaff !important;
   text-shadow: 0 0 6px rgba(0, 200, 255, 0.5) !important;
@@ -112,7 +136,7 @@ body::before {
 }
 .win-scroll {
   background: #0a0a14 !important;
-  color: #8899aa !important;
+  color: #b0c0d0 !important;
   font-family: "Share Tech Mono", monospace !important;
   scrollbar-color: #00cccc #060a14 !important;
   padding: 0 !important;
@@ -141,7 +165,7 @@ body::before {
   background: #050a16 !important;
   color: #00eaff !important;
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 10px !important;
+  font-size: 11px !important;
   letter-spacing: 1px !important;
 }
 
@@ -152,7 +176,7 @@ body::before {
 }
 #start-btn {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   letter-spacing: 3px !important;
   background: linear-gradient(to bottom, #000060 0%, #1084d0 5%, #006aaa 100%) !important;
 }
@@ -161,7 +185,7 @@ body::before {
 }
 .tb-btn {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 9px !important;
+  font-size: 10px !important;
   letter-spacing: 0.5px !important;
 }
 .tb-btn.active {
@@ -182,8 +206,8 @@ body::before {
 }
 .ctx-item {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 10px !important;
-  color: #8899cc !important;
+  font-size: 11px !important;
+  color: #aebde0 !important;
 }
 .ctx-item:hover {
   background: rgba(0, 160, 180, 0.2) !important;
@@ -216,21 +240,21 @@ body::before {
 }
 .start-username {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 10px !important;
-  color: #8899cc !important;
+  font-size: 11px !important;
+  color: #aebde0 !important;
 }
 .start-usertag {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 9px !important;
-  color: #334455 !important;
+  font-size: 10px !important;
+  color: #5f7f9e !important;
 }
 .start-sep {
   background: #003a3a !important;
 }
 .start-social {
-  color: #667788 !important;
+  color: #6d7f91 !important;
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 9px !important;
+  font-size: 10px !important;
 }
 .start-social:hover {
   background: rgba(0, 140, 160, 0.2) !important;
@@ -241,15 +265,15 @@ body::before {
 }
 .start-apps-title {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 8px !important;
+  font-size: 10px !important;
   letter-spacing: 3px !important;
-  color: #334455 !important;
+  color: #5f7f9e !important;
   border-bottom-color: #0a1a24 !important;
 }
 .start-item {
   font-family: "Share Tech Mono", monospace !important;
-  font-size: 10px !important;
-  color: #8899cc !important;
+  font-size: 11px !important;
+  color: #aebde0 !important;
   border-bottom-color: #0a1420 !important;
 }
 .start-item:hover {
@@ -270,7 +294,7 @@ body::before {
 }
 .clr-label {
   font-family: "Share Tech Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: rgba(0, 220, 255, 0.85);
   margin-right: 2px;
@@ -295,7 +319,7 @@ body::before {
   justify-content: center;
   font-family: "VT323", monospace;
   font-size: 14px;
-  color: #cc0000;
+  color: #ce5555;
   text-shadow: 0 0 4px rgba(0, 200, 220, 0.5);
   width: 16px;
   height: 16px;

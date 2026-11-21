@@ -33,13 +33,13 @@
 .site-card-name {
   font-family: var(--pixel, "VT323", monospace);
   font-size: 20px;
-  color: #aabbcc;
+  color: #d0dce8;
   line-height: 1;
 }
 
 /* ── STATUS BADGE ────────────────────────────────────────────── */
 .site-status-badge {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
   padding: 2px 8px;
   border: 1px solid;
@@ -61,7 +61,7 @@
 /* ── PROFILE TABLE ───────────────────────────────────────────── */
 .site-profile-table {
   width: 100%;
-  font-size: 11px;
+  font-size: 12px;
   border-collapse: collapse;
 }
 
@@ -71,25 +71,25 @@
 
 .site-profile-table th {
   text-align: left;
-  color: #445566;
+  color: #67809a;
   padding: 5px 12px;
   width: 88px;
   font-weight: normal;
   letter-spacing: 0.5px;
-  font-size: 9px;
+  font-size: 10px;
   font-family: var(--mono, "Share Tech Mono", monospace);
 }
 
 .site-profile-table td {
-  color: #aabbcc;
+  color: #d0dce8;
   padding: 5px 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--mono, "Share Tech Mono", monospace);
 }
 
 .site-loc-val {
   color: #7a99aa;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* ── ENTITY MANIFEST DROPDOWN ────────────────────────────────── */
@@ -99,9 +99,9 @@
 
 .manifest-summary {
   padding: 7px 12px;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
-  color: #556677;
+  color: #6a8095;
   cursor: pointer;
   background: #0a0a14;
   user-select: none;
@@ -115,22 +115,22 @@
 .manifest-summary::-webkit-details-marker { display: none; }
 
 .manifest-details[open] .manifest-summary {
-  color: #aabbcc;
+  color: #d0dce8;
   border-bottom: 1px solid #1a2a4a;
 }
 
 .manifest-summary:hover {
-  color: #aabbcc;
+  color: #d0dce8;
   background: rgba(0, 140, 140, 0.06);
 }
 
 .manifest-count {
-  color: #334455;
-  font-size: 10px;
+  color: #5f7f9e;
+  font-size: 11px;
 }
 
 .manifest-details[open] .manifest-count {
-  color: #667788;
+  color: #6d7f91;
 }
 
 .manifest-inner {
@@ -147,20 +147,20 @@
 
 .site-ent-classified-icon {
   font-size: 18px;
-  color: #445566;
+  color: #67809a;
   flex-shrink: 0;
 }
 
 .site-ent-classified-label {
-  font-size: 10px;
-  color: #556677;
+  font-size: 11px;
+  color: #6a8095;
   letter-spacing: 2px;
   font-family: var(--mono, "Share Tech Mono", monospace);
 }
 
 .site-ent-classified-sub {
-  font-size: 10px;
-  color: #334455;
+  font-size: 11px;
+  color: #5f7f9e;
   margin-top: 3px;
   line-height: 1.5;
   font-family: var(--mono, "Share Tech Mono", monospace);
@@ -169,8 +169,8 @@
 /* ── EMPTY MESSAGE ───────────────────────────────────────────── */
 .site-ent-none {
   padding: 10px 12px;
-  font-size: 10px;
-  color: #334455;
+  font-size: 11px;
+  color: #5f7f9e;
   font-family: var(--mono, "Share Tech Mono", monospace);
   letter-spacing: 0.5px;
 }

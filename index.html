@@ -41,13 +41,13 @@
     <!-- ===== STICKER BOARD ===== -->
     <div
       id="Sticker-Board"
-      style="position: fixed; inset: 8; pointer-events: none; z-index: 8000; overflow: visible"></div>
+      style="position: fixed; inset: 0; pointer-events: none; z-index: 8000; overflow: visible"></div>
 
     <!-- ===== CONTEXT MENU ===== -->
     <div id="ctx-menu">
       <div class="ctx-item" onclick="openWin('prime');closeCtx()">Creator's Log</div>
       <div class="ctx-item" onclick="openWin('neomix');closeCtx()">NeoMix Player</div>
-      <div class="ctx-item" onclick="openWin('guestbook');closeCtx()">Systems Log</div>
+      <div class="ctx-item" onclick="openWin('guestbook');closeCtx()">Guest Book</div>
       <div class="ctx-sep"></div>
       <div class="ctx-item" onclick="openWin('wallpaper');closeCtx()">Change Wallpaper</div>
     </div>
@@ -199,10 +199,7 @@
     <div id="taskbar">
       <button id="start-btn" onclick="toggleStart()" title="NeoMS Start">&#9670; START</button>
       <span class="tb-title">NEOCORP VM</span>
-      <div
-        id="tb-buttons"
-        style="display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; max-width: 340px; flex-shrink: 1"></div>
-      <div style="flex: 1; min-width: 0"></div>
+      <div id="tb-buttons"></div>
       <div id="tb-neomix">
         <button class="tb-nm-btn" id="tb-nm-prev" title="Previous">&#9664;&#9664;</button>
         <button class="tb-nm-btn" id="tb-nm-play" title="Play / Pause">&#9654;</button>

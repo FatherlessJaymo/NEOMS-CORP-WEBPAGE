@@ -208,6 +208,7 @@ function removeEntry(id) {
   var el = document.getElementById(id);
   if (el) el.remove();
 }
+window.removeEntry = removeEntry;
 
 /* Wire add buttons */
 var addProtoBtn = document.getElementById("ec-add-protocol");

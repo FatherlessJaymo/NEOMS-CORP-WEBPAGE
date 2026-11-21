@@ -151,6 +151,16 @@ function closeWin(id) {
         tbBtns[id].remove();
         delete tbBtns[id];
     }
+    syncMaxState();
+}
+
+/* Lift the desktop over the label bar + taskbar while any maximized
+   window is visible (see body.win-max-active in window-manager.css) */
+function syncMaxState() {
+    var active = Object.keys(wins).some(function (k) {
+        return wins[k].maximized && !wins[k].minimized;
+    });
+    document.body.classList.toggle("win-max-active", active);
 }
 
 function minWin(id) {
@@ -168,6 +178,7 @@ function minWin(id) {
             b.classList.remove("active");
         });
     }
+    syncMaxState();
 }
 
 function maxWin(id) {
@@ -194,12 +205,25 @@ function maxWin(id) {
         w.oy = parseInt(w.el.style.top);
         w.ow = parseInt(w.el.style.width);
         w.oh = parseInt(w.el.style.height);
-        /* Leave the 22px top label bar visible above the maximized window */
-        w.el.style.cssText = "left:0;top:22px;width:100%;height:calc(100% - 22px);" + "z-index:" + zTop + ";";
+        /* Covers the top label bar; the taskbar stays visible below */
+        w.el.style.cssText = "left:0;top:0;width:100%;height:100%;" + "z-index:" + zTop + ";";
         w.maximized = true;
     }
+    w.el.classList.toggle("maximized", w.maximized);
     w.el.classList.add("focused");
+    syncMaxState();
 }
+
+/* Esc restores the focused maximized window */
+document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    for (var k in wins) {
+        if (wins[k].maximized && !wins[k].minimized && wins[k].el.classList.contains("focused")) {
+            maxWin(k);
+            return;
+        }
+    }
+});
 
 /* ============================================================
    TASKBAR BUTTON
@@ -207,17 +231,9 @@ function maxWin(id) {
 function addTBBtn(id, title, icon, iconSrc) {
     var btn = document.createElement("button");
     btn.className = "tb-btn active";
-    var iconHTML =
-        '<img src="' +
-        (iconSrc || iconImg(icon)) +
-        '" alt="" ' +
-        'style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;"/>';
-    btn.innerHTML =
-        iconHTML +
-        '<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;' +
-        'white-space:nowrap;font-size:6px;">' +
-        title.slice(0, 14) +
-        "</span>";
+    /* Sizing/ellipsis live in taskbar.css (.tb-btn img / .tb-btn > span) */
+    btn.title = title;
+    btn.innerHTML = '<img src="' + (iconSrc || iconImg(icon)) + '" alt=""/>' + "<span>" + title + "</span>";
     btn.addEventListener("click", function () {
         if (wins[id]) {
             if (wins[id].minimized) minWin(id);
@@ -238,6 +254,7 @@ function makeDraggable(win, bar) {
         if (e.target.classList.contains("win-btn")) return;
         var id = win.id.replace("win-", "");
         focusWin(id);
+        if (wins[id] && wins[id].maximized) return; /* maximized windows stay put */
         sx = e.clientX;
         sy = e.clientY;
         sl = parseInt(win.style.left) || 0;

@@ -1,7 +1,11 @@
 /* ============================================================
    TASKBAR — bar, start button, window buttons, clock
+   Layout (left → right):
+     [START] [title] [window buttons … (shrink to fit)] [NeoMix] [clock]
+   Every item is vertically centred; tall items share --tb-item-h.
 ============================================================ */
 #taskbar {
+  --tb-item-h: 36px;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -11,28 +15,27 @@
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  gap: 5px; /* Extra left padding pushes the Start button a bit to the right of the edge*/
-  padding: 0 6px 0 14px;
+  gap: 6px;
+  padding: 0 6px;
   z-index: 9999;
 }
 
 /* Start button */
 #start-btn {
   font-family: "Press Start 2P", monospace;
-  font-size: 5px;
-  letter-spacing: 5px;
-  padding: 0 1px;
-  height: 41px;  /* Small left margin for extra breathing room from the taskbar padding */
-  margin-left: -14px;
+  font-size: 7px;
+  letter-spacing: 3px;
+  padding: 0 16px 0 12px;
+  height: var(--tb-item-h);
   background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
   color: #fff;
   border: none;
-  border-radius: 5px 5px 20px 5px;
+  border-radius: 5px 5px 18px 5px;
   box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
   flex-shrink: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 80, 0.6);
@@ -47,24 +50,37 @@
 /* System title in taskbar */
 .tb-title {
   font-family: "Press Start 2P", monospace;
-  font-size: 5px;
+  font-size: 6px;
   letter-spacing: 3px;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.7);
   white-space: nowrap;
   flex-shrink: 0;
-  padding: 0 10px 0 6px;
+  padding: 0 10px 0 4px;
+  height: 24px;
+  display: flex;
+  align-items: center;
   text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  line-height: var(--taskbar-h);
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* Open window buttons */
+/* Open window buttons — the strip takes the free space and the
+   buttons shrink (down to icon-only) instead of being cut off */
+#tb-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
 .tb-btn {
   font-family: "Press Start 2P", monospace;
   font-size: 6px;
   letter-spacing: 0.5px;
-  padding: 3px 8px;
+  padding: 0 8px;
   height: 30px;
+  flex: 0 1 128px;
+  min-width: 34px;
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -73,14 +89,24 @@
   transition: background 0.15s;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
-  flex-shrink: 0;
-  max-width: 120px;
   overflow: hidden;
-  text-overflow: ellipsis;
   box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
   text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
+}
+.tb-btn img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.tb-btn > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .tb-btn:hover {
   background: rgba(255, 255, 255, 0.25);
@@ -98,15 +124,32 @@
   letter-spacing: 1px;
   color: #fff;
   white-space: nowrap;
-  text-align: center;
   flex-shrink: 0;
-  width: 100px;
-  height: 40px;
+  min-width: 100px;
+  padding: 0 10px;
+  height: var(--tb-item-h);
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 5px;
   background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
   box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
   text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
   font-style: italic;
+}
+
+/* Narrower screens: drop the duplicate title first, then the
+   mini-player's seek bar and song text, so window buttons keep room */
+@media (max-width: 1100px) {
+  .tb-title {
+    display: none;
+  }
+}
+/* #taskbar prefix: neomix-player.css loads after this file and sets
+   #tb-neomix-info to flex, so the hide needs the extra specificity */
+@media (max-width: 760px) {
+  #taskbar #tb-nm-seek,
+  #taskbar #tb-neomix-info {
+    display: none;
+  }
 }

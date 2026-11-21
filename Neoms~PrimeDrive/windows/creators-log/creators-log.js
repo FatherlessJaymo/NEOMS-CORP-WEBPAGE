@@ -1,46 +1,45 @@
 /* ============================================================
    CREATOR'S LOG (Director's Log)
-   Exposes window.initCreatorsLog() to be called AFTER the
-   Creator's Log window is injected into the DOM by
-   window-manager.js (the window mounts the admin form, sort
-   button, filter chips, and feed container with the IDs
-   referenced below).
+   Exposes window.buildPrime() (window HTML) and
+   window.initCreatorsLog() (called by window-manager.js after
+   the window is mounted).
 
-   Admin form requires a passcode; accepted entries are saved
-   to localStorage and always render above the hardcoded ones.
+   DATA
+     NEOMS_BLOG_DATA in creators-log-data.js is the only source.
+     Entries posted with the admin form are saved in THIS
+     browser's localStorage and merged in; the feed is always
+     sorted by date, so array order doesn't matter.
 
-   DATA SOURCES (in priority order):
-     1. NEOMS_BLOG_DATA — live source of truth. Defined in
-        creators-log-data.js, loaded before this script.
-     2. blog-entries.html — legacy backup. Only fetched if
-        NEOMS_BLOG_DATA is missing or empty. Same markup as
-        the EXPORT-HTML output, so the two can stay in sync.
+   ADMIN TOOLS (hidden from visitors)
+     Toggle with Ctrl+Shift+L, or open the site with ?admin
+     in the address (for phones). Remembered per browser.
+     NOTE: the passcode is readable in this public file — it
+     only keeps casual visitors out of the form. Posts never
+     reach the live site; they stay in the browser that made
+     them until you EXPORT and paste them into the data file.
 
    PROMOTE-TO-LIVE FLOW (admin):
      1. Post entries via the admin form (saved in localStorage).
-     2. Click "EXPORT" — paste-ready entries copied to clipboard.
-        - Default copy format is JS array entries for
-          creators-log-data.js (the live source).
-        - Hold Shift while clicking for the legacy HTML format
-          (for blog-entries.html backup).
+     2. Click EXPORT — entries are copied as JS for the data file.
      3. Paste into creators-log-data.js, save & redeploy.
-     4. Click "CLEAR LOCAL" to wipe localStorage now those
-        entries are permanently in the data file.
+     4. Click CLEAR LOCAL. (Local entries whose title + tag
+        already exist in the data file are hidden anyway.)
 ============================================================ */
 (function () {
     var DIRECTOR_PASS = "neoms--2026";
     var STORAGE_KEY = "directors_log";
     var SORT_KEY = "directors_log_sort";
     var FILTER_KEY = "directors_log_filter";
-    var ENTRIES_SRC = "Neoms~PrimeDrive/windows/creators-log/blog-entries.html";
+    var ADMIN_KEY = "directors_log_admin";
 
-    /* Module-level state so re-opens don't re-fetch */
+    /* Module-level state so re-opens don't redo work */
     var hardcodedData = [];
     var hardcodedLoaded = false;
     var wired = false;
 
     var sortDir, activeFilter;
-    var toggleBtn,
+    var rootEl,
+        toggleBtn,
         form,
         cancelBtn,
         statusEl,
@@ -49,7 +48,6 @@
         sortBtn,
         sortWrap,
         sortDrop,
-        filterArea,
         exportBtn,
         clearBtn;
 
@@ -80,62 +78,51 @@
     }
 
     /* ================================================================
-       LOAD HARDCODED ENTRIES
-       Priority 1: NEOMS_BLOG_DATA (defined in creators-log-data.js).
-       Priority 2: blog-entries.html (legacy, only if 1 is empty).
+       ADMIN MODE
     ================================================================ */
-    function loadHardcodedEntries(cb) {
-        if (hardcodedLoaded) {
-            cb && cb();
-            return;
+    function isAdmin() {
+        try {
+            return localStorage.getItem(ADMIN_KEY) === "1";
+        } catch (e) {
+            return false;
         }
+    }
+    function setAdmin(on) {
+        try {
+            if (on) localStorage.setItem(ADMIN_KEY, "1");
+            else localStorage.removeItem(ADMIN_KEY);
+        } catch (e) {}
+        applyAdmin();
+    }
+    function applyAdmin() {
+        if (!rootEl) return;
+        var on = isAdmin();
+        rootEl.classList.toggle("Blog-Admin-On", on);
+        if (!on && form) form.classList.remove("visible");
+    }
+    /* ?admin in the URL turns admin mode on (phones have no keyboard) */
+    if (/[?&]admin\b/.test(location.search)) {
+        try {
+            localStorage.setItem(ADMIN_KEY, "1");
+        } catch (e) {}
+    }
 
-        /* Priority 1 — JS data array */
-        if (typeof NEOMS_BLOG_DATA !== "undefined" && Array.isArray(NEOMS_BLOG_DATA) && NEOMS_BLOG_DATA.length) {
-            hardcodedData = NEOMS_BLOG_DATA.map(function (e) {
-                return {
-                    date: e.date || "",
-                    tag: e.tag || "NOTE",
-                    title: e.title || "",
-                    body: e.body || "",
-                    hardcoded: true
-                };
-            });
-            hardcodedLoaded = true;
-            cb && cb();
-            return;
-        }
-
-        /* Priority 2 — legacy HTML backup */
-        fetch(ENTRIES_SRC + "?nocache=" + Date.now())
-            .then(function (r) {
-                if (!r.ok) throw new Error("HTTP " + r.status);
-                return r.text();
-            })
-            .then(function (html) {
-                var parser = new DOMParser();
-                var doc = parser.parseFromString("<div>" + html + "</div>", "text/html");
-                doc.querySelectorAll(".Blog-Entry").forEach(function (el) {
-                    var tagEl = el.querySelector(".Blog-Tag");
-                    var dateEl = el.querySelector(".Blog-Date");
-                    var titleEl = el.querySelector(".Blog-Entry-Title");
-                    var bodyEl = el.querySelector(".Blog-Entry-Body");
-                    hardcodedData.push({
-                        date: dateEl ? dateEl.textContent.trim() : "",
-                        tag: tagEl ? tagEl.textContent.trim() : "",
-                        title: titleEl ? titleEl.textContent.trim() : "",
-                        body: bodyEl ? bodyEl.textContent.trim() : "",
-                        hardcoded: true
-                    });
-                });
-                hardcodedLoaded = true;
-                cb && cb();
-            })
-            .catch(function (err) {
-                console.warn("CreatorsLog: NEOMS_BLOG_DATA empty and could not load blog-entries.html —", err.message);
-                hardcodedLoaded = true;
-                cb && cb();
-            });
+    /* ================================================================
+       LOAD HARDCODED ENTRIES (creators-log-data.js)
+    ================================================================ */
+    function loadHardcodedEntries() {
+        if (hardcodedLoaded) return;
+        var src = typeof NEOMS_BLOG_DATA !== "undefined" && Array.isArray(NEOMS_BLOG_DATA) ? NEOMS_BLOG_DATA : [];
+        hardcodedData = src.map(function (e) {
+            return {
+                date: e.date || "",
+                tag: e.tag || "NOTE",
+                title: e.title || "",
+                body: e.body || "",
+                hardcoded: true
+            };
+        });
+        hardcodedLoaded = true;
     }
 
     /* ================================================================
@@ -143,6 +130,27 @@
     ================================================================ */
     function escapeHTML(s) {
         return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    /* "2026.4.2", "2026-04-02", "2026/04/02" → 20260402 (0 if unreadable) */
+    function dateKey(d) {
+        var p = String(d || "").match(/\d+/g);
+        if (!p || p.length < 3) return 0;
+        return parseInt(p[0], 10) * 10000 + parseInt(p[1], 10) * 100 + parseInt(p[2], 10);
+    }
+
+    /* Escaped text → paragraphs, line breaks and clickable links.
+       Escaping happens first, so no HTML from an entry can run. */
+    function formatBody(text) {
+        return String(text)
+            .split(/\n\s*\n/)
+            .map(function (para) {
+                var html = escapeHTML(para.trim())
+                    .replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)\]])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+                    .replace(/\n/g, "<br/>");
+                return '<p class="Blog-Entry-Body">' + html + "</p>";
+            })
+            .join("");
     }
 
     function updateCount(n) {
@@ -156,11 +164,12 @@
         art.setAttribute("data-tag", e.tag || "");
         art.innerHTML =
             '<div class="Blog-Entry-Meta">' +
-                '<span class="Blog-Date">' + escapeHTML(e.date) + '</span>' +
-                '<span class="Blog-Tag">' + escapeHTML(e.tag) + '</span>' +
-            '</div>' +
-            '<h3 class="Blog-Entry-Title">' + escapeHTML(e.title) + '</h3>' +
-            '<p class="Blog-Entry-Body">' + escapeHTML(e.body) + '</p>';
+            '<span class="Blog-Date">' + escapeHTML(e.date) + "</span>" +
+            '<span class="Blog-Tag">' + escapeHTML(e.tag) + "</span>" +
+            (e.hardcoded ? "" : '<span class="Blog-Local-Badge" title="Only saved in this browser">LOCAL</span>') +
+            "</div>" +
+            '<h3 class="Blog-Entry-Title">' + escapeHTML(e.title) + "</h3>" +
+            formatBody(e.body);
         return art;
     }
 
@@ -173,6 +182,14 @@
         } catch (e) {
             return [];
         }
+    }
+
+    /* Local entries already promoted into the data file (same title + tag) */
+    function notPromoted(e) {
+        var key = (e.title + "|" + e.tag).toLowerCase();
+        return !hardcodedData.some(function (h) {
+            return (h.title + "|" + h.tag).toLowerCase() === key;
+        });
     }
 
     /* ================================================================
@@ -205,9 +222,11 @@
             });
         }
         if (sortBtn) {
-            var label = sortDir === "desc" ? "NEW\u2192OLD" : "OLD\u2192NEW";
-            if (activeFilter !== "ALL") label += " \u00b7 " + activeFilter;
-            sortBtn.textContent = label + " \u25be";
+            /* Plain text only — Press Start 2P has no arrow glyphs.
+               The ▾ caret is drawn in CSS (.Blog-Sort-Btn::after). */
+            var label = sortDir === "desc" ? "NEWEST" : "OLDEST";
+            if (activeFilter !== "ALL") label += " · " + activeFilter;
+            sortBtn.textContent = label;
         }
     }
 
@@ -215,27 +234,31 @@
        RENDER FEED
     ================================================================ */
     function renderFeed() {
-        var saved = readLocalEntries();
+        var all = readLocalEntries()
+            .filter(notPromoted)
+            .concat(hardcodedData)
+            .map(function (e, i) {
+                return { e: e, k: dateKey(e.date), i: i };
+            });
 
-        var ordered;
-        if (sortDir === "desc") {
-            ordered = saved.concat(hardcodedData);
-        } else {
-            ordered = hardcodedData.slice().reverse().concat(saved.slice().reverse());
-        }
+        /* Sort by date; same-day entries keep their list order */
+        all.sort(function (a, b) {
+            if (a.k !== b.k) return sortDir === "desc" ? b.k - a.k : a.k - b.k;
+            return a.i - b.i;
+        });
 
         feed.innerHTML = "";
         var visible = 0;
-        ordered.forEach(function (e) {
-            if (activeFilter !== "ALL" && e.tag !== activeFilter) return;
-            feed.appendChild(buildArticle(e));
+        all.forEach(function (x) {
+            if (activeFilter !== "ALL" && x.e.tag !== activeFilter) return;
+            feed.appendChild(buildArticle(x.e));
             visible++;
         });
 
         if (visible === 0) {
             var empty = document.createElement("p");
             empty.className = "Blog-Empty";
-            empty.textContent = "NO ENTRIES FOR THIS TAG.";
+            empty.textContent = activeFilter === "ALL" ? "NO ENTRIES YET." : "NO " + activeFilter + " ENTRIES YET.";
             feed.appendChild(empty);
         }
 
@@ -253,46 +276,24 @@
     }
 
     /* ================================================================
-       EXPORT
-       Default: JS array entries for creators-log-data.js (live source).
-       Shift-click: legacy HTML for blog-entries.html (backup).
+       EXPORT — JS entries for creators-log-data.js
     ================================================================ */
     function buildExportJS(entries) {
         if (!entries.length) return "";
         var header =
             "// === PROMOTED FROM LOCALSTORAGE " + new Date().toISOString() +
-            " (" + entries.length + " entries, newest first) ===\n" +
+            " (" + entries.length + " entries) ===\n" +
             "// Paste these inside the NEOMS_BLOG_DATA array.\n\n";
         var body = entries.map(function (e) {
             return (
-                '  {\n' +
+                "  {\n" +
                 '    date:  "' + String(e.date).replace(/"/g, '\\"') + '",\n' +
                 '    tag:   "' + String(e.tag).replace(/"/g, '\\"') + '",\n' +
                 '    title: "' + String(e.title).replace(/"/g, '\\"') + '",\n' +
-                '    body:  "' + String(e.body).replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"\n' +
-                '  },'
+                '    body:  "' + String(e.body).replace(/"/g, '\\"').replace(/\n/g, "\\n") + '"\n' +
+                "  },"
             );
         }).join("\n");
-        return header + body + "\n";
-    }
-
-    function buildExportHTML(entries) {
-        if (!entries.length) return "";
-        var header =
-            "<!-- === PROMOTED FROM LOCALSTORAGE " +
-            new Date().toISOString() + " (" + entries.length + " entries, newest first) === -->\n\n";
-        var body = entries.map(function (e) {
-            return (
-                '<article class="Blog-Entry">\n' +
-                '    <div class="Blog-Entry-Meta">\n' +
-                '        <span class="Blog-Date">' + escapeHTML(e.date) + '</span>\n' +
-                '        <span class="Blog-Tag">' + escapeHTML(e.tag) + '</span>\n' +
-                '    </div>\n' +
-                '    <h3 class="Blog-Entry-Title">' + escapeHTML(e.title) + '</h3>\n' +
-                '    <p class="Blog-Entry-Body">' + escapeHTML(e.body) + '</p>\n' +
-                '</article>'
-            );
-        }).join("\n\n");
         return header + body + "\n";
     }
 
@@ -328,16 +329,14 @@
         }, 1800);
     }
 
-    function doExport(ev) {
+    function doExport() {
         var saved = readLocalEntries();
         if (!saved.length) {
             flashStatus(exportBtn, "NO LOCAL ENTRIES", true);
             return;
         }
-        var asHTML = ev && ev.shiftKey;
-        var text = asHTML ? buildExportHTML(saved) : buildExportJS(saved);
-        copyToClipboard(text).then(function () {
-            flashStatus(exportBtn, asHTML ? "COPIED HTML" : "COPIED JS");
+        copyToClipboard(buildExportJS(saved)).then(function () {
+            flashStatus(exportBtn, "COPIED");
         }).catch(function () {
             flashStatus(exportBtn, "COPY FAILED", true);
         });
@@ -391,6 +390,11 @@
             toggleBtn.addEventListener("click", function () {
                 form.classList.toggle("visible");
                 if (form.classList.contains("visible")) {
+                    var dateEl = document.getElementById("Blog-Admin-Date");
+                    if (dateEl && !dateEl.value) {
+                        var d = new Date();
+                        dateEl.value = d.getFullYear() + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + String(d.getDate()).padStart(2, "0");
+                    }
                     var passEl = document.getElementById("Blog-Admin-Pass");
                     if (passEl) passEl.focus();
                 }
@@ -425,6 +429,11 @@
                     statusEl.className = "Blog-Admin-Status error";
                     return;
                 }
+                if (!dateKey(date)) {
+                    statusEl.textContent = "DATE MUST BE YYYY.MM.DD";
+                    statusEl.className = "Blog-Admin-Status error";
+                    return;
+                }
                 addEntry({ date: date, tag: tag, title: title, body: body });
                 form.reset();
                 form.classList.remove("visible");
@@ -443,6 +452,13 @@
             });
             document.addEventListener("keydown", function (e) {
                 if (e.key === "Escape") closeDropdown();
+                /* Ctrl+Shift+L — show / hide the admin tools */
+                if (e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
+                    e.preventDefault();
+                    var on = !isAdmin();
+                    setAdmin(on);
+                    if (typeof toast === "function") toast(on ? "CREATOR'S LOG: ADMIN ON" : "CREATOR'S LOG: ADMIN OFF");
+                }
             });
             window.addEventListener(
                 "scroll",
@@ -459,11 +475,11 @@
     }
 
     /* ================================================================
-       BUILDER — moved from window-manager.js so all Creator's Log
-       code lives in this folder.
+       BUILDER — window HTML
     ================================================================ */
     window.buildPrime = function () {
         return (
+            '<div class="Blog-Root" id="Blog-Root">' +
             '<div class="Blog-Header">' +
               '<div class="Blog-Header-Left">' +
                 '<span class="Blog-Header-Title">CREATOR\'S LOG</span>' +
@@ -471,11 +487,11 @@
               '</div>' +
               '<div class="Blog-Header-Right">' +
                 '<div class="Blog-Sort-Wrap" id="Blog-Sort-Wrap">' +
-                  '<button class="Blog-Sort-Btn" id="Blog-Sort-Btn">NEW\u2192OLD \u25be</button>' +
+                  '<button class="Blog-Sort-Btn" id="Blog-Sort-Btn" title="Sort and filter">NEWEST</button>' +
                   '<div class="Blog-Sort-Dropdown" id="Blog-Sort-Dropdown">' +
                     '<div class="Blog-Dropdown-Section-Title">SORT</div>' +
-                    '<div class="Blog-Dropdown-Opt" data-sort="desc">NEW \u2192 OLD</div>' +
-                    '<div class="Blog-Dropdown-Opt" data-sort="asc">OLD \u2192 NEW</div>' +
+                    '<div class="Blog-Dropdown-Opt" data-sort="desc">NEWEST FIRST</div>' +
+                    '<div class="Blog-Dropdown-Opt" data-sort="asc">OLDEST FIRST</div>' +
                     '<div class="Blog-Dropdown-Section-Title">FILTER BY TAG</div>' +
                     '<div class="Blog-Filter-Chips" id="Blog-Filter-Chips">' +
                       '<button class="Blog-Filter-Chip active" data-tag="ALL">ALL</button>' +
@@ -486,9 +502,12 @@
                     '</div>' +
                   '</div>' +
                 '</div>' +
-                '<button class="Blog-Export-Btn" id="Blog-Export-Btn" title="Default: copy entries as JS for creators-log-data.js. Shift+click: copy as HTML for blog-entries.html backup.">EXPORT</button>' +
-                '<button class="Blog-Clear-Btn" id="Blog-Clear-Btn" title="Delete all local entries">CLEAR LOCAL</button>' +
-                '<button class="Blog-Admin-Toggle" id="Blog-Admin-Toggle" title="New entry">+ NEW</button>' +
+                /* Admin-only — hidden unless .Blog-Admin-On is on #Blog-Root */
+                '<div class="Blog-Admin-Tools">' +
+                  '<button class="Blog-Export-Btn" id="Blog-Export-Btn" title="Copy local entries as JS for creators-log-data.js">EXPORT</button>' +
+                  '<button class="Blog-Clear-Btn" id="Blog-Clear-Btn" title="Delete all local entries">CLEAR LOCAL</button>' +
+                  '<button class="Blog-Admin-Toggle" id="Blog-Admin-Toggle" title="New entry">+ NEW</button>' +
+                '</div>' +
               '</div>' +
             '</div>' +
             '<form class="Blog-Admin-Form" id="Blog-Admin-Form" autocomplete="off">' +
@@ -517,7 +536,7 @@
               '</div>' +
               '<div class="Blog-Admin-Row">' +
                 '<label class="Blog-Admin-Label" for="Blog-Admin-Body">BODY</label>' +
-                '<textarea class="Blog-Admin-Input Blog-Admin-Textarea" id="Blog-Admin-Body" rows="3" placeholder="entry body"></textarea>' +
+                '<textarea class="Blog-Admin-Input Blog-Admin-Textarea" id="Blog-Admin-Body" rows="3" placeholder="entry body (blank line = new paragraph)"></textarea>' +
               '</div>' +
               '<div class="Blog-Admin-Footer">' +
                 '<span class="Blog-Admin-Status" id="Blog-Admin-Status"></span>' +
@@ -529,6 +548,7 @@
             '</form>' +
             '<div id="Blog-Feed">' +
               '<p class="Blog-Empty">Loading entries...</p>' +
+            '</div>' +
             '</div>'
         );
     };
@@ -537,6 +557,7 @@
        PUBLIC INIT
     ================================================================ */
     window.initCreatorsLog = function () {
+        rootEl = document.getElementById("Blog-Root");
         toggleBtn = document.getElementById("Blog-Admin-Toggle");
         form = document.getElementById("Blog-Admin-Form");
         cancelBtn = document.getElementById("Blog-Admin-Cancel");
@@ -546,14 +567,15 @@
         sortBtn = document.getElementById("Blog-Sort-Btn");
         sortWrap = document.getElementById("Blog-Sort-Wrap");
         sortDrop = document.getElementById("Blog-Sort-Dropdown");
-        filterArea = document.getElementById("Blog-Filter-Chips");
         exportBtn = document.getElementById("Blog-Export-Btn");
         clearBtn = document.getElementById("Blog-Clear-Btn");
 
         if (!feed) return;
 
         loadPrefs();
+        applyAdmin();
         wireEvents();
-        loadHardcodedEntries(renderFeed);
+        loadHardcodedEntries();
+        renderFeed();
     };
 })();

@@ -28,10 +28,10 @@
 
 .ec-tab {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   padding: 7px 14px;
-  color: #445566;
+  color: #67809a;
   background: transparent;
   border: none;
   border-right: 1px solid #0d1520;
@@ -42,7 +42,7 @@
   transition: color 0.1s;
 }
 .ec-tab:hover {
-  color: #8899aa;
+  color: #b0c0d0;
 }
 .ec-tab--active {
   color: #00cccc;
@@ -50,7 +50,7 @@
   background: rgba(0, 180, 200, 0.06);
 }
 .ec-tab--output {
-  color: #556677;
+  color: #6a8095;
 }
 .ec-tab--output.ec-tab--active {
   color: #00eaff;
@@ -98,22 +98,22 @@
 
 .ec-label {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1.5px;
-  color: #445566;
+  color: #67809a;
   text-transform: uppercase;
 }
 
 .ec-req {
-  color: #cc3333;
+  color: #ce5555;
 }
 
 .ec-input {
   background: #040810;
   border: 1px solid #1a2a4a;
-  color: #aabbcc;
+  color: #d0dce8;
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 11px;
+  font-size: 12px;
   padding: 5px 8px;
   outline: none;
   width: 100%;
@@ -126,7 +126,7 @@
   color: #ccddee;
 }
 .ec-input::placeholder {
-  color: #233344;
+  color: #577fa9;
 }
 
 select.ec-input {
@@ -155,11 +155,11 @@ select.ec-input {
 .ec-list-title {
   font-family: var(--pixel, "VT323", monospace);
   font-size: 20px;
-  color: #aabbcc;
+  color: #d0dce8;
 }
 .ec-add-btn {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   padding: 4px 10px;
   background: rgba(0, 140, 160, 0.1);
@@ -173,8 +173,8 @@ select.ec-input {
 
 .ec-empty-msg {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 10px;
-  color: #2a3a4a;
+  font-size: 11px;
+  color: #5c7fa2;
   padding: 16px 0;
   letter-spacing: 0.5px;
 }
@@ -195,17 +195,17 @@ select.ec-input {
 }
 .ec-entry-num {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
-  color: #334455;
+  color: #5f7f9e;
 }
 .ec-entry-remove {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   padding: 2px 8px;
   background: rgba(136, 0, 0, 0.2);
   border: 1px solid #550000;
-  color: #cc4444;
+  color: #ce5656;
   cursor: pointer;
   letter-spacing: 1px;
 }
@@ -235,7 +235,7 @@ select.ec-input {
 .ec-output-label {
   font-family: var(--pixel, "VT323", monospace);
   font-size: 20px;
-  color: #aabbcc;
+  color: #d0dce8;
 }
 .ec-output-btns {
   display: flex;
@@ -244,7 +244,7 @@ select.ec-input {
 
 .ec-gen-btn {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   padding: 5px 12px;
   background: rgba(0, 140, 160, 0.15);
@@ -258,7 +258,7 @@ select.ec-input {
 
 .ec-copy-btn {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   padding: 5px 12px;
   background: rgba(0, 80, 40, 0.2);
@@ -276,8 +276,8 @@ select.ec-input {
 
 .ec-output-hint {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 10px;
-  color: #334455;
+  font-size: 11px;
+  color: #5f7f9e;
   margin-bottom: 10px;
   line-height: 1.6;
 }
@@ -293,8 +293,8 @@ select.ec-input {
   border: 1px solid #1a2a4a;
   padding: 12px 14px;
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 10px;
-  color: #8899aa;
+  font-size: 11px;
+  color: #b0c0d0;
   line-height: 1.7;
   overflow-x: auto;
   overflow-y: auto;
@@ -312,7 +312,7 @@ select.ec-input {
 /* ── SUBMIT BUTTON ────────────────────────────────────────── */
 .ec-submit-btn {
   font-family: var(--mono, "Share Tech Mono", monospace);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   padding: 5px 12px;
   background: rgba(60, 0, 120, 0.2);

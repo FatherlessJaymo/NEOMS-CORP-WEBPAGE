@@ -58,18 +58,16 @@
     </div>
   </div>
 
-  <!-- Legend -->
+  <!-- Legend + site list (click a site to fly to it) -->
   <div class="nm-legend">
-    <div class="nm-legend-title">SITE STATUS</div>
-    <div class="nm-legend-row">
-      <div class="nm-legend-dot nm-legend-dot-active"></div>
-      <span class="nm-legend-status nm-legend-active">ACTIVE</span>
-      <span class="nm-legend-desc">Nominal operations</span>
+    <div class="nm-legend-head">
+      <span class="nm-legend-title">SITES</span>
+      <button id="nm-reset" class="nm-reset" title="Reset view">&#8634; RESET</button>
     </div>
-    <div class="nm-legend-row">
-      <div class="nm-legend-dot nm-legend-dot-breach"></div>
-      <span class="nm-legend-status nm-legend-breach">BREACH</span>
-      <span class="nm-legend-desc">Entity uncontained</span>
+    <div id="nm-site-list" class="nm-site-list"></div>
+    <div class="nm-legend-keys">
+      <span><i class="nm-legend-dot nm-legend-dot-active"></i>ACTIVE</span>
+      <span><i class="nm-legend-dot nm-legend-dot-breach"></i>BREACH</span>
     </div>
   </div>
 
@@ -77,6 +75,6 @@
   <div class="nm-hints">
     <div>SCROLL — zoom</div>
     <div>DRAG — pan</div>
-    <div>CLICK MARKER — site dossier</div>
+    <div>CLICK SITE — dossier</div>
   </div>
 </div>

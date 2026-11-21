@@ -6,8 +6,8 @@
    ============================================================ */
 "use strict";
 
-var WIN_BASE = "/Neoms~Database/windows/";
-var FOLDER_IMG = "/Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
+var WIN_BASE = "../../Neoms~Database/windows/";
+var FOLDER_IMG = "../../Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg";
 
 var zTop = 200;
 var wins = {};
@@ -27,6 +27,7 @@ var WIN_DEFS = {
   sites: { title: "CONTAINMENT SITES", w: 680, h: 560, clr: 1 },
   worldmap: { title: "GLOBAL FACILITY MAP", w: 960, h: 600, clr: 1 },
   terminal: { title: "NEOMS TERMINAL v1.0", w: 580, h: 400, clr: 4 },
+  codeviewer: { title: "NEOMS SOURCE VIEWER", w: 860, h: 540, clr: 5 },
   entitycreator: { title: "ENTITY CREATOR", w: 860, h: 580, clr: 4 }
 };
 
@@ -62,16 +63,39 @@ function openWin(type, data) {
 }
 
 /* ── INTERNAL SPAWN ──────────────────────────────────────────── */
+var LABEL_H = 22; /* top label bar */
+var TASKBAR_H = 48; /* matches --taskbar-h */
+
+/* Right edge of the desktop icon columns, so new windows open beside
+   the icons instead of on top of them */
+function _iconsRight() {
+  var right = 0;
+  document.querySelectorAll("#icon-grid .desk-icon").forEach(function (d) {
+    right = Math.max(right, d.offsetLeft + d.offsetWidth);
+  });
+  return right;
+}
+
 function _spawnWin(id, title, w, h, winType, data) {
   var vw = window.innerWidth;
-  var vh = window.innerHeight - 48 - 24;
-  var x = Math.max(10, Math.min(vw - w - 10, 60 + Object.keys(wins).length * 22));
-  var y = Math.max(28, Math.min(vh - h - 10, 60 + Object.keys(wins).length * 22));
+  var vh = window.innerHeight - TASKBAR_H;
+  var n = Object.keys(wins).length;
+
+  /* Fit inside the viewport */
+  w = Math.min(w, vw - 20);
+  h = Math.min(h, vh - LABEL_H - 20);
+
+  /* Cascade from just right of the icons; fall back to the left
+     edge when the screen is too narrow for both */
+  var baseX = _iconsRight() + 16;
+  if (baseX + w > vw - 10) baseX = 10;
+  var x = Math.max(10, Math.min(vw - w - 10, baseX + (n % 8) * 26));
+  var y = Math.max(LABEL_H + 10, Math.min(vh - h - 10, LABEL_H + 16 + (n % 8) * 26));
 
   var win = document.createElement("div");
   win.className = "win opening";
   win.id = "win-" + id;
-  win.style.cssText = "left:" + x + "px;" + "top:" + (y + 24) + "px;" + "width:" + w + "px;" + "height:" + h + "px;";
+  win.style.cssText = "left:" + x + "px;" + "top:" + y + "px;" + "width:" + w + "px;" + "height:" + h + "px;";
 
   /* Title bar */
   var bar = document.createElement("div");
@@ -120,10 +144,16 @@ function _spawnWin(id, title, w, h, winType, data) {
     minimized: false,
     maximized: false,
     ox: x,
-    oy: y + 24,
+    oy: y,
     ow: w,
     oh: h
   };
+
+  /* Double-click the title bar to maximize / restore */
+  bar.addEventListener("dblclick", function (e) {
+    if (e.target.closest(".win-btns")) return;
+    maxWin(id);
+  });
 
   setTimeout(function () {
     win.classList.remove("opening");
@@ -206,11 +236,11 @@ function _loadContent(id, winType, data) {
       if (body)
         body.innerHTML =
           "<div style=\"padding:20px;font-family:'Share Tech Mono',monospace;" +
-          'font-size:11px;color:#553333;">WINDOW UNAVAILABLE<br>' +
-          '<span style="color:#2a2a3a;">' +
+          'font-size:12px;color:#ff6666;">WINDOW UNAVAILABLE<br>' +
+          '<span style="color:#9aa4b4;">' +
           err.message +
           "</span><br>" +
-          '<span style="color:#1a2a2a;">Path: ' +
+          '<span style="color:#7f95aa;">Path: ' +
           htmlUrl +
           "</span></div>";
     });
@@ -218,10 +248,10 @@ function _loadContent(id, winType, data) {
 
 /* ── FOCUS ───────────────────────────────────────────────────── */
 function focusWin(id) {
+  if (!wins[id] || wins[id].minimized) return;
   document.querySelectorAll(".win").forEach(function (w) {
     w.classList.remove("focused");
   });
-  if (!wins[id]) return;
   zTop++;
   wins[id].el.style.zIndex = zTop;
   wins[id].el.classList.add("focused");
@@ -230,6 +260,34 @@ function focusWin(id) {
     b.classList.remove("active");
   });
   if (tbBtns[id]) tbBtns[id].classList.add("active");
+}
+
+/* Hand focus to the top-most visible window (after a close/minimize) */
+function _focusTopVisible() {
+  var best = null,
+    bestZ = -1;
+  Object.keys(wins).forEach(function (k) {
+    if (wins[k].minimized) return;
+    var z = parseInt(wins[k].el.style.zIndex) || 0;
+    if (z > bestZ) {
+      bestZ = z;
+      best = k;
+    }
+  });
+  if (best) focusWin(best);
+  else
+    document.querySelectorAll(".tb-btn").forEach(function (b) {
+      b.classList.remove("active");
+    });
+}
+
+/* Lift the desktop over the label bar while a maximized window is
+   showing (see body.win-max-active in PrimeDrive window-manager.css) */
+function syncMaxState() {
+  var active = Object.keys(wins).some(function (k) {
+    return wins[k].maximized && !wins[k].minimized;
+  });
+  document.body.classList.toggle("win-max-active", active);
 }
 
 /* ── CLOSE ───────────────────────────────────────────────────── */
@@ -245,6 +303,8 @@ function closeWin(id) {
     tbBtns[id].remove();
     delete tbBtns[id];
   }
+  syncMaxState();
+  _focusTopVisible();
 }
 
 /* ── MINIMISE ────────────────────────────────────────────────── */
@@ -255,14 +315,13 @@ function minWin(id) {
     w.el.style.display = "";
     w.minimized = false;
     focusWin(id);
-    if (tbBtns[id]) tbBtns[id].classList.add("active");
   } else {
     w.el.style.display = "none";
+    w.el.classList.remove("focused");
     w.minimized = true;
-    document.querySelectorAll(".tb-btn").forEach(function (b) {
-      b.classList.remove("active");
-    });
+    _focusTopVisible();
   }
+  syncMaxState();
 }
 
 /* ── MAXIMISE ────────────────────────────────────────────────── */
@@ -271,44 +330,56 @@ function maxWin(id) {
   var w = wins[id];
   if (w.maximized) {
     w.el.style.cssText =
-      "left:" +
-      w.ox +
-      "px;top:" +
-      w.oy +
-      "px;" +
-      "width:" +
-      w.ow +
-      "px;height:" +
-      w.oh +
-      "px;" +
-      "z-index:" +
-      zTop +
-      ";";
+      "left:" + w.ox + "px;top:" + w.oy + "px;" + "width:" + w.ow + "px;height:" + w.oh + "px;" + "z-index:" + zTop + ";";
     w.maximized = false;
   } else {
     w.ox = parseInt(w.el.style.left) || 0;
     w.oy = parseInt(w.el.style.top) || 0;
     w.ow = parseInt(w.el.style.width) || 600;
     w.oh = parseInt(w.el.style.height) || 400;
-    w.el.style.cssText = "left:0;top:22px;width:100%;height:calc(100% - 22px);" + "z-index:" + zTop + ";";
+    /* Covers the top label bar; the taskbar stays visible below */
+    w.el.style.cssText = "left:0;top:0;width:100%;height:100%;" + "z-index:" + zTop + ";";
     w.maximized = true;
   }
-  w.el.classList.add("focused");
+  w.el.classList.toggle("maximized", w.maximized);
+  if (w.minimized) minWin(id);
+  else focusWin(id);
+  syncMaxState();
 }
+
+/* Esc restores the focused maximized window */
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  for (var k in wins) {
+    if (wins[k].maximized && !wins[k].minimized && wins[k].el.classList.contains("focused")) {
+      maxWin(k);
+      return;
+    }
+  }
+});
+
+/* Keep windows reachable when the browser window shrinks */
+window.addEventListener("resize", function () {
+  var vw = window.innerWidth,
+    vh = window.innerHeight - TASKBAR_H;
+  Object.keys(wins).forEach(function (k) {
+    var w = wins[k];
+    if (w.maximized) return;
+    var el = w.el;
+    var left = parseInt(el.style.left) || 0,
+      top = parseInt(el.style.top) || 0;
+    el.style.left = Math.max(0, Math.min(left, vw - 120)) + "px";
+    el.style.top = Math.max(LABEL_H, Math.min(top, vh - 40)) + "px";
+  });
+});
 
 /* ── TASKBAR BUTTON ──────────────────────────────────────────── */
 function addTBBtn(id, title) {
   var btn = document.createElement("button");
   btn.className = "tb-btn active";
-  btn.innerHTML =
-    '<img src="' +
-    FOLDER_IMG +
-    '" alt="" ' +
-    'style="width:14px;height:14px;object-fit:contain;border-radius:2px;flex-shrink:0;">' +
-    '<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis;' +
-    'white-space:nowrap;">' +
-    title.slice(0, 14) +
-    "</span>";
+  /* Sizing/ellipsis live in PrimeDrive taskbar.css (.tb-btn img / .tb-btn > span) */
+  btn.title = title;
+  btn.innerHTML = '<img src="' + FOLDER_IMG + '" alt="">' + "<span>" + title + "</span>";
   btn.addEventListener("click", function () {
     if (!wins[id]) return;
     if (wins[id].minimized) minWin(id);
@@ -320,19 +391,32 @@ function addTBBtn(id, title) {
 }
 
 /* ── DRAG ────────────────────────────────────────────────────── */
+/* Clamp a dragged window so its title bar can't leave the screen */
+function _clampLeft(v, win) {
+  return Math.max(-win.offsetWidth + 120, Math.min(window.innerWidth - 120, v));
+}
+function _clampTop(v) {
+  return Math.max(LABEL_H, Math.min(window.innerHeight - TASKBAR_H - 30, v));
+}
+
 function makeDraggable(win, bar) {
   var sx, sy, sl, st;
+  function isMax() {
+    var w = wins[win.id.replace("win-", "")];
+    return w && w.maximized;
+  }
   bar.addEventListener("mousedown", function (e) {
     if (e.target.classList.contains("win-btn") || e.target.closest(".win-btns")) return;
     var id = win.id.replace("win-", "");
     focusWin(id);
+    if (isMax()) return; /* maximized windows stay put */
     sx = e.clientX;
     sy = e.clientY;
     sl = parseInt(win.style.left) || 0;
     st = parseInt(win.style.top) || 0;
     function mv(e) {
-      win.style.left = Math.max(0, sl + (e.clientX - sx)) + "px";
-      win.style.top = Math.max(24, st + (e.clientY - sy)) + "px";
+      win.style.left = _clampLeft(sl + (e.clientX - sx), win) + "px";
+      win.style.top = _clampTop(st + (e.clientY - sy)) + "px";
     }
     function up() {
       document.removeEventListener("mousemove", mv);
@@ -350,6 +434,7 @@ function makeDraggable(win, bar) {
       if (e.target.closest(".win-btns")) return;
       var id = win.id.replace("win-", "");
       focusWin(id);
+      if (isMax()) return;
       var t = e.touches[0];
       sx = t.clientX;
       sy = t.clientY;
@@ -362,9 +447,10 @@ function makeDraggable(win, bar) {
   bar.addEventListener(
     "touchmove",
     function (e) {
+      if (isMax()) return;
       var t = e.touches[0];
-      win.style.left = Math.max(0, sl + (t.clientX - sx)) + "px";
-      win.style.top = Math.max(24, st + (t.clientY - sy)) + "px";
+      win.style.left = _clampLeft(sl + (t.clientX - sx), win) + "px";
+      win.style.top = _clampTop(st + (t.clientY - sy)) + "px";
       e.preventDefault();
     },
     { passive: false }
@@ -437,7 +523,7 @@ function termPrint(txt, cls) {
   if (cls === "err") d.style.color = "#ff4444";
   else if (cls === "warn") d.style.color = "#ffaa00";
   else if (cls === "ok") d.style.color = "#00ee88";
-  else if (cls === "dim") d.style.color = "#335544";
+  else if (cls === "dim") d.style.color = "#6f9a86";
   d.textContent = txt;
   out.appendChild(d);
   out.scrollTop = out.scrollHeight;
@@ -455,7 +541,7 @@ function termRun(raw) {
     case "HELP":
       [
         "HELP              — show this list",
-        "LIST              — list records  (LIST ENTITIES | LIST personnel | LIST SITES)",
+        "LIST              — list records  (LIST ENTITIES | LIST PERSONNEL | LIST SITES)",
         "GET               — get entity by ID  (GET ENTITY <id>)",
         "OPEN              — open entity window  (OPEN ENTITY <id>)",
         "STATUS            — overall system status",
@@ -531,7 +617,7 @@ function termRun(raw) {
         ENT.forEach(function (e) {
           termPrint("  E-" + String(e.id).padStart(4, "0") + " [" + e.cls + "/" + e.ps + "] " + e.name);
         });
-      } else if (sub === "personnel") {
+      } else if (sub === "PERSONNEL") {
         STF.forEach(function (s) {
           termPrint("  S-" + s.id + " [CL-" + s.clr + "] " + s.fname + " " + s.lname + " — " + s.pos);
         });
@@ -540,7 +626,7 @@ function termRun(raw) {
           termPrint("  " + s.name + " — " + s.loc + " (" + s.status + ")");
         });
       } else {
-        termPrint("Unknown target. Try: LIST ENTITIES | LIST personnel | LIST SITES", "err");
+        termPrint("Unknown target. Try: LIST ENTITIES | LIST PERSONNEL | LIST SITES", "err");
       }
       break;
     }
@@ -671,7 +757,7 @@ function termRun(raw) {
       } catch (e) {}
       termPrint("Session terminated. Redirecting to intake...", "warn");
       setTimeout(function () {
-        window.location.href = "/Neoms~Database/HTML/intake.html";
+        window.location.href = "../../Neoms~Database/HTML/intake.html";
       }, 1200);
       break;
 

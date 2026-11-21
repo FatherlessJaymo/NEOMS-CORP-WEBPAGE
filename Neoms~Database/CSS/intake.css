@@ -44,7 +44,7 @@ html, body {
 #iv-titlebar {
   background: linear-gradient(90deg, #000060, #006666 50%, #000060);
   padding: 5px 10px;
-  font-size: 11px;
+  font-size: 12px;
   color: #fff;
   letter-spacing: 2px;
   display: flex;
@@ -57,7 +57,7 @@ html, body {
   padding: 14px 18px;
   height: 220px;
   overflow-y: auto;
-  font-size: 12px;
+  font-size: 13px;
   color: #00cc88;
   line-height: 1.9;
   scrollbar-width: thin;
@@ -86,8 +86,8 @@ html, body {
 #iv-form.visible { display: flex; }
 
 .iv-form-label {
-  font-size: 10px;
-  color: #446655;
+  font-size: 11px;
+  color: #5a8871;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -121,7 +121,7 @@ html, body {
   border-color: #00ccaa;
   box-shadow: 0 0 8px rgba(0, 200, 150, 0.2);
 }
-.iv-form-input::placeholder { color: #224433; }
+.iv-form-input::placeholder { color: #468b69; }
 
 /* ── Auto-assigned parameter grid ────────────────────────────── */
 .iv-auto-fields {
@@ -133,15 +133,15 @@ html, body {
   border: 1px solid #0a2a1a;
   border-radius: 2px;
 }
-.iv-auto-field { font-size: 10px; }
+.iv-auto-field { font-size: 11px; }
 .iv-auto-field .iv-af-label {
-  color: #336644;
+  color: #468b5d;
   letter-spacing: 1px;
   margin-bottom: 2px;
 }
 .iv-auto-field .iv-af-val {
   color: #00aa66;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* Replaces style="color:#00ffaa" on the STATUS auto-field */
@@ -160,7 +160,7 @@ html, body {
 /* ── Submit button ───────────────────────────────────────────── */
 .iv-submit {
   font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   padding: 10px 24px;
   background: #003322;
@@ -179,7 +179,7 @@ html, body {
 
 /* ── Error text ──────────────────────────────────────────────── */
 #iv-err {
-  font-size: 10px;
+  font-size: 11px;
   color: #ff4444;
   letter-spacing: 1px;
   min-height: 14px;
@@ -198,9 +198,9 @@ html, body {
 #iv-transmit.visible { display: flex; }
 
 .iv-tx-header {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
-  color: #446655;
+  color: #5a8871;
   text-transform: uppercase;
   border-bottom: 1px solid #0a2a1a;
   padding-bottom: 8px;
@@ -214,17 +214,17 @@ html, body {
 }
 
 .iv-tx-desc {
-  font-size: 11px;
-  color: #335544;
+  font-size: 12px;
+  color: #52886d;
   line-height: 1.8;
   letter-spacing: 0.5px;
 }
 .iv-tx-desc b { color: #00aa66; }
 
-/* Replaces style="color:#1a3a2a;font-size:10px" on the disclaimer span */
+/* Replaces style="color:#3e8b65;font-size:11px" on the disclaimer span */
 .iv-tx-note {
-  color: #1a3a2a;
-  font-size: 10px;
+  color: #3e8b65;
+  font-size: 11px;
 }
 
 .iv-tx-actions {
@@ -236,7 +236,7 @@ html, body {
 
 #iv-tx-btn {
   font-family: "Share Tech Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   padding: 10px 22px;
   background: #003322;
@@ -255,20 +255,20 @@ html, body {
 
 #iv-tx-skip {
   font-family: "Share Tech Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   padding: 10px 16px;
   background: transparent;
   border: 1px solid #1a3a2a;
-  color: #335544;
+  color: #52886d;
   cursor: pointer;
   transition: 0.2s;
   text-transform: uppercase;
 }
-#iv-tx-skip:hover { border-color: #446655; color: #667766; }
+#iv-tx-skip:hover { border-color: #446655; color: #6f826f; }
 
 #iv-tx-status {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   min-height: 14px;
   flex: 1;

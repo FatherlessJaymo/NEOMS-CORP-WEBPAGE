@@ -7,10 +7,11 @@
 const breachedCount = ENTITIES.filter((e) => e.status === "BREACHED").length;
 const statSites = document.getElementById("nm-stat-sites");
 const statBreach = document.getElementById("nm-stat-breach");
-if (statSites) statSites.innerHTML = 'SITES: <span style="color:#00aa66;">' + SITES.length + "</span>";
-if (statBreach) statBreach.innerHTML = 'BREACH: <span style="color:#ff3333;">' + breachedCount + " ACTIVE</span>";
+if (statSites) statSites.innerHTML = 'SITES: <span class="nm-stat-ok">' + SITES.length + "</span>";
+if (statBreach) statBreach.innerHTML = 'BREACH: <span class="nm-stat-bad">' + breachedCount + " ACTIVE</span>";
 
 /* ── Clock ──────────────────────────────────────────────────── */
+let nmClockI = null;
 function nmTick() {
   const el = document.getElementById("nm-clock");
   if (!el) {
@@ -21,18 +22,28 @@ function nmTick() {
   el.textContent = t.split(" ")[4] + " UTC";
 }
 nmTick();
-const nmClockI = setInterval(nmTick, 1000);
+nmClockI = setInterval(nmTick, 1000);
+
+/* ── Site helpers ───────────────────────────────────────────── */
+function nmIsBreached(site) {
+  return ENTITIES.some((e) => e.site === site.id && e.status === "BREACHED");
+}
+function nmColor(site) {
+  return nmIsBreached(site) ? "#ff4444" : "#00e0e0";
+}
 
 /* ── Panel helpers ──────────────────────────────────────────── */
-function nmShowPanel(site, breached, color) {
+function nmShowPanel(site) {
   const panel = document.getElementById("nm-panel");
   const ph = document.getElementById("nm-ph");
   if (!panel) return;
+  const breached = nmIsBreached(site);
+  const color = nmColor(site);
   panel.style.borderColor = color;
   panel.style.boxShadow = "0 0 20px " + color + "22, 0 0 40px " + color + "0a";
   if (ph) {
     ph.style.borderColor = color;
-    ph.style.background = color + "10";
+    ph.style.background = color + "14";
   }
 
   const breachedEnts = ENTITIES.filter((e) => e.site === site.id && e.status === "BREACHED");
@@ -42,13 +53,13 @@ function nmShowPanel(site, breached, color) {
   g("nm-pname").style.color = color;
   g("nm-pname").style.textShadow = "0 0 10px " + color + "88";
   g("nm-ploc").textContent = site.loc;
-  g("nm-ploc").style.color = breached ? "#ff6666" : "#00aa66";
+  g("nm-ploc").style.color = breached ? "#ff8888" : "#33dd99";
   g("nm-pents").textContent = site.entities;
   g("nm-pents").style.color = color;
   g("nm-ppersonnel").textContent = site.personnel;
   g("nm-ppersonnel").style.color = color;
   g("nm-pstatus").textContent = site.status;
-  g("nm-pstatus").style.color = breached ? "#ff3333" : "#00cc66";
+  g("nm-pstatus").style.color = breached ? "#ff4444" : "#33dd88";
   g("nm-pest").textContent = site.est;
   g("nm-pdesc").textContent = site.desc;
 
@@ -63,21 +74,16 @@ function nmShowPanel(site, breached, color) {
   }
   const pf = g("nm-pfooter");
   if (pf) {
-    pf.style.borderColor = color + "33";
+    pf.style.borderColor = color + "44";
     pf.textContent = "ACCESS LOGGED — " + new Date().toISOString().split("T")[0];
   }
 
-  panel.style.opacity = "1";
-  panel.style.transform = "translateY(0)";
-  panel.style.pointerEvents = "all";
+  panel.classList.add("nm-panel--open");
 }
 
 function nmClosePanel() {
   const panel = document.getElementById("nm-panel");
-  if (!panel) return;
-  panel.style.opacity = "0";
-  panel.style.transform = "translateY(-8px)";
-  panel.style.pointerEvents = "none";
+  if (panel) panel.classList.remove("nm-panel--open");
 }
 
 window.nmClosePanel = nmClosePanel;
@@ -86,43 +92,143 @@ window.nmClosePanel = nmClosePanel;
    MAP BUILD
    ════════════════════════════════════════════════════════════ */
 (function initMap() {
-  if (typeof d3 === "undefined") {
-    const svgEl = document.getElementById("nm-d3-svg");
-    if (svgEl) {
-      const msg = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      msg.setAttribute("x", "50%");
-      msg.setAttribute("y", "50%");
-      msg.setAttribute("text-anchor", "middle");
-      msg.setAttribute("fill", "#335544");
-      msg.setAttribute("font-family", "'Share Tech Mono',monospace");
-      msg.setAttribute("font-size", "12");
-      msg.textContent = "MAP DATA UNAVAILABLE — D3 NOT LOADED";
-      svgEl.appendChild(msg);
-    }
-    return;
-  }
-
   const svgEl = document.getElementById("nm-d3-svg");
   if (!svgEl) return;
 
-  function mkProj(w, h) {
-    return d3
-      .geoNaturalEarth1()
-      .scale(Math.min(w / 6.28, h / 3.14) * 0.88)
-      .translate([w / 2, h / 2]);
+  if (typeof d3 === "undefined") {
+    const msg = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    msg.setAttribute("x", "50%");
+    msg.setAttribute("y", "50%");
+    msg.setAttribute("text-anchor", "middle");
+    msg.setAttribute("fill", "#7fb8a0");
+    msg.setAttribute("font-family", "'Share Tech Mono',monospace");
+    msg.setAttribute("font-size", "13");
+    msg.textContent = "MAP DATA UNAVAILABLE — D3 NOT LOADED";
+    svgEl.appendChild(msg);
+    return;
   }
 
-  /* ── Full redraw ─────────────────────────────────────────── */
+  const svg = d3.select(svgEl);
+
+  /* State that survives redraws (window resize / maximize) */
+  let curTransform = d3.zoomIdentity;
+  let selectedId = null;
+  let proj = null;
+  let world = null;
+
+  /* Markers keep a constant on-screen size while the map zooms, so
+     clustered sites spread apart as you zoom in */
+  function markerScale(k) {
+    return 1 / k;
+  }
+  function sizeMarkers(k) {
+    const s = markerScale(k);
+    svg.selectAll(".nm-site-marker").each(function () {
+      const mk = d3.select(this);
+      mk.select(".nm-hit").attr("r", 12 * s);
+      mk.select(".nm-ring1").attr("r", 11 * s).attr("stroke-width", 1 * s);
+      mk.select(".nm-outer").attr("r", 5.5 * s).attr("stroke-width", 1.6 * s);
+      mk.select(".nm-inner").attr("r", 2.4 * s);
+      mk.select(".nm-site-label")
+        .attr("y", -10 * s)
+        .attr("font-size", 11 * s + "px")
+        .attr("stroke-width", 3 * s + "px");
+    });
+    const zd = document.getElementById("nm-zoom-disp");
+    if (zd) zd.innerHTML = 'ZOOM: <span class="nm-stat-ok">' + k.toFixed(2) + "x</span>";
+    /* Show every label once zoomed in enough to read them */
+    svgEl.classList.toggle("nm-labels-on", k >= 3);
+  }
+
+  const zoom = d3
+    .zoom()
+    .scaleExtent([0.8, 40])
+    .on("zoom", function (event) {
+      curTransform = event.transform;
+      svg.select(".nm-world").attr("transform", curTransform);
+      sizeMarkers(curTransform.k);
+    });
+  svg.call(zoom);
+
+  function selectSite(id) {
+    selectedId = id;
+    svg.selectAll(".nm-site-marker").classed("nm-selected", (d) => d.id === id);
+    document.querySelectorAll(".nm-site-row").forEach((r) => {
+      r.classList.toggle("nm-site-row--active", Number(r.dataset.id) === id);
+    });
+    const site = SITES.find((s) => s.id === id);
+    if (site) nmShowPanel(site);
+  }
+
+  function clearSelection() {
+    selectedId = null;
+    svg.selectAll(".nm-site-marker").classed("nm-selected", false);
+    document.querySelectorAll(".nm-site-row").forEach((r) => r.classList.remove("nm-site-row--active"));
+    nmClosePanel();
+  }
+
+  /* Smoothly centre + zoom onto a site */
+  function flyTo(site) {
+    if (!proj) return;
+    const xy = proj([site.lng, site.lat]);
+    if (!xy) return;
+    const r = svgEl.getBoundingClientRect();
+    const k = Math.max(curTransform.k, 6);
+    const t = d3.zoomIdentity
+      .translate(r.width / 2, r.height / 2)
+      .scale(k)
+      .translate(-xy[0], -xy[1]);
+    svg.transition().duration(750).call(zoom.transform, t);
+  }
+
+  /* ── Site list (legend) — reaches markers that overlap ─────── */
+  (function buildSiteList() {
+    const list = document.getElementById("nm-site-list");
+    if (!list) return;
+    list.innerHTML = SITES.map(function (s) {
+      const bad = nmIsBreached(s);
+      return (
+        '<button class="nm-site-row' +
+        (bad ? " nm-site-row--breach" : "") +
+        '" data-id="' +
+        s.id +
+        '" title="' +
+        escHtml(s.loc) +
+        '"><span class="nm-legend-dot ' +
+        (bad ? "nm-legend-dot-breach" : "nm-legend-dot-active") +
+        '"></span>' +
+        escHtml(s.name) +
+        '<span class="nm-site-row-loc">' +
+        escHtml(s.loc.split(",").slice(-1)[0].trim()) +
+        "</span></button>"
+      );
+    }).join("");
+    list.addEventListener("click", function (e) {
+      const row = e.target.closest(".nm-site-row");
+      if (!row) return;
+      const site = SITES.find((s) => s.id === Number(row.dataset.id));
+      if (!site) return;
+      selectSite(site.id);
+      flyTo(site);
+    });
+  })();
+
+  /* Reset view button */
+  const resetBtn = document.getElementById("nm-reset");
+  if (resetBtn)
+    resetBtn.addEventListener("click", function () {
+      clearSelection();
+      svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity);
+    });
+
+  /* ── Full redraw (first paint + every resize) ─────────────── */
   function redraw() {
     const rect = svgEl.getBoundingClientRect();
-    const W = rect.width || svgEl.clientWidth || 800;
-    const H = rect.height || svgEl.clientHeight || 500;
+    const W = rect.width;
+    const H = rect.height;
     if (W < 10 || H < 10) return;
 
-    const svg = d3.select(svgEl);
     svg.selectAll("*").remove();
-
-    /* Defs */
     const defs = svg.append("defs");
 
     function makeGlow(id, color, dev) {
@@ -140,8 +246,8 @@ window.nmClosePanel = nmClosePanel;
       m.append("feMergeNode").attr("in", "shd");
       m.append("feMergeNode").attr("in", "SourceGraphic");
     }
-    makeGlow("nm-glow-ok", "#00cccc", 4);
-    makeGlow("nm-glow-breach", "#ff3333", 5);
+    makeGlow("nm-glow-ok", "#00e0e0", 3);
+    makeGlow("nm-glow-breach", "#ff4444", 4);
 
     defs
       .append("pattern")
@@ -152,251 +258,175 @@ window.nmClosePanel = nmClosePanel;
       .append("path")
       .attr("d", "M 80 0 L 0 0 0 40")
       .attr("fill", "none")
-      .attr("stroke", "#051510")
-      .attr("stroke-width", 0.4);
+      .attr("stroke", "#0c2420")
+      .attr("stroke-width", 0.5);
 
-    svg.append("rect").attr("width", W).attr("height", H).attr("fill", "#040810");
-    svg.append("rect").attr("width", W).attr("height", H).attr("fill", "url(#nm-grat)").attr("opacity", 0.7);
+    svg.append("rect").attr("width", W).attr("height", H).attr("fill", "#050b14");
+    svg.append("rect").attr("width", W).attr("height", H).attr("fill", "url(#nm-grat)").attr("opacity", 0.8);
 
-    let proj = mkProj(W, H);
-    let geoPath = d3.geoPath().projection(proj);
-    let curZoom = 1;
-    const g = svg.append("g");
+    /* Fit the globe below the header and above the legend */
+    const top = Math.min(96, H * 0.18);
+    const pad = 16;
+    proj = d3.geoNaturalEarth1().fitExtent(
+      [
+        [pad, top],
+        [W - pad, H - pad]
+      ],
+      { type: "Sphere" }
+    );
+    const geoPath = d3.geoPath().projection(proj);
+    const g = svg.append("g").attr("class", "nm-world");
 
-    /* ── Draw world from data ── */
-    function drawWorld(world) {
+    function drawWorld(atlas) {
+      world = atlas;
       g.append("path")
         .datum({ type: "Sphere" })
-        .attr("fill", "#020810")
-        .attr("stroke", "#0a1a18")
-        .attr("stroke-width", 0.4)
+        .attr("fill", "#061520")
+        .attr("stroke", "#1a4a50")
+        .attr("stroke-width", 0.8)
+        .attr("vector-effect", "non-scaling-stroke")
         .attr("d", geoPath);
 
       g.append("path")
         .datum(d3.geoGraticule()())
         .attr("fill", "none")
-        .attr("stroke", "#061612")
-        .attr("stroke-width", 0.25)
+        .attr("stroke", "#0f3036")
+        .attr("stroke-width", 0.5)
+        .attr("vector-effect", "non-scaling-stroke")
         .attr("d", geoPath);
 
       g.selectAll(".nm-country")
-        .data(topojson.feature(world, world.objects.countries).features)
+        .data(topojson.feature(atlas, atlas.objects.countries).features)
         .enter()
         .append("path")
         .attr("class", "nm-country")
-        .attr("fill", "#071510")
-        .attr("stroke", "#0a2010")
-        .attr("stroke-width", 0.35)
-        .attr("d", geoPath)
-        .on("mouseover", function () {
-          d3.select(this).attr("fill", "#0d1e16");
-        })
-        .on("mouseout", function () {
-          d3.select(this).attr("fill", "#071510");
-        });
+        .attr("vector-effect", "non-scaling-stroke")
+        .attr("d", geoPath);
 
       SITES.forEach(function (site) {
-        const breached = ENTITIES.some((e) => e.site === site.id && e.status === "BREACHED");
-        const color = breached ? "#ff3333" : "#00cccc";
-        const filterId = breached ? "nm-glow-breach" : "nm-glow-ok";
+        const breached = nmIsBreached(site);
+        const color = nmColor(site);
         const xy = proj([site.lng, site.lat]);
         if (!xy) return;
 
         const grp = g
           .append("g")
-          .attr("class", "nm-site-marker")
+          .attr("class", "nm-site-marker" + (breached ? " nm-breach" : ""))
           .attr("transform", "translate(" + xy[0] + "," + xy[1] + ")")
           .datum(site)
           .on("click", function (event, d) {
             event.stopPropagation();
-            svg.selectAll(".nm-site-marker").classed("nm-selected", false);
-            d3.select(this).classed("nm-selected", true);
-            nmShowPanel(d, breached, color);
+            selectSite(d.id);
           });
 
-        grp
-          .append("circle")
-          .attr("class", "nm-ring1")
-          .attr("r", 11)
-          .attr("fill", "none")
-          .attr("stroke", color)
-          .attr("stroke-width", 0.9)
-          .attr("opacity", 0);
-        grp
-          .append("circle")
-          .attr("class", "nm-ring2")
-          .attr("r", 18)
-          .attr("fill", "none")
-          .attr("stroke", color)
-          .attr("stroke-width", 0.55)
-          .attr("opacity", 0);
+        /* Invisible, larger hit area so small markers are easy to click */
+        grp.append("circle").attr("class", "nm-hit").attr("r", 12).attr("fill", "transparent");
+        grp.append("circle").attr("class", "nm-ring1").attr("r", 11).attr("fill", "none").attr("stroke", color);
         grp
           .append("circle")
           .attr("class", "nm-outer")
-          .attr("r", 5)
-          .attr("fill", "transparent")
-          .attr("stroke", color)
-          .attr("stroke-width", 1.5);
+          .attr("r", 5.5)
+          .attr("fill", color)
+          .attr("fill-opacity", 0.12)
+          .attr("stroke", color);
         grp
           .append("circle")
           .attr("class", "nm-inner")
-          .attr("r", 2.2)
+          .attr("r", 2.4)
           .attr("fill", color)
-          .style("filter", "url(#" + filterId + ")");
+          .style("filter", "url(#" + (breached ? "nm-glow-breach" : "nm-glow-ok") + ")");
         grp
           .append("text")
           .attr("class", "nm-site-label")
-          .attr("y", -10)
           .attr("text-anchor", "middle")
           .attr("fill", color)
           .attr("font-family", "'Share Tech Mono',monospace")
-          .attr("font-size", "7px")
           .attr("paint-order", "stroke fill")
-          .attr("stroke", "#020810")
-          .attr("stroke-width", "3px")
-          .attr("opacity", 0)
-          .style("pointer-events", "none")
+          .attr("stroke", "#050b14")
           .text(site.name);
       });
 
+      /* Restore zoom + selection from before the redraw */
+      g.attr("transform", curTransform);
+      sizeMarkers(curTransform.k);
+      if (selectedId !== null) {
+        svg.selectAll(".nm-site-marker").classed("nm-selected", (d) => d.id === selectedId);
+      }
+    }
+
+    /* Background click clears the selection (d3.zoom swallows the
+       click that ends a pan, so dragging doesn't close the dossier) */
+    svg.on("click.bg", clearSelection);
+
+    function drawError(text) {
       svg
-        .selectAll(".nm-site-marker")
-        .on("mouseover.rings", function () {
-          const sel = d3.select(this);
-          sel
-            .select(".nm-ring1")
-            .attr("opacity", 1)
-            .interrupt()
-            .transition()
-            .duration(1800)
-            .ease(d3.easeCubicOut)
-            .attrTween("r", () => {
-              const i = d3.interpolate(5, 20);
-              return (t) => i(t);
-            })
-            .attrTween("opacity", () => {
-              const i = d3.interpolate(0.8, 0);
-              return (t) => i(t);
-            })
-            .on("end", function () {
-              d3.select(this).attr("r", 11).attr("opacity", 0);
-            });
-          sel
-            .select(".nm-ring2")
-            .attr("opacity", 1)
-            .interrupt()
-            .transition()
-            .delay(250)
-            .duration(1800)
-            .ease(d3.easeCubicOut)
-            .attrTween("r", () => {
-              const i = d3.interpolate(8, 26);
-              return (t) => i(t);
-            })
-            .attrTween("opacity", () => {
-              const i = d3.interpolate(0.6, 0);
-              return (t) => i(t);
-            })
-            .on("end", function () {
-              d3.select(this).attr("r", 18).attr("opacity", 0);
-            });
-          sel.select(".nm-site-label").attr("opacity", 1);
-        })
-        .on("mouseout.rings", function () {
-          const sel = d3.select(this);
-          if (!sel.classed("nm-selected")) sel.select(".nm-site-label").attr("opacity", 0);
-        });
+        .append("text")
+        .attr("x", W / 2)
+        .attr("y", H / 2)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#7fb8a0")
+        .attr("font-family", "'Share Tech Mono',monospace")
+        .attr("font-size", 13)
+        .text(text);
+    }
 
-      const zoom = d3
-        .zoom()
-        .scaleExtent([0.5, 14])
-        .on("zoom", function (event) {
-          g.attr("transform", event.transform);
-          curZoom = event.transform.k;
-          const s = Math.max(0.3, 1 / Math.sqrt(curZoom));
-          svg.selectAll(".nm-site-marker").each(function () {
-            const mk = d3.select(this);
-            mk.select(".nm-ring1")
-              .attr("r", 11 * s)
-              .attr("stroke-width", 0.9 * s);
-            mk.select(".nm-ring2")
-              .attr("r", 18 * s)
-              .attr("stroke-width", 0.55 * s);
-            mk.select(".nm-outer")
-              .attr("r", 5 * s)
-              .attr("stroke-width", 1.5 * s);
-            mk.select(".nm-inner").attr("r", 2.2 * s);
-            mk.select(".nm-site-label")
-              .attr("y", -10 * s)
-              .attr("font-size", 7 * s + "px")
-              .attr("stroke-width", 3 * s + "px");
-          });
-          const zd = document.getElementById("nm-zoom-disp");
-          if (zd) zd.innerHTML = 'ZOOM: <span style="color:#00aa66;">' + curZoom.toFixed(2) + "x</span>";
-        });
-
-      svg.call(zoom);
-      svgEl.style.cursor = "grab";
-      svgEl.addEventListener("mousedown", () => {
-        svgEl.style.cursor = "grabbing";
-      });
-      svgEl.addEventListener("mouseup", () => {
-        svgEl.style.cursor = "grab";
-      });
-
-      svg.on("click.bg", function () {
-        svg.selectAll(".nm-site-marker").classed("nm-selected", false);
-        svg.selectAll(".nm-site-label").attr("opacity", 0);
-        nmClosePanel();
-      });
-    } /* end drawWorld() */
-
-    /* ── FIX: use preloaded data if available, else fetch ────── */
-    /* window.__worldAtlas is set by world-atlas-loader.js which
-       is loaded as a <script> tag in desktop.html — no CSP issue */
-    if (window.__worldAtlas) {
+    /* window.__worldAtlas is set by world-atlas-loader.js (loaded as a
+       <script> in desktop.html), which avoids Neocities' CSP on fetch */
+    const atlas = world || window.__worldAtlas;
+    if (atlas) {
       try {
-        drawWorld(window.__worldAtlas);
+        drawWorld(atlas);
       } catch (e) {
-        g.append("text")
-          .attr("x", W / 2)
-          .attr("y", H / 2)
-          .attr("text-anchor", "middle")
-          .attr("fill", "#335544")
-          .attr("font-family", "'Share Tech Mono',monospace")
-          .attr("font-size", 12)
-          .text("MAP RENDER ERROR — " + e.message);
+        drawError("MAP RENDER ERROR — " + e.message);
       }
     } else {
-      /* Fallback: try d3.json() — will fail on Neocities due to CSP
-         but works fine on localhost / other hosts */
       d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
         .then(drawWorld)
         .catch(function () {
-          g.append("text")
-            .attr("x", W / 2)
-            .attr("y", H / 2)
-            .attr("text-anchor", "middle")
-            .attr("fill", "#335544")
-            .attr("font-family", "'Share Tech Mono',monospace")
-            .attr("font-size", 12)
-            .text("MAP DATA UNAVAILABLE — NETWORK RESTRICTED");
+          drawError("MAP DATA UNAVAILABLE — NETWORK RESTRICTED");
         });
     }
-  } /* end redraw() */
+  }
 
-  /* Defer first draw until SVG has real layout dimensions */
+  /* Defer first draw until the SVG has real layout dimensions */
   requestAnimationFrame(function () {
-    requestAnimationFrame(redraw);
+    requestAnimationFrame(function () {
+      lastSize = [svgEl.getBoundingClientRect().width, svgEl.getBoundingClientRect().height];
+      redraw();
+    });
   });
 
-  /* Full redraw on resize */
+  /* Redraw on resize (window drag-resize, maximize/restore). The zoom
+     transform lives in projection space, so re-fitting the projection
+     would shift the view; instead keep the same geographic point in
+     the centre at the same zoom level. */
+  let lastSize = null;
+  function redrawKeepingView() {
+    const r = svgEl.getBoundingClientRect();
+    let centre = null;
+    if (proj && lastSize && curTransform.k !== 1) {
+      const p = curTransform.invert([lastSize[0] / 2, lastSize[1] / 2]);
+      centre = proj.invert(p);
+    }
+    lastSize = [r.width, r.height];
+    redraw();
+    if (centre && proj) {
+      const xy = proj(centre);
+      curTransform = d3.zoomIdentity
+        .translate(r.width / 2, r.height / 2)
+        .scale(curTransform.k)
+        .translate(-xy[0], -xy[1]);
+    } else if (!centre) {
+      curTransform = d3.zoomIdentity;
+    }
+    svg.call(zoom.transform, curTransform);
+  }
+
   if (typeof ResizeObserver !== "undefined") {
     let roTimer = null;
-    const ro = new ResizeObserver(function () {
+    new ResizeObserver(function () {
       cancelAnimationFrame(roTimer);
-      roTimer = requestAnimationFrame(redraw);
-    });
-    ro.observe(svgEl);
+      roTimer = requestAnimationFrame(redrawKeepingView);
+    }).observe(svgEl);
   }
 })();

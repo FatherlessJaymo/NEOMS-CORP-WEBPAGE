@@ -1,135 +1,137 @@
 /* ============================================================
    NEOMIX PLAYER — Studio Deck layout (2-column)
-   2-column grid: [ rail | stage ]
+   [ rail | stage ] inside a size container (.neomix-shell), so the
+   rail reacts to the WINDOW width, not the browser width.
 ========================================================= */
 
 /* ============================================================
-   ROOT — 2-column grid wrapper
+   SHELL — size container; cancels .win-scroll padding (12px)
+============================================================ */
+.neomix-shell {
+  container: neomix / inline-size;
+  height: calc(100% + 24px);
+  margin: -12px;
+}
+
+/* ============================================================
+   ROOT — 2-column grid
 ============================================================ */
 #neomix-player {
+  --nm-accent: #00eaff;
+  --nm-accent-2: #006dff;
+  --nm-text: #e6ecf5;
+  --nm-text-dim: rgba(168, 200, 232, 0.75);
+  --nm-text-faint: #4d6680;
+  --nm-line: rgba(106, 183, 255, 0.16);
+  --rail-w: 168px;
+
   display: grid;
-  grid-template-columns: var(--rail-w, 200px) 1fr;
-  grid-template-rows: 28px 1fr;
-  grid-template-areas:
-    "title  title"
-    "rail   stage";
+  grid-template-columns: var(--rail-w) 1fr;
   height: 100%;
-  margin: -12px; /* cancel .win-scroll padding */
-  background: radial-gradient(circle at 15% 0%, rgba(0, 234, 255, 0.07), transparent 45%),
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 15% 0%, rgba(0, 234, 255, 0.08), transparent 45%),
     radial-gradient(circle at 90% 100%, rgba(255, 60, 200, 0.06), transparent 50%),
     linear-gradient(180deg, #060a1c 0%, #02040c 100%);
-  color: #e6ecf5;
-  font-family: "Press Start 2P", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  overflow: hidden;
-  position: relative;
-  transition: grid-template-columns 0.3s ease;
+  color: var(--nm-text);
+  font-family: "Press Start 2P", monospace;
+  transition: grid-template-columns 0.25s ease;
 }
 #neomix-player.rail-collapsed {
-  --rail-w: 28px;
-}
-
-/* Subtle ambient glow layer */
-#neomix-player::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 20% 20%, rgba(0, 234, 255, 0.08), transparent 40%),
-    radial-gradient(circle at 80% 100%, rgba(0, 109, 255, 0.1), transparent 40%);
-  pointer-events: none;
-  z-index: 0;
-}
-#neomix-player > * {
-  position: relative;
-  z-index: 1;
+  --rail-w: 34px;
 }
 
 /* ============================================================
-   TITLE BAR
+   BUTTON BASE — only the player's own buttons
 ============================================================ */
-#neomix-title-bar {
-  grid-area: title;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 28px;
-  flex-shrink: 0;
-  padding: 0 12px;
+#neomix-player .neomix-btn {
+  font-family: inherit;
   font-size: 7px;
-  letter-spacing: 4px;
-  color: #6ab7ff;
-  text-shadow: 0 0 8px rgba(0, 234, 255, 0.5);
-  border-bottom: 1px solid rgba(106, 183, 255, 0.12);
-  background: rgba(255, 255, 255, 0.02);
+  letter-spacing: 1px;
+  color: var(--nm-text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(106, 183, 255, 0.22);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  box-shadow: none;
+  text-shadow: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
 }
-.neomix-title-text {
-  display: inline-block;
+#neomix-player .neomix-btn:hover {
+  background: rgba(0, 234, 255, 0.12);
+  border-color: rgba(0, 234, 255, 0.5);
 }
-.neomix-tag {
-  font-size: 5px;
-  letter-spacing: 2px;
-  color: #ff3cc8;
-  padding: 2px 6px;
-  border: 1px solid rgba(255, 60, 200, 0.4);
-  border-radius: 2px;
-  animation: neomix-tag-blink 2s step-start infinite;
+#neomix-player .neomix-btn:active {
+  background: rgba(0, 234, 255, 0.22);
 }
-@keyframes neomix-tag-blink {
-  50% {
-    opacity: 0.4;
-  }
+#neomix-player .neomix-btn:focus-visible {
+  outline: 1px solid var(--nm-accent);
+  outline-offset: 2px;
 }
 
 /* ============================================================
-   LEFT RAIL — playlist drawer (now wider)
+   LEFT RAIL — playlist drawer
 ============================================================ */
 #neomix-rail {
-  grid-area: rail;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 5, 20, 0.55);
-  border-right: 1px solid rgba(106, 183, 255, 0.12);
   min-width: 0;
   overflow: hidden;
+  background: rgba(0, 5, 20, 0.6);
+  border-right: 1px solid var(--nm-line);
 }
 
-/* Top of rail: playlist switcher + collapse button */
 .rail-head {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 9px;
-  border-bottom: 1px solid rgba(106, 183, 255, 0.1);
+  padding: 8px;
+  border-bottom: 1px solid var(--nm-line);
   flex-shrink: 0;
 }
 
-#neomix-rail-toggle {
-  width: 20px;
-  height: 24px;
-  background: transparent;
-  color: #6ab7ff;
-  border: 1px solid rgba(106, 183, 255, 0.25);
-  border-radius: 3px;
-  cursor: pointer;
-  font-family: inherit;
+#neomix-player #neomix-rail-toggle {
+  width: 18px;
+  height: 22px;
+  padding: 0;
+  flex-shrink: 0;
   font-size: 9px;
+  color: #6ab7ff;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  transition: 0.15s;
-  padding: 0;
-}
-#neomix-rail-toggle:hover {
-  background: rgba(0, 234, 255, 0.12);
-  color: #00eaff;
+  border-radius: 4px;
 }
 #neomix-player.rail-collapsed #neomix-rail-toggle {
   transform: rotate(180deg);
 }
-#neomix-player.rail-collapsed #neomix-playlist-select,
-#neomix-player.rail-collapsed .rail-list-title,
-#neomix-player.rail-collapsed .rail-list-empty {
-  display: none;
+
+#neomix-playlist-select {
+  flex: 1;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 7px;
+  letter-spacing: 1px;
+  padding: 6px 18px 6px 7px;
+  border-radius: 4px;
+  color: #a8c8e8;
+  border: 1px solid rgba(106, 183, 255, 0.25);
+  background-color: rgba(0, 109, 255, 0.1);
+  background-image: linear-gradient(45deg, transparent 50%, #6ab7ff 50%),
+    linear-gradient(135deg, #6ab7ff 50%, transparent 50%);
+  background-position: right 9px top 50%, right 5px top 50%;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  outline: none;
+  text-overflow: ellipsis;
+}
+#neomix-playlist-select option {
+  background: #0a0a18;
+  color: var(--nm-text);
 }
 
 /* Queue list */
@@ -137,7 +139,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 6px 6px;
+  padding: 6px;
   scrollbar-width: thin;
   scrollbar-color: rgba(106, 183, 255, 0.3) transparent;
 }
@@ -148,46 +150,37 @@
   background: rgba(106, 183, 255, 0.3);
   border-radius: 2px;
 }
-
-.rail-list-title {
-  font-size: 6px;
-  letter-spacing: 2px;
-  color: #354a5f;
-  padding: 6px 6px 8px;
-}
+.rail-list-title,
 .rail-list-empty {
-  font-size: 6px;
-  letter-spacing: 1px;
-  color: #354a5f;
-  padding: 8px 6px;
-  font-style: italic;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: var(--nm-text-faint);
+  padding: 6px 6px 8px;
 }
 
 .rail-track {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 8px;
-  font-size: 6px;
-  letter-spacing: 0.5px;
-  color: rgba(154, 200, 246, 0.65);
+  padding: 7px 6px;
+  font-size: 7px;
+  line-height: 1.5;
+  color: var(--nm-text-dim);
   cursor: pointer;
   border-radius: 3px;
   border-left: 2px solid transparent;
   margin-bottom: 2px;
-  transition: 0.15s;
-  line-height: 1.5;
+  transition: background 0.15s, color 0.15s;
 }
 .rail-track:hover {
-  background: rgba(0, 109, 255, 0.12);
-  color: #a8c8e8;
+  background: rgba(0, 109, 255, 0.14);
+  color: #cfe3f7;
 }
 .rail-track-num {
-  width: 18px;
-  font-size: 6px;
-  color: #354a5f;
+  width: 16px;
   flex-shrink: 0;
   text-align: center;
+  color: var(--nm-text-faint);
 }
 .rail-track-name {
   flex: 1;
@@ -198,111 +191,102 @@
 }
 .rail-track.active {
   background: linear-gradient(90deg, rgba(0, 234, 255, 0.18), transparent);
-  color: #00eaff;
-  border-left-color: #00eaff;
+  color: var(--nm-accent);
+  border-left-color: var(--nm-accent);
 }
 .rail-track.active .rail-track-num {
-  color: #00eaff;
-  font-size: 8px;
+  color: var(--nm-accent);
 }
 
+/* Collapsed rail: just the toggle + track numbers */
+#neomix-player.rail-collapsed .rail-head {
+  padding: 8px 0;
+  justify-content: center;
+}
+#neomix-player.rail-collapsed #neomix-playlist-select,
+#neomix-player.rail-collapsed .rail-list-title,
+#neomix-player.rail-collapsed .rail-list-empty,
 #neomix-player.rail-collapsed .rail-track-name {
   display: none;
 }
+#neomix-player.rail-collapsed .rail-list {
+  padding: 6px 3px;
+}
 #neomix-player.rail-collapsed .rail-track {
   justify-content: center;
-  padding: 6px 0;
+  padding: 7px 0;
 }
 #neomix-player.rail-collapsed .rail-track-num {
   width: auto;
 }
 
 /* ============================================================
-   CENTER STAGE — video + controls (id kept as #neomix-body)
+   CENTER STAGE
 ============================================================ */
 #neomix-body {
-  grid-area: stage;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  background: transparent;
-  border: none;
+  min-width: 0;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #1a4a8a transparent;
-  min-width: 0;
-  min-height: 0;
-}
-#neomix-body::-webkit-scrollbar {
-  width: 4px;
-}
-#neomix-body::-webkit-scrollbar-thumb {
-  background: #1a4a8a;
-  border-radius: 2px;
 }
 
-/* === VIDEO STAGE — capped width so it doesn't dominate === */
+/* === DISPLAY — grows to fill spare height === */
 #neomix-display {
-  width: 100%;
-  max-width: 901px; /* video capped — was full-width before */
-  aspect-ratio: 16 / 9;
-  height: auto;
+  flex: 1 1 auto;
+  min-height: 110px;
+  position: relative;
+  overflow: hidden;
   background: #000;
   border-radius: 6px;
-  overflow: hidden;
-  position: relative;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.5),
-    inset 0 0 40px rgba(0, 234, 255, 0.08),
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(0, 234, 255, 0.08),
     0 0 0 1px rgba(106, 183, 255, 0.18);
-  flex-shrink: 0;
-  margin: 0 auto 2px; /* center the video horizontally */
-  display: block;
+}
+#neomix-player.video-on #neomix-display {
+  min-height: 150px;
 }
 
-/* CRT-ish scanline overlay — pure cosmetic, ties into retro vibe */
+/* CRT scanlines */
 #neomix-display::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 2px,
-    rgba(0, 0, 0, 0.08) 2px,
-    rgba(0, 0, 0, 0.08) 3px
-  );
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0, 0, 0, 0.1) 2px, rgba(0, 0, 0, 0.1) 3px);
   pointer-events: none;
-  mix-blend-mode: multiply;
-  z-index: 1;
+  z-index: 3;
 }
 
-/* Channel/live badge */
+/* Channel badge */
 .neomix-live {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 7px;
+  left: 7px;
+  z-index: 4;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 5px;
+  gap: 6px;
+  font-size: 6px;
   letter-spacing: 2px;
   color: #fff;
-  background: rgba(0, 0, 0, 0.55);
-  padding: 3px 6px;
-  border-radius: 2px;
-  z-index: 3;
-  font-family: inherit;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 7px;
+  border-radius: 3px;
 }
 .neomix-live::before {
   content: "";
   width: 5px;
   height: 5px;
-  background: #ff3344;
   border-radius: 50%;
+  background: #ff3344;
   box-shadow: 0 0 6px #ff3344;
   animation: neomix-live-blink 1.4s ease-in-out infinite;
+}
+.neomix-live-tag {
+  color: #ff3cc8;
 }
 @keyframes neomix-live-blink {
   50% {
@@ -310,476 +294,373 @@
   }
 }
 
-/* The iframe target. Gets the iframe injected when video is on. */
+/* iframe host */
 #neomix-yt-target {
-  width: 100%;
-  height: 100%;
-  display: block;
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 2;
 }
 #neomix-yt-target iframe {
-  width: 100% !important;
+  width: 100% !important; /* the YT API sets inline sizes */
   height: 100% !important;
-  border: 0 !important;
+  border: 0;
   display: block;
 }
 
-/* Audio-only fallback message — shown when video is off */
+/* Audio-only cover art */
 .neomix-display-fallback {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  background: radial-gradient(circle at 50% 45%, rgba(0, 109, 255, 0.22), transparent 60%);
+}
+.neomix-cover {
+  width: auto;
+  height: 62%;
+  max-height: 150px;
+  min-height: 56px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(106, 183, 255, 0.3), 0 0 24px rgba(0, 234, 255, 0.25);
+}
+#neomix-player.paused .neomix-cover {
+  filter: saturate(0.6) brightness(0.8);
+}
+.neomix-cover-cap {
   font-size: 6px;
   letter-spacing: 3px;
-  color: rgba(106, 183, 255, 0.4);
-  text-align: center;
-  pointer-events: none;
-  z-index: 0;
+  color: rgba(106, 183, 255, 0.55);
 }
-/* Hide fallback when iframe is present in the target */
 #neomix-yt-target:has(iframe) ~ .neomix-display-fallback {
   display: none;
 }
 
-/* === NOW PLAYING CARD === */
+/* === NOW PLAYING === */
 #neomix-screen {
-  background: linear-gradient(135deg, rgba(0, 109, 255, 0.1), rgba(0, 234, 255, 0.04));
-  border: 1px solid rgba(106, 183, 255, 0.2);
-  border-radius: 8px;
-  padding: 10px 12px;
-  min-height: 48px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 3px;
+  gap: 6px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(0, 109, 255, 0.12), rgba(0, 234, 255, 0.04));
+  border: 1px solid rgba(106, 183, 255, 0.2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  flex-shrink: 0;
 }
 #neomix-song-name {
-  font-size: 8px;
-  color: #ffffff;
-  letter-spacing: 1px;
-  text-shadow: 0 0 12px rgba(0, 234, 255, 0.4);
   overflow: hidden;
-}
-#neomix-song-name b {
-  font-weight: normal;
-}
-#neomix-song-name marquee {
-  font-size: 8px;
+  font-size: 9px;
+  line-height: 1.4;
   letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0, 234, 255, 0.4);
+}
+.nm-title-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Long titles slide to reveal the rest on hover (distance set by JS) */
+#neomix-song-name.overflows:hover .nm-title-text {
+  overflow: visible;
+  text-overflow: clip;
+  transform: translateX(calc(-1 * var(--nm-shift, 0px)));
+  transition: transform var(--nm-shift-time, 3s) linear;
 }
 #neomix-song-sub {
-  font-size: 6px;
-  color: rgba(230, 236, 245, 0.55);
+  font-size: 7px;
   letter-spacing: 1.5px;
+  color: var(--nm-text-dim);
   text-transform: uppercase;
 }
 
-/* === SEEK BAR === */
-#neomix-seek-bar {
-  width: 100%;
-  height: 4px;
-  margin: 2px 0 !important;
-  display: block;
+/* === SEEK ROW === */
+.neomix-seek-row {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 7px;
+  color: #a8c8e8;
+  font-variant-numeric: tabular-nums;
+}
+.neomix-seek-row span {
+  flex-shrink: 0;
+  min-width: 30px;
+}
+#neomix-time-dur {
+  text-align: right;
+}
+
+/* Shared slider look (seek + volume + taskbar). --pct = filled part */
+#neomix-seek-bar,
+#neomix-vol-bar,
+#tb-nm-seek,
+#tb-nm-vol {
+  --pct: 0%;
   appearance: none;
   -webkit-appearance: none;
-  background: rgba(106, 183, 255, 0.15);
-  border: none !important;
-  border-radius: 2px;
-  cursor: pointer;
-  outline: none;
-  flex-shrink: 0;
-}
-#neomix-seek-bar::-webkit-slider-runnable-track {
   height: 4px;
-  background: transparent;
-}
-#neomix-seek-bar::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  background: #00eaff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(0, 234, 255, 0.6);
-  margin-top: -4px;
-}
-#neomix-seek-bar::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  background: #00eaff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(0, 234, 255, 0.6);
-}
-#neomix-seek-bar::-moz-range-track {
-  height: 4px;
-  background: rgba(106, 183, 255, 0.15);
-  border-radius: 2px;
-}
-
-/* ============================================================
-   CONTROL STRIP — single horizontal row
-============================================================ */
-.neomix-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 2px;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-
-.neomix-ctrls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(to right, var(--nm-accent, #00eaff) var(--pct), rgba(106, 183, 255, 0.18) var(--pct));
+}
+#neomix-seek-bar {
+  flex: 1;
+  min-width: 0;
+}
+#neomix-seek-bar::-webkit-slider-thumb,
+#neomix-vol-bar::-webkit-slider-thumb,
+#tb-nm-seek::-webkit-slider-thumb,
+#tb-nm-vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0, 234, 255, 0.8);
+  cursor: pointer;
+}
+#neomix-seek-bar::-moz-range-thumb,
+#neomix-vol-bar::-moz-range-thumb,
+#tb-nm-seek::-moz-range-thumb,
+#tb-nm-vol::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0, 234, 255, 0.8);
+  cursor: pointer;
+}
+#neomix-seek-bar:focus-visible,
+#neomix-vol-bar:focus-visible {
+  outline: 1px solid var(--nm-accent);
+  outline-offset: 4px;
 }
 
-/* Round image buttons (prev / next) */
-.neomix-ibtn {
-  width: 32px;
-  height: 32px;
-  min-width: 0;
-  padding: 0;
-  border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(106, 183, 255, 0.2) !important;
-  color: #e6ecf5 !important;
-  cursor: pointer;
-  transition:
-    transform 0.12s,
-    background 0.15s,
-    box-shadow 0.15s,
-    border-color 0.15s;
+/* === ROW 1 — TRANSPORT === */
+.neomix-transport {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
-  text-shadow: none;
-  font-family: inherit;
-  overflow: hidden;
+  gap: 14px;
+}
+#neomix-player .neomix-ibtn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 0;
 }
-.neomix-ibtn:hover {
-  background: rgba(0, 234, 255, 0.15) !important;
-  border-color: rgba(0, 234, 255, 0.5) !important;
+#neomix-player .neomix-ibtn:hover {
   transform: scale(1.08);
 }
-.neomix-ibtn:active {
+#neomix-player .neomix-ibtn:active {
   transform: scale(0.95);
-  background: rgba(0, 234, 255, 0.25) !important;
 }
-.neomix-ibtn-img {
+.neomix-ico {
   width: 14px;
   height: 14px;
-  object-fit: contain;
-  display: block;
-  pointer-events: none;
-  filter: drop-shadow(0 0 4px rgba(0, 234, 255, 0.2));
+  fill: #cfe3f7;
+  filter: drop-shadow(0 0 4px rgba(0, 234, 255, 0.35));
 }
-.neomix-ibtn-glyph {
-  font-size: 12px;
-  color: #e6ecf5;
-  line-height: 1;
+#neomix-player .neomix-ibtn:hover .neomix-ico {
+  fill: #fff;
 }
-
-/* Big central play button */
-#neomix-play {
-  width: 40px !important;
-  height: 40px !important;
-  background: linear-gradient(135deg, #00eaff, #006dff) !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(0, 234, 255, 0.4) !important;
+#neomix-player #neomix-play {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: linear-gradient(135deg, var(--nm-accent), var(--nm-accent-2));
+  box-shadow: 0 4px 14px rgba(0, 234, 255, 0.4);
 }
-#neomix-play:hover {
-  background: linear-gradient(135deg, #33efff, #3386ff) !important;
-  box-shadow: 0 6px 18px rgba(0, 234, 255, 0.55) !important;
-  transform: scale(1.06);
+#neomix-player #neomix-play:hover {
+  background: linear-gradient(135deg, #33efff, #3386ff);
+  box-shadow: 0 6px 18px rgba(0, 234, 255, 0.55);
 }
-#neomix-play .neomix-ibtn-img {
+.neomix-ibtn-img {
   width: 18px;
   height: 18px;
+  object-fit: contain;
+  pointer-events: none;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* ============================================================
-   GENERIC BUTTON RESET — applies to all <button>s in the player
-============================================================ */
-#neomix-player button {
-  font-family: "Press Start 2P", sans-serif;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(106, 183, 255, 0.2);
-  color: #e6ecf5;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 6px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
-  text-shadow: none;
-  box-shadow: none;
-}
-#neomix-player button:hover {
-  background: rgba(0, 234, 255, 0.12);
-  border-color: rgba(0, 234, 255, 0.4);
-}
-#neomix-player button:active {
-  background: rgba(0, 234, 255, 0.2);
-  border: 1px solid rgba(0, 234, 255, 0.4);
-}
-
-/* ============================================================
-   VOLUME GROUP (mute + slider)
-============================================================ */
-.neomix-vol-group {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-left: auto;
+/* === ROW 2 — TOGGLES + VOLUME === */
+.neomix-controls {
   flex-shrink: 0;
-}
-
-#neomix-mute {
-  width: 26px !important;
-  height: 26px !important;
-  padding: 0 !important;
-  font-size: 11px !important;
-  border-radius: 50% !important;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.06) !important;
-}
-
-#neomix-vol-bar {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 60px;
-  height: 3px !important;
-  background: rgba(106, 183, 255, 0.15) !important;
-  border: none !important;
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-}
-#neomix-vol-bar::-webkit-slider-runnable-track {
-  height: 3px;
-  background: transparent;
-}
-#neomix-vol-bar::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 9px;
-  height: 9px;
-  background: #a8c8e8;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-top: -3px;
-  box-shadow: 0 0 4px rgba(168, 200, 232, 0.6);
-}
-#neomix-vol-bar::-moz-range-thumb {
-  width: 9px;
-  height: 9px;
-  background: #a8c8e8;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 4px rgba(168, 200, 232, 0.6);
-}
-
-/* ============================================================
-   TIME / TRACK INFO
-============================================================ */
-.neomix-info-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 5px;
-  letter-spacing: 1.5px;
-  color: rgba(230, 236, 245, 0.6);
-  padding: 0 2px;
-  font-variant-numeric: tabular-nums;
+  flex-wrap: wrap;
 }
-#neomix-time-cur,
-#neomix-time-dur {
-  color: #a8c8e8;
-}
-#neomix-track-info {
-  color: rgba(230, 236, 245, 0.4);
-  margin-left: 4px;
-}
-
-/* ============================================================
-   PLAYLIST SELECT (lives in the rail header — wider now)
-============================================================ */
-#neomix-playlist-select {
-  flex: 1;
-  min-width: 0;
-  font-family: "Press Start 2P", sans-serif;
-  font-size: 6px !important;
-  padding: 6px 20px 6px 8px;
-  border-radius: 4px;
-  background: rgba(0, 109, 255, 0.1) !important;
-  border: 1px solid rgba(106, 183, 255, 0.25) !important;
-  color: #a8c8e8 !important;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, #6ab7ff 50%),
-    linear-gradient(135deg, #6ab7ff 50%, transparent 50%) !important;
-  background-position:
-    right 9px top 50%,
-    right 5px top 50% !important;
-  background-size:
-    4px 4px,
-    4px 4px !important;
-  background-repeat: no-repeat !important;
-  letter-spacing: 1px;
-  outline: none;
-}
-#neomix-playlist-select option {
-  background: #0a0a18;
-  color: #e6ecf5;
-  font-family: inherit;
-}
-
-/* ============================================================
-   TOGGLE BUTTONS (Video / Shuffle)
-============================================================ */
-.neomix-toggle-btn {
+#neomix-player .neomix-toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 9px !important;
-  border-radius: 12px !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(106, 183, 255, 0.2) !important;
-  color: #a8c8e8 !important;
-  font-size: 5px !important;
-  letter-spacing: 1px;
-  flex-shrink: 0;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  color: #a8c8e8;
 }
-.neomix-toggle-btn:hover {
-  background: rgba(0, 234, 255, 0.08) !important;
-  border-color: rgba(0, 234, 255, 0.4) !important;
-}
-.neomix-toggle-btn[state="on"] {
-  background: rgba(0, 234, 255, 0.18) !important;
-  border-color: #00eaff !important;
-  color: #ffffff !important;
+#neomix-player .neomix-toggle-btn[state="on"] {
+  background: rgba(0, 234, 255, 0.18);
+  border-color: var(--nm-accent);
+  color: #fff;
   box-shadow: 0 0 12px rgba(0, 234, 255, 0.25);
 }
-.neomix-toggle-btn > span {
-  font-size: 5px;
-  color: inherit;
-  letter-spacing: 1px;
-}
-
-/* Video button dot indicator */
-#neomix-video-toggle[state="off"] > span::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #30374a;
-  margin-right: 5px;
-  vertical-align: middle;
-}
-#neomix-video-toggle[state="on"] > span::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #00eaff;
-  margin-right: 5px;
-  vertical-align: middle;
-  box-shadow: 0 0 6px #00eaff;
-}
-
-/* Shuffle toggle: image + label, no dot */
 .neomix-toggle-img {
   width: 10px;
   height: 10px;
   object-fit: contain;
-  filter: drop-shadow(0 0 3px rgba(168, 200, 232, 0.4));
   opacity: 0.6;
-  transition:
-    opacity 0.15s,
-    filter 0.15s;
   pointer-events: none;
+  transition: opacity 0.15s, filter 0.15s;
 }
 #neomix-shuffle[state="on"] .neomix-toggle-img {
   opacity: 1;
   filter: drop-shadow(0 0 6px rgba(0, 234, 255, 0.8));
 }
+/* Video toggle dot */
+#neomix-video-toggle > span::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+  background: #30374a;
+}
+#neomix-video-toggle[state="on"] > span::before {
+  background: var(--nm-accent);
+  box-shadow: 0 0 6px var(--nm-accent);
+}
 
-/* ============================================================
-   BLINK (kept for compatibility with existing JS)
-============================================================ */
+.neomix-vol-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+#neomix-player #neomix-mute {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  font-size: 11px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#neomix-vol-bar {
+  width: 64px;
+}
+
+/* Kept for the player script (paused status blink) */
 .neomix-blink {
-  animation: blink 1.6s step-start infinite;
+  animation: neomix-blink 1.6s step-start infinite;
 }
-@keyframes blink {
+@keyframes neomix-blink {
   50% {
-    opacity: 0.3;
+    opacity: 0.4;
   }
 }
 
 /* ============================================================
-   RESPONSIVE — collapse rail when window is small
+   NARROW WINDOW (< 560px wide) — rail becomes a number strip.
+   The toggle then opens it as an overlay drawer (.rail-expanded).
 ============================================================ */
-@media (max-width: 500px) {
-  #neomix-player {
-    grid-template-columns: 28px 1fr;
+@container neomix (max-width: 559px) {
+  #neomix-player:not(.rail-expanded) {
+    --rail-w: 34px;
   }
-  #neomix-player #neomix-playlist-select,
-  #neomix-player .rail-list-title,
-  #neomix-player .rail-list-empty,
-  #neomix-player .rail-track-name {
+  #neomix-player:not(.rail-expanded) .rail-head {
+    padding: 8px 0;
+    justify-content: center;
+  }
+  #neomix-player:not(.rail-expanded) #neomix-playlist-select,
+  #neomix-player:not(.rail-expanded) .rail-list-title,
+  #neomix-player:not(.rail-expanded) .rail-list-empty,
+  #neomix-player:not(.rail-expanded) .rail-track-name {
     display: none;
   }
-  #neomix-player .rail-track {
+  #neomix-player:not(.rail-expanded) .rail-list {
+    padding: 6px 3px;
+  }
+  #neomix-player:not(.rail-expanded) .rail-track {
     justify-content: center;
-    padding: 6px 0;
+    padding: 7px 0;
+  }
+  #neomix-player:not(.rail-expanded) .rail-track-num {
+    width: auto;
+  }
+  #neomix-player:not(.rail-expanded) #neomix-rail-toggle {
+    transform: rotate(180deg);
+  }
+
+  /* Drawer: keeps a 34px column, rail floats over the stage */
+  #neomix-player.rail-expanded {
+    grid-template-columns: 34px 1fr;
+  }
+  #neomix-player.rail-expanded #neomix-rail {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 168px;
+    z-index: 10;
+    background: rgba(2, 6, 22, 0.97);
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .neomix-transport {
+    gap: 10px;
+  }
+  #neomix-vol-bar {
+    width: 48px;
   }
 }
 
 /* ============================================================
-   TASKBAR MINI PLAYER  (unchanged from original)
+   TASKBAR MINI PLAYER
 ============================================================ */
 #tb-neomix {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 0 8px;
-  height: 100%;
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0 10px;
+  height: var(--tb-item-h, 36px);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
   min-width: 0;
 }
+/* Fixed width so the bar doesn't jump around as song titles change */
 #tb-neomix-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 3px;
+  width: 120px;
   min-width: 0;
-  max-width: 160px;
+  margin: 0 6px;
 }
 #tb-neomix-title {
   font-size: 6px;
@@ -789,19 +670,31 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);
-  max-width: 160px;
 }
 #tb-neomix-sub {
   font-size: 5px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
   letter-spacing: 0.5px;
+}
+#tb-nm-seek {
+  width: 90px;
+  flex-shrink: 1;
+  min-width: 40px;
+  --nm-accent: #ffffff;
+  background: linear-gradient(to right, #ffffff var(--pct), rgba(255, 255, 255, 0.25) var(--pct));
+}
+#tb-nm-vol {
+  width: 50px;
+  flex-shrink: 0;
+  margin-left: 10px;
+  background: linear-gradient(to right, #ffffff var(--pct), rgba(255, 255, 255, 0.25) var(--pct));
 }
 
 .tb-nm-btn {
   font-family: "Press Start 2P", monospace;
   font-size: 9px;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   line-height: 0;
   text-align: center;
@@ -823,7 +716,6 @@
 .tb-nm-btn:active {
   background: rgba(0, 0, 0, 0.2);
 }
-
 .tb-nm-img {
   width: 12px;
   height: 12px;

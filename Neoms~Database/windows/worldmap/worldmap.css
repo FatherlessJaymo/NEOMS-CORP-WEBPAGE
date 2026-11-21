@@ -8,8 +8,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #04060f;
+  background: #050b14;
   position: relative;
+  overflow: hidden;
 }
 
 /* ── Header overlay ──────────────────────────────────────────── */
@@ -22,64 +23,60 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 12px 14px 0;
+  gap: 12px;
+  padding: 10px 14px 8px;
   pointer-events: none;
+  background: linear-gradient(to bottom, rgba(5, 11, 20, 0.92) 60%, rgba(5, 11, 20, 0));
 }
 
 .nm-header-title {
   font-family: "VT323", monospace;
-  font-size: 22px;
-  color: #00cccc;
-  text-shadow: 0 0 10px rgba(0, 204, 204, 0.6), 0 0 24px rgba(0, 204, 204, 0.2);
+  font-size: 24px;
+  color: #00e0e0;
+  text-shadow: 0 0 10px rgba(0, 224, 224, 0.5);
   letter-spacing: 0.08em;
+  line-height: 1;
 }
 
-.nm-header-sub1 {
-  font-size: 9px;
-  color: #0d2a2a;
-  letter-spacing: 0.2em;
-  margin-top: 2px;
-}
-
+.nm-header-sub1,
 .nm-header-sub2 {
-  font-size: 8px;
-  color: #081818;
+  font-size: 11px;
+  color: #5fb3b3;
   letter-spacing: 0.12em;
-  margin-top: 2px;
+  margin-top: 3px;
+}
+.nm-header-sub2 {
+  color: #4d9a9a;
 }
 
 .nm-header-stats {
   display: flex;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   margin-top: 6px;
 }
 
 .nm-stat {
-  font-size: 9px;
-  color: #0d2a2a;
+  font-size: 12px;
+  color: #8fc7c7;
 }
-
+.nm-stat-ok,
 .nm-zoom-val {
-  color: #00aa66;
+  color: #33dd99;
+}
+.nm-stat-bad {
+  color: #ff5555;
 }
 
 .nm-header-meta {
   text-align: right;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.7;
-  color: #081818;
+  color: #5fb3b3;
+  white-space: nowrap;
 }
-
-.nm-header-build {
-  color: #1a3a3a;
-}
-
 .nm-header-clock {
-  color: #0a2020;
-}
-
-.nm-header-schema {
-  color: #081818;
+  color: #8fc7c7;
 }
 
 /* ── D3 SVG ──────────────────────────────────────────────────── */
@@ -89,50 +86,113 @@
   display: block;
   width: 100%;
   height: 100%;
+  min-height: 0;
+}
+.nm-d3-svg:active {
+  cursor: grabbing;
 }
 
-/* ── Site info panel ─────────────────────────────────────────── */
+.nm-country {
+  fill: #0e2a26;
+  stroke: #1f5a50;
+  stroke-width: 0.6;
+  transition: fill 0.12s;
+}
+.nm-country:hover {
+  fill: #164038;
+}
+
+/* ── Site markers ────────────────────────────────────────────── */
+.nm-site-marker {
+  cursor: pointer;
+}
+.nm-site-marker .nm-ring1 {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.nm-site-marker .nm-site-label {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.nm-site-marker:hover .nm-outer,
+.nm-site-marker.nm-selected .nm-outer {
+  fill-opacity: 0.3;
+}
+.nm-site-marker:hover .nm-site-label,
+.nm-site-marker.nm-selected .nm-site-label,
+.nm-labels-on .nm-site-label {
+  opacity: 1;
+}
+.nm-site-marker:hover .nm-ring1,
+.nm-site-marker.nm-selected .nm-ring1 {
+  animation: nm-pulse 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+/* Breached sites pulse all the time so they stand out */
+.nm-site-marker.nm-breach .nm-ring1 {
+  animation: nm-pulse 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+@keyframes nm-pulse {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+/* ── Site dossier panel ──────────────────────────────────────── */
 .nm-panel {
   position: absolute;
   top: 14px;
   right: 14px;
-  width: 280px;
+  width: 290px;
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 28px);
+  overflow-y: auto;
   z-index: 200;
-  background: rgba(3, 8, 16, 0.97);
-  border: 1px solid #0a2a2a;
-  border-radius: 2px;
-  overflow: hidden;
+  background: rgba(5, 12, 22, 0.97);
+  border: 1px solid #1f5a5a;
+  border-radius: 3px;
   opacity: 0;
   transform: translateY(-8px);
-  transition: opacity 0.2s, transform 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
   pointer-events: none;
+}
+.nm-panel--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .nm-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
-  border-bottom: 1px solid #0a2a2a;
-  font-size: 9px;
+  padding: 7px 10px;
+  border-bottom: 1px solid #1f5a5a;
+  font-size: 11px;
   letter-spacing: 0.1em;
-  color: #00aa66;
-  background: rgba(0, 170, 102, 0.06);
+  color: #33dd99;
 }
 
 .nm-panel-close {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 13px;
-  color: #00aa66;
-  opacity: 0.6;
+  font-size: 15px;
+  line-height: 1;
+  color: #8fc7c7;
   font-family: "Share Tech Mono", monospace;
-  pointer-events: all;
 }
-
 .nm-panel-close:hover {
-  opacity: 1;
+  color: #fff;
 }
 
 .nm-panel-body {
@@ -141,134 +201,193 @@
 
 .nm-pname {
   font-family: "VT323", monospace;
-  font-size: 24px;
-  color: #00cccc;
+  font-size: 26px;
+  color: #00e0e0;
   letter-spacing: 0.06em;
   margin-bottom: 2px;
 }
 
 .nm-ploc {
-  font-size: 10px;
-  color: #00aa66;
-  margin-bottom: 8px;
+  font-size: 12px;
+  color: #33dd99;
+  margin-bottom: 10px;
 }
 
 .nm-pstats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px 14px;
-  margin-bottom: 8px;
+  gap: 8px 14px;
+  margin-bottom: 10px;
 }
 
-.nm-pstat-label {
-  font-size: 8px;
+.nm-pstat-label,
+.nm-pdesc-label {
+  font-size: 10px;
   letter-spacing: 0.12em;
-  color: #1a4a3a;
+  color: #6fb49a;
   margin-bottom: 2px;
 }
 
 .nm-pstat-val {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
 }
-
-.nm-pstat-teal  { color: #00cccc; }
-.nm-pstat-green { color: #00aa66; }
-
-.nm-pdesc-label {
-  font-size: 8px;
-  letter-spacing: 0.15em;
-  color: #1a4a3a;
-  margin-bottom: 4px;
+.nm-pstat-teal {
+  color: #00e0e0;
+}
+.nm-pstat-green {
+  color: #33dd99;
 }
 
 .nm-pdesc {
-  font-size: 10px;
-  color: #5a8870;
+  font-size: 12px;
+  color: #b8d8c8;
   line-height: 1.55;
 }
 
 .nm-pbreach {
-  margin-top: 8px;
+  margin-top: 10px;
   padding: 6px 8px;
-  background: #1a0000;
-  border-left: 2px solid #ff3333;
+  background: #2a0606;
+  border-left: 2px solid #ff4444;
 }
-
 .nm-pbreach-title {
-  font-size: 9px;
-  color: #ff3333;
+  font-size: 11px;
+  color: #ff5555;
   letter-spacing: 0.08em;
 }
-
 .nm-pbreach-ents {
-  font-size: 9px;
-  color: #aa4444;
+  font-size: 11px;
+  color: #ff9999;
   margin-top: 2px;
 }
 
 .nm-pfooter {
-  margin-top: 8px;
+  margin-top: 10px;
   padding-top: 6px;
-  border-top: 1px solid #0a2a2a;
-  font-size: 8px;
-  color: #0d2a2a;
+  border-top: 1px solid #1f5a5a;
+  font-size: 10px;
+  color: #6fa8a8;
   letter-spacing: 0.04em;
 }
 
-/* ── Legend ──────────────────────────────────────────────────── */
+/* ── Legend + site list ──────────────────────────────────────── */
 .nm-legend {
   position: absolute;
   bottom: 12px;
   left: 12px;
-  background: rgba(3, 8, 16, 0.92);
-  border: 1px solid #091818;
-  border-radius: 2px;
-  padding: 8px 12px;
-  z-index: 100;
-  pointer-events: none;
+  width: 230px;
+  max-width: calc(100% - 24px);
+  max-height: calc(100% - 130px);
+  display: flex;
+  flex-direction: column;
+  background: rgba(5, 12, 22, 0.94);
+  border: 1px solid #1f5a5a;
+  border-radius: 3px;
+  padding: 8px 10px;
+  z-index: 150;
 }
 
-.nm-legend-title {
-  font-size: 8px;
-  letter-spacing: 0.15em;
-  color: #0d2a2a;
+.nm-legend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 6px;
 }
 
-.nm-legend-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 3px;
+.nm-legend-title {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: #8fc7c7;
 }
 
-.nm-legend-row:last-child {
-  margin-bottom: 0;
+.nm-reset {
+  background: rgba(0, 224, 224, 0.08);
+  border: 1px solid #1f5a5a;
+  color: #8fc7c7;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.nm-reset:hover {
+  color: #00e0e0;
+  border-color: #00e0e0;
+}
+
+.nm-site-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #1f5a5a transparent;
+}
+
+.nm-site-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 4px 6px;
+  background: none;
+  border: 1px solid transparent;
+  color: #cfe8e8;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.nm-site-row:hover {
+  background: rgba(0, 224, 224, 0.08);
+  border-color: #1f5a5a;
+}
+.nm-site-row--active {
+  background: rgba(0, 224, 224, 0.14);
+  border-color: #00e0e0;
+  color: #00e0e0;
+}
+.nm-site-row--breach {
+  color: #ff8888;
+}
+.nm-site-row-loc {
+  margin-left: auto;
+  font-size: 10px;
+  color: #6fa8a8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nm-legend-keys {
+  display: flex;
+  gap: 14px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #143838;
+  font-size: 10px;
+  color: #8fc7c7;
+}
+.nm-legend-keys span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .nm-legend-dot {
+  display: inline-block;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-
-.nm-legend-dot-active { background: #00cccc; }
-.nm-legend-dot-breach { background: #ff3333; }
-
-.nm-legend-status {
-  font-size: 9px;
-  font-weight: bold;
-  min-width: 60px;
+.nm-legend-dot-active {
+  background: #00e0e0;
 }
-
-.nm-legend-active { color: #00cccc; }
-.nm-legend-breach { color: #ff3333; }
-
-.nm-legend-desc {
-  font-size: 8px;
-  color: #1a3a3a;
+.nm-legend-dot-breach {
+  background: #ff4444;
 }
 
 /* ── Hints ───────────────────────────────────────────────────── */
@@ -276,34 +395,19 @@
   position: absolute;
   bottom: 12px;
   right: 12px;
-  font-size: 8px;
-  color: #091818;
+  font-size: 11px;
+  color: #6fa8a8;
   text-align: right;
   line-height: 1.7;
   pointer-events: none;
   z-index: 100;
 }
 
-/* ── Site marker animations ──────────────────────────────────── */
-.nm-site-marker { cursor: pointer; }
-
-.nm-site-marker:hover .nm-outer,
-.nm-site-marker.nm-selected .nm-outer { fill-opacity: 0.18; }
-
-.nm-site-marker:hover .nm-site-label,
-.nm-site-marker.nm-selected .nm-site-label { opacity: 1 !important; }
-
-.nm-site-marker.nm-selected .nm-ring1 {
-  animation: nm-pulse 2s cubic-bezier(.22,.61,.36,1) infinite;
-  opacity: 1 !important;
-}
-
-.nm-site-marker.nm-selected .nm-ring2 {
-  animation: nm-pulse 2s cubic-bezier(.22,.61,.36,1) infinite .28s;
-  opacity: 1 !important;
-}
-
-@keyframes nm-pulse {
-  0%   { r: 6;  opacity: .9; }
-  100% { r: 26; opacity: 0;  }
+/* Small windows: drop the secondary header lines + hints */
+@media (max-width: 700px) {
+  .nm-header-sub2,
+  .nm-header-meta,
+  .nm-hints {
+    display: none;
+  }
 }

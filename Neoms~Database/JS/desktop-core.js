@@ -7,7 +7,7 @@
 
 var LS_KEY      = "neoms_session_personnel";
 var LS_CLR_KEY  = "neoms_clearance";
-var INTAKE_URL  = "/Neoms~Database/HTML/intake.html";
+var INTAKE_URL  = "intake.html";
 
 /* ── SESSION GUARD ───────────────────────────────────────────── */
 (function () {
@@ -141,11 +141,11 @@ function initDesktopBgMap() {
 
     g.append("path")
       .datum({ type: "Sphere" })
-      .attr("fill", "#020608").attr("stroke", "#061010").attr("stroke-width", 0.3)
+      .attr("fill", "#04101a").attr("stroke", "#0c2a30").attr("stroke-width", 0.5)
       .attr("d", geoPath);
     g.append("path")
       .datum(d3.geoGraticule()())
-      .attr("fill", "none").attr("stroke", "#041008").attr("stroke-width", 0.2)
+      .attr("fill", "none").attr("stroke", "#0a2228").attr("stroke-width", 0.3)
       .attr("d", geoPath);
 
     function drawCountries(world) {
@@ -153,7 +153,7 @@ function initDesktopBgMap() {
         .data(topojson.feature(world, world.objects.countries).features)
         .enter().append("path")
         .attr("class", "bg-country")
-        .attr("fill", "#060e0a").attr("stroke", "#081408").attr("stroke-width", 0.25)
+        .attr("fill", "#0b2420").attr("stroke", "#14403a").attr("stroke-width", 0.35)
         .attr("d", geoPath);
 
       if (typeof SITES !== "undefined") {
@@ -164,7 +164,7 @@ function initDesktopBgMap() {
             ENTITIES.some(function (e) { return e.site === site.id && e.status === "BREACHED"; });
           g.append("circle")
             .attr("cx", xy[0]).attr("cy", xy[1]).attr("r", 3)
-            .attr("fill", breached ? "#550000" : "#004040").attr("opacity", 0.6);
+            .attr("fill", breached ? "#aa2222" : "#00aaaa").attr("opacity", 0.7);
         });
       }
     }

@@ -28,18 +28,18 @@ const ENTITIES = [
         status: "CONTAINED",
         disc: "19██-████-████",
         glyph: "\u25CB",
-        img: "/Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/TrueFormRewriteTf(Entity-PFP).gif",
+        img: "../../Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/TrueFormRewriteTf(Entity-PFP).gif",
         bioImages: [
             {
-                src: "/Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/RedRingsRewrite.webp",
+                src: "../../Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/RedRingsRewrite.webp",
                 caption: "Wurugashikoi state — ring count 138"
             },
             {
-                src: "/Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/TrueFormRewriteTf(Entity-PFP).gif",
+                src: "../../Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/TrueFormRewriteTf(Entity-PFP).gif",
                 caption: "True form — partial capture"
             },
             {
-                src: "/Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/MidaretaState.png",
+                src: "../../Neoms~Universal-Fonts+Images/Entities-Data/Rewrite/MidaretaState.png",
                 caption: "Midareta state — 2 rings confirmed"
             }
         ],
@@ -172,7 +172,7 @@ const ENTITIES = [
         status: "CONTAINED",
         disc: "20██-████-████",
         glyph: "\u2638",
-        img: "/Neoms~Universal-Fonts+Images/Entities-Data/Divine-General-Mahoraga/Divine-General-Mahoraga(Entity-PFP).jpg",
+        img: "../../Neoms~Universal-Fonts+Images/Entities-Data/Divine-General-Mahoraga/Divine-General-Mahoraga(Entity-PFP).jpg",
         desc: "Full designation: Eight-Handled Sword Divergent Sila Divine General Mahoraga (\u516B\u63E1\u5263\u7570\u6212\u795E\u5C06\u9B54\u865A\u7F85). The most powerful shikigami of the Ten Shadows Technique, bound historically to the Zenin sorcerer clan. No summoner throughout the entirety of recorded history has successfully tamed it. Entity operates as a binary of feral, indiscriminate aggression and a sophisticated real-time adaptation engine.",
         aprop: "Reactive adaptation (tekio) to any and all phenomena — entity needs only a single exposure to begin adaptation. Repeated exposure accelerates the process considerably. Upon completion, entity becomes fully immune to the encountered phenomenon. Mid-grade regeneration from severe injury. Superhuman physical strength capable of displacing targets through multiple structures with a single strike.",
         phys: "Towering muscular humanoid, estimated 3\u20134m. White colouration. Four large wings protrude from eye sockets. Tail-like appendage extends from rear cranium. Black hakama, white sash. A golden eight-spoked Dharma wheel (h\u014Djin) hovers above the entity at all times — this wheel rotates in direct response to new stimuli and serves as the visible engine of the entity's adaptation process.",
@@ -299,7 +299,7 @@ const ENTITIES = [
         status: "MONITORED",
         disc: "20██-████-████",
         glyph: "\u271D",
-        img: "/Neoms~Universal-Fonts+Images/Entities-Data/Seraphim-Ghidorah/Seraphim-Ghidorah(Entity-PFP.jpg",
+        img: "../../Neoms~Universal-Fonts+Images/Entities-Data/Seraphim-Ghidorah/Seraphim-Ghidorah(Entity-PFP.jpg",
         desc: "Designation: SERAPHIM GHIDORAH. Analog-horror class Angelic Abomination. A three-headed, two-tailed draconic entity of extradimensional origin, presented to civilian populations as a divine messenger — specifically the physical manifestation of the three Archangels: Michael (left head), Gabriel (central head), and Raphael (right head). Entity is worshipped by a fanatical cult, the Church of Ghidorah, who summoned it through mass human sacrifice at a consecrated cross site.",
         aprop: "Three light spears (simultaneous deployment, one per head). Black hole generation — capable of countering and nullifying directed energy attacks. Mass psychological influence and brainwashing via broadcast hijacking. Summoning-dependent mass conversion via human sacrifice. Mind control extended onto unshielded human targets. Public broadcast override — confirmed twice in documented incidents. Fourth-wall-class memetic hazard: entity has been observed directly addressing the viewer layer outside in-universe narrative.",
         phys: "Massive draconic body consistent with classical King Ghidorah morphology — three heads, two tails, large wingspan. Multiple eyes distributed across the entire body, concentrated on the heads. No blood. No decay. Luminous golden colouration. Presence is described by witnesses as overwhelming and devotional rather than physically threatening. Entity's scale has not been precisely documented — CODC instrumentation fails in proximity.",

@@ -21,6 +21,9 @@
   background: rgba(0,109,255,0.28);
   border-color: var(--accent);
 }
+.desk-icon.settling {
+  transition: left .18s ease-out, top .18s ease-out, border-color .15s, background .15s;
+}
 .desk-icon.dragging {
   opacity: .75; z-index:9500; cursor:grabbing;
 }

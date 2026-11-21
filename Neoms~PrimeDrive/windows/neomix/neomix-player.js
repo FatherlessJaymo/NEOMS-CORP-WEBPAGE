@@ -22,7 +22,7 @@
      - Rail collapse toggle on #neomix-rail-toggle.
    Both no-op gracefully if the new elements aren't present.
 ============================================================ */
-var NEOMIX_ICON_PATH = "/Neoms~Universal-Fonts+Images/Icons/Neomix/";
+var NEOMIX_ICON_PATH = "Neoms~Universal-Fonts+Images/Icons/Neomix/";
 
 var NEOMIX_PLAYLISTS = {
   "NeoMsMix-Main": "PLV-phDrTzbSXqxdDXn9itq4bwt9bgER2g",
@@ -95,6 +95,27 @@ function neomixFmtTime(s) {
   return m + ":" + (sec < 10 ? "0" : "") + sec;
 }
 
+/* ---- Learned queue names ----
+   YouTube only tells us the title of the track that is loaded, so
+   each title is remembered (per browser) by video ID the first time
+   it plays. The queue then shows real names instead of "Track NN". */
+var NEOMIX_LEARNED_KEY = "neomix_learned_titles_v1";
+var neomixLearned = (function () {
+  try {
+    return JSON.parse(localStorage.getItem(NEOMIX_LEARNED_KEY) || "{}");
+  } catch (e) {
+    return {};
+  }
+})();
+function neomixLearnTitle(videoId, title) {
+  if (!videoId || !title || neomixLearned[videoId] === title) return;
+  neomixLearned[videoId] = title;
+  try {
+    localStorage.setItem(NEOMIX_LEARNED_KEY, JSON.stringify(neomixLearned));
+  } catch (e) {}
+  neomixRenderQueue();
+}
+
 function neomixUpdateSong() {
   if (!neomixYtPlayer || !neomixYtPlayer.getVideoData) return;
   var data = neomixYtPlayer.getVideoData();
@@ -102,9 +123,23 @@ function neomixUpdateSong() {
   if (!nameEl) return;
   var title = (data && data.title) || "";
   var author = (data && data.author) || "";
-  nameEl.innerHTML = title
-    ? "<marquee><b>" + title + (author ? " \u2014 " + author : "") + "</b></marquee>"
-    : "<b>READY</b>";
+  var full = title ? title + (author ? " \u2014 " + author : "") : "READY";
+
+  var textEl = nameEl.querySelector(".nm-title-text");
+  if (!textEl) {
+    nameEl.innerHTML = '<span class="nm-title-text"></span>';
+    textEl = nameEl.firstChild;
+  }
+  textEl.textContent = full;
+  nameEl.title = full;
+
+  /* Long titles: ellipsis, slide on hover. Distance = hidden overflow. */
+  var shift = textEl.scrollWidth - textEl.clientWidth;
+  nameEl.classList.toggle("overflows", shift > 0);
+  nameEl.style.setProperty("--nm-shift", shift + "px");
+  nameEl.style.setProperty("--nm-shift-time", Math.max(1.5, shift / 40) + "s");
+
+  if (data && data.video_id && title) neomixLearnTitle(data.video_id, title);
 }
 
 /* Swap the <img> inside a play/pause button */
@@ -133,6 +168,8 @@ function neomixQueueName(playlistKey, idx, videoId) {
     var name = arr[idx];
     if (typeof name === "string" && name) return name;
   }
+  /* 3. Title learned from an earlier play in this browser */
+  if (videoId && neomixLearned[videoId]) return neomixLearned[videoId];
   return "";
 }
 
@@ -187,6 +224,15 @@ function neomixRenderQueue() {
   }
 }
 
+/* Paint the filled part of a range slider (CSS reads --pct) */
+function neomixSetFill(range) {
+  if (!range) return;
+  var min = parseFloat(range.min) || 0;
+  var max = parseFloat(range.max) || 100;
+  var pct = max > min ? ((parseFloat(range.value) - min) / (max - min)) * 100 : 0;
+  range.style.setProperty("--pct", Math.max(0, Math.min(100, pct)).toFixed(1) + "%");
+}
+
 /* Tiny escaper used by the queue renderer */
 function neomixEsc(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -205,12 +251,16 @@ function neomixUpdateStatus() {
   var dur = neomixYtPlayer.getDuration() || 0;
 
   if (seek) {
-    seek.max = dur;
+    seek.max = dur || 100;
     if (!neomixIsSeeking) seek.value = cur;
+    neomixSetFill(seek);
   }
   if (!neomixIsVolSliding) {
     var vb = document.getElementById("neomix-vol-bar");
-    if (vb && neomixYtPlayer.getVolume) vb.value = neomixYtPlayer.getVolume();
+    if (vb && neomixYtPlayer.getVolume) {
+      vb.value = neomixYtPlayer.getVolume();
+      neomixSetFill(vb);
+    }
   }
   if (tCur) tCur.textContent = neomixFmtTime(cur);
   if (tDur) tDur.textContent = neomixFmtTime(dur);
@@ -233,10 +283,12 @@ function neomixUpdateStatus() {
                 ? "Cued"
                 : "Standby";
   if (subEl) {
-    subEl.innerHTML =
-      ss + (pl ? " " + (idx + 1) + "/" + pl.length : "") + " " + neomixFmtTime(cur) + "/" + neomixFmtTime(dur);
+    /* Times live beside the seek bar — the sub line is status + position */
+    subEl.textContent = ss + (pl ? " · " + (idx + 1) + "/" + pl.length : "");
     subEl.className = state === 2 ? "neomix-blink" : "";
   }
+  var playerEl = document.getElementById("neomix-player");
+  if (playerEl) playerEl.classList.toggle("paused", state !== 1);
 
   /* Play button: swap the <img> src */
   if (play) neomixSetPlayImg(play, state === 1);
@@ -266,6 +318,8 @@ function neomixApplyVideoMode() {
   var hiddenHost = document.getElementById("neomix-yt-hidden");
   var visibleHost = document.getElementById("neomix-yt-target");
   var displayWrap = document.getElementById("neomix-display");
+  var playerEl = document.getElementById("neomix-player");
+  if (playerEl) playerEl.classList.toggle("video-on", neomixIsVideoOn);
   var iframe = hiddenHost ? hiddenHost.querySelector("iframe") : null;
   if (!iframe) iframe = visibleHost ? visibleHost.querySelector("iframe") : null;
   if (!iframe) return;
@@ -383,6 +437,7 @@ function initNeomixInWin() {
         neomixIsSeeking = true;
       });
       seekBar.addEventListener("input", function () {
+        neomixSetFill(this);
         if (neomixYtPlayer) neomixYtPlayer.seekTo(parseFloat(this.value), true);
       });
       seekBar.addEventListener("mouseup", function () {
@@ -395,6 +450,7 @@ function initNeomixInWin() {
       });
       volBar.addEventListener("input", function () {
         var v = parseInt(this.value, 10);
+        neomixSetFill(this);
         if (neomixYtPlayer) neomixYtPlayer.setVolume(v);
         neomixIsMuted = v === 0;
         if (muteBtn) muteBtn.innerHTML = neomixIsMuted ? "&#128263;" : "&#128266;";
@@ -439,11 +495,20 @@ function initNeomixInWin() {
         neomixLoadPlaylist(this.value);
       });
 
-    /* Studio Deck: rail collapse toggle */
+    /* Studio Deck: rail toggle. Wide window → collapse/expand the column.
+       Narrow window (< 560px, rail is already a strip) → open/close it
+       as a drawer over the stage. Width matches the CSS @container rule. */
     if (railToggle && playerEl) {
       railToggle.addEventListener("click", function () {
-        playerEl.classList.toggle("rail-collapsed");
+        if (playerEl.offsetWidth < 560) playerEl.classList.toggle("rail-expanded");
+        else playerEl.classList.toggle("rail-collapsed");
       });
+      /* Picking a track from the drawer closes it */
+      var railList = document.getElementById("neomix-rail-list");
+      if (railList)
+        railList.addEventListener("click", function (e) {
+          if (e.target.closest(".rail-track")) playerEl.classList.remove("rail-expanded");
+        });
     }
 
     /* Sync the playlist dropdown to the currently-loaded playlist
@@ -507,6 +572,7 @@ function initNeomixTaskbar() {
       tbSeeking = true;
     });
     tbSeek.addEventListener("input", function () {
+      neomixSetFill(this);
       if (neomixYtPlayer) neomixYtPlayer.seekTo(parseFloat(this.value), true);
     });
     tbSeek.addEventListener("mouseup", function () {
@@ -515,8 +581,11 @@ function initNeomixTaskbar() {
   }
   if (tbVol)
     tbVol.addEventListener("input", function () {
+      neomixSetFill(this);
       if (neomixYtPlayer) neomixYtPlayer.setVolume(parseInt(this.value, 10));
     });
+  neomixSetFill(tbSeek);
+  neomixSetFill(tbVol);
 
   /* Sync mini-player every 500ms */
   setInterval(function () {
@@ -529,10 +598,12 @@ function initNeomixTaskbar() {
     if (tbSeek && !tbSeeking) {
       tbSeek.max = dur || 100;
       tbSeek.value = cur;
-      var pct = dur > 0 ? ((cur / dur) * 100).toFixed(1) + "%" : "0%";
-      tbSeek.style.setProperty("--prog", pct);
+      neomixSetFill(tbSeek);
     }
-    if (!neomixIsVolSliding && tbVol && neomixYtPlayer.getVolume) tbVol.value = neomixYtPlayer.getVolume();
+    if (!neomixIsVolSliding && tbVol && neomixYtPlayer.getVolume) {
+      tbVol.value = neomixYtPlayer.getVolume();
+      neomixSetFill(tbVol);
+    }
     var data = neomixYtPlayer.getVideoData && neomixYtPlayer.getVideoData();
     if (tbTitle && data && data.title)
       tbTitle.textContent = data.title.length > 28 ? data.title.slice(0, 28) + "\u2026" : data.title;

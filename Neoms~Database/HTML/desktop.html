@@ -5,27 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="NeoMS — Containment Log Desktop" />
     <title>NeoMs | Containment Log</title>
-    <link rel="icon" type="image/png" href="/Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png" />
+    <link rel="icon" type="image/png" href="../../Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-    <script src="/Neoms~Database/windows/worldmap/world-atlas-loader.js"></script>
+    <script src="../../Neoms~Database/windows/worldmap/world-atlas-loader.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/green-screen.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <!-- PrimeDrive structural CSS -->
-    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/desktop-base.css" />
-    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/desktop-icons.css" />
-    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/window-manager.css" />
-    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/taskbar.css" />
-    <link rel="stylesheet" href="/Neoms~PrimeDrive/CSS/start-menu.css" />
+    <link rel="stylesheet" href="../../Neoms~PrimeDrive/CSS/desktop-base.css" />
+    <link rel="stylesheet" href="../../Neoms~PrimeDrive/CSS/desktop-icons.css" />
+    <link rel="stylesheet" href="../../Neoms~PrimeDrive/CSS/window-manager.css" />
+    <link rel="stylesheet" href="../../Neoms~PrimeDrive/CSS/taskbar.css" />
+    <link rel="stylesheet" href="../../Neoms~PrimeDrive/CSS/start-menu.css" />
     <!-- DB window content styles -->
-    <link rel="stylesheet" href="/Neoms~Database/CSS/Databaselog.css" />
-    <link rel="stylesheet" href="/Neoms~Database/CSS/desktop.css" />
+    <link rel="stylesheet" href="../../Neoms~Database/CSS/Databaselog.css" />
+    <link rel="stylesheet" href="../../Neoms~Database/CSS/desktop.css" />
     <!-- DB theme overrides (applied last) -->
-    <link rel="stylesheet" href="/Neoms~Database/CSS/desktop-db.css" />
+    <link rel="stylesheet" href="../../Neoms~Database/CSS/desktop-db.css" />
   </head>
   <body>
     <!-- ── TOP LABEL BAR ──────────────────────────────────────── -->
@@ -60,16 +60,16 @@
       <div class="start-body">
         <div class="start-user">
           <img
-            src="/Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png"
+            src="../../Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png"
             class="start-avatar"
             alt="Avatar"
             onerror="this.style.display='none'" />
           <div class="start-username" id="sm-username">OPERATOR</div>
           <div class="start-usertag" id="sm-userclr">CLR-1</div>
           <div class="start-sep"></div>
-          <a class="start-social" href="/" target="_blank">
+          <a class="start-social" href="../../index.html" target="_blank">
             <img
-              src="/Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png"
+              src="../../Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png"
               onerror="this.style.display='none'" />
             <span class="start-social-name">PrimeDrive</span>
           </a>
@@ -90,6 +90,9 @@
           </div>
           <div class="start-item" onclick="openWin('entity-scheme');closeStart()">
             <span class="start-item-icon db-ico">&#9783;</span>Entity Scheme
+          </div>
+          <div class="start-item" onclick="openWin('entitycreator');closeStart()">
+            <span class="start-item-icon db-ico">&#10010;</span>Entity Creator
           </div>
           <div class="start-item" onclick="openWin('personnel');closeStart()">
             <span class="start-item-icon db-ico">&#9670;</span>Personnel Records
@@ -130,12 +133,13 @@
     </div>
 
     <!-- ── DATA ────────────────────────────────────────────────── -->
-    <script src="/Neoms~Database/windows/entities/Entities-Data.js"></script>
-    <script src="/Neoms~Database/windows/personnel/Personnel-Data.js"></script>
-    <script src="/Neoms~Database/windows/sites/Sites-Data.js"></script>
+    <script src="../../Neoms~Database/windows/entities/Entities-Data.js"></script>
+    <script src="../../Neoms~Database/windows/personnel/Personnel-Data.js"></script>
+    <script src="../../Neoms~Database/windows/sites/Sites-Data.js"></script>
+    <script src="../../Neoms~Database/windows/codeviewer/codeviewer-files.js"></script>
     <!-- ── SHELL JS (order matters) ─────────────────────────────── -->
-    <script src="/Neoms~Database/JS/window-manager.js"></script>
-    <script src="/Neoms~Database/JS/desktop-icons.js"></script>
-    <script src="/Neoms~Database/JS/desktop-core.js"></script>
+    <script src="../../Neoms~Database/JS/window-manager.js"></script>
+    <script src="../../Neoms~Database/JS/desktop-icons.js"></script>
+    <script src="../../Neoms~Database/JS/desktop-core.js"></script>
   </body>
 </html>

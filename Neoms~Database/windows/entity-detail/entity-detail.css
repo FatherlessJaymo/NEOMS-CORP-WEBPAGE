@@ -18,14 +18,14 @@
     opacity: 0.3;
 }
 .ed-empty-label {
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 3px;
-    color: #334455;
+    color: #5f7f9e;
     font-family: var(--mono);
 }
 .ed-empty-sub {
-    font-size: 10px;
-    color: #223;
+    font-size: 11px;
+    color: #7a7aa7;
     font-family: var(--mono);
     max-width: 340px;
     line-height: 1.7;
@@ -69,9 +69,9 @@
     right: 0;
     padding: 5px 10px;
     background: rgba(4, 8, 16, 0.82);
-    font-size: 9px;
+    font-size: 10px;
     font-family: var(--mono);
-    color: #556677;
+    color: #6a8095;
     letter-spacing: 1px;
     white-space: nowrap;
     overflow: hidden;
@@ -113,9 +113,9 @@
     position: absolute;
     top: 6px;
     right: 8px;
-    font-size: 9px;
+    font-size: 10px;
     font-family: var(--mono);
-    color: #445566;
+    color: #67809a;
     background: rgba(4, 8, 16, 0.75);
     padding: 2px 6px;
     border: 1px solid #1a2a4a;
@@ -181,9 +181,9 @@
 }
 .ed-source-label {
     font-family: var(--mono);
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 2px;
-    color: #556677;
+    color: #6a8095;
     margin-bottom: 5px;
     text-transform: uppercase;
 }
@@ -215,7 +215,7 @@
     border: 1px solid #1a2a4a;
     color: var(--teal-b);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     text-decoration: none;
     letter-spacing: 0.5px;
     transition:
@@ -234,8 +234,8 @@
     font-size: 13px;
 }
 .ed-wiki-note {
-    font-size: 9px;
-    color: #334;
+    font-size: 10px;
+    color: #7a7a9b;
     margin-top: 6px;
 }
 
@@ -259,8 +259,8 @@
     opacity: 0.6;
 }
 .ed-disc-personnel-id {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     letter-spacing: 1px;
     margin-bottom: 4px;
     font-family: var(--mono);
@@ -268,26 +268,26 @@
 .ed-disc-personnel-name {
     font-family: var(--pixel);
     font-size: 15px;
-    color: #aabbcc;
+    color: #d0dce8;
     margin-bottom: 6px;
 }
 .ed-disc-personnel-meta {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 10px;
-    color: #556677;
+    font-size: 11px;
+    color: #6a8095;
     font-family: var(--mono);
     margin-bottom: 3px;
 }
 .ed-disc-personnel-clr {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
 }
 .ed-disc-personnel-dept {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 1px;
-    color: #334;
+    color: #7a7a9b;
     font-family: var(--mono);
 }
 
@@ -314,13 +314,13 @@
 }
 
 .ed-rpt-chip {
-    font-size: 8px;
+    font-size: 10px;
     font-family: var(--mono);
     letter-spacing: 1.5px;
     padding: 3px 9px;
     border: 1px solid #1a2a3a;
     background: #0a0a14;
-    color: #445566;
+    color: #67809a;
     cursor: pointer;
     transition:
         border-color 0.15s,
@@ -341,13 +341,13 @@
 
 /* Sort toggle button */
 .ed-rpt-sort {
-    font-size: 8px;
+    font-size: 10px;
     font-family: var(--mono);
     letter-spacing: 1.5px;
     padding: 3px 10px;
     border: 1px solid #1a2a3a;
     background: #0a0a14;
-    color: #445566;
+    color: #67809a;
     cursor: pointer;
     white-space: nowrap;
     transition:
@@ -366,9 +366,9 @@
 
 /* Empty filter state */
 .ed-rpt-empty {
-    font-size: 10px;
+    font-size: 11px;
     font-family: var(--mono);
-    color: #334;
+    color: #7a7a9b;
     letter-spacing: 2px;
     padding: 20px 0;
     text-align: center;
@@ -391,7 +391,7 @@
     flex-wrap: wrap;
 }
 .ed-report-type {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 3px;
     font-family: var(--mono);
     margin-right: 8px;
@@ -403,8 +403,8 @@
     letter-spacing: 0.5px;
 }
 .ed-report-date {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     font-family: var(--mono);
     white-space: nowrap;
     flex-shrink: 0;
@@ -422,8 +422,8 @@
     padding: 8px 10px;
     background: #1a0a0a;
     border: 1px solid #2a1a1a;
-    font-size: 10px;
-    color: #664444;
+    font-size: 11px;
+    color: #a07070;
     font-family: var(--mono);
     letter-spacing: 1px;
     margin-bottom: 10px;
@@ -440,7 +440,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 10px;
+    font-size: 11px;
     font-family: var(--mono);
     color: var(--teal-b);
     text-decoration: none;
@@ -454,30 +454,30 @@
     background: rgba(0, 140, 140, 0.08);
 }
 .ed-report-file-offline {
-    font-size: 10px;
-    color: #445566;
+    font-size: 11px;
+    color: #67809a;
     font-family: var(--mono);
 }
 .ed-report-file-note {
-    font-size: 9px;
-    color: #334;
+    font-size: 10px;
+    color: #7a7a9b;
 }
 .ed-report-author {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     font-family: var(--mono);
     flex: 1;
 }
 .ed-report-contribs {
-    font-size: 9px;
-    color: #3a4f5f;
+    font-size: 10px;
+    color: #5f819b;
     font-family: var(--mono);
     width: 100%;
     margin-top: 2px;
 }
 .ed-report-clr {
-    font-size: 9px;
-    color: #445566;
+    font-size: 10px;
+    color: #67809a;
     font-family: var(--mono);
     letter-spacing: 1px;
     padding: 2px 6px;
