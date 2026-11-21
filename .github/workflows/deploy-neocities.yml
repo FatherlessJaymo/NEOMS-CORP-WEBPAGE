@@ -1,0 +1,30 @@
+name: Deploy to Neocities
+
+on:
+  push:
+    branches: [Main-Directive]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-to-neocities
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Copy only the website files (skip README, LICENSE, .git, etc.)
+      - name: Prepare site folder
+        run: |
+          mkdir _site
+          cp index.html _site/
+          cp -r Neoms~* _site/
+
+      - name: Deploy to Neocities
+        uses: bcomnes/deploy-to-neocities@v3
+        with:
+          api_key: ${{ secrets.NEOCITIES_API_TOKEN }}
+          dist_dir: _site
+          cleanup: false
