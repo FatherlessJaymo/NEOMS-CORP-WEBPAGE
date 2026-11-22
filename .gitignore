@@ -1,18 +1,19 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+# Personal notes
+notes.txt
 
-# Other files and folders
-.settings/
+# Windows / OneDrive / Mac junk — would otherwise deploy to Neocities
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+*.tmp
+~$*
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# Editor / tool settings
+.vscode/
+.idea/
+.claude/settings.local.json
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# Secrets (the deploy token lives in GitHub Secrets, keep it that way)
+.env
+.env.*
