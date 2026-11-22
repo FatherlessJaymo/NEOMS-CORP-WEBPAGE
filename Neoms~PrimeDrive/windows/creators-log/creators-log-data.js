@@ -15,6 +15,18 @@
        body: "Migrated entries to JS array.\n\nFaster cold-load." }
 ============================================================ */
 var NEOMS_BLOG_DATA = [
+  {
+    date: "2026.11.21",
+    tag: "UPDATE",
+    title: "Art Gallery",
+    body: "Art Gallery now has its own folder on the desktop, separate from Rankings. First up: the GLOBMAGEDDON Collection by yuk1draw. Click any piece to view it fullscreen.\n\nRankings is now just tier lists: Cartoons, Movies, YouTubers."
+  },
+  {
+    date: "2026.11.21",
+    tag: "NEWS",
+    title: "New badges",
+    body: "Three new NEOMS OS badges in the Badges folder: Jova, Nova, and Jova x Nova. Copy the code and put one on your site."
+  },
   { date: "2026.11.18", tag: "UPDATE", title: "Neocorp VM V1.2 update", body: "UI/QOL update" },
   { date: "2026.04.02", tag: "UPDATE", title: "NEOMS_Databased.v1", body: "Database-EXEs.v1 out now." },
   {
