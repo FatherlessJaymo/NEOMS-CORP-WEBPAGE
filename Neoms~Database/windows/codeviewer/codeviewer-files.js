@@ -2,7 +2,7 @@
    NEOMS — SOURCE VIEWER FILE LIST
    Neoms~Database/windows/codeviewer/codeviewer-files.js
 
-   Paths are relative to Neoms~Database/HTML/desktop.html
+   Paths are relative to Neoms~Database/HTML/archive.html
    (no leading slash, so they work on GitHub Pages too).
    ============================================================ */
 "use strict";
@@ -14,19 +14,18 @@ var CV_FILES = [
   { label: "Sites-Data.js", path: "../../Neoms~Database/windows/sites/Sites-Data.js", lang: "js", clr: 3, dir: "windows/sites", desc: "Containment site records" },
 
   /* ── Core JS ── */
-  { label: "window-manager.js", path: "../../Neoms~Database/JS/window-manager.js", lang: "js", clr: 2, dir: "JS", desc: "Window manager + terminal commands" },
+  { label: "archive-shell.js", path: "../../Neoms~Database/JS/archive-shell.js", lang: "js", clr: 2, dir: "JS", desc: "Archive shell + window loader" },
+  { label: "db-common.js", path: "../../Neoms~Database/JS/db-common.js", lang: "js", clr: 2, dir: "JS", desc: "Shared database helpers" },
   { label: "desktop-core.js", path: "../../Neoms~Database/JS/desktop-core.js", lang: "js", clr: 2, dir: "JS", desc: "Session guard, menus, clearance" },
-  { label: "desktop-icons.js", path: "../../Neoms~Database/JS/desktop-icons.js", lang: "js", clr: 2, dir: "JS", desc: "Desktop icon grid" },
   { label: "intake.js", path: "../../Neoms~Database/JS/intake.js", lang: "js", clr: 2, dir: "JS", desc: "Intake terminal logic" },
 
   /* ── HTML ── */
-  { label: "desktop.html", path: "../../Neoms~Database/HTML/desktop.html", lang: "html", clr: 1, dir: "HTML", desc: "Desktop shell markup" },
+  { label: "archive.html", path: "../../Neoms~Database/HTML/archive.html", lang: "html", clr: 1, dir: "HTML", desc: "Archive shell markup" },
   { label: "intake.html", path: "../../Neoms~Database/HTML/intake.html", lang: "html", clr: 1, dir: "HTML", desc: "Intake terminal markup" },
 
   /* ── CSS ── */
   { label: "Databaselog.css", path: "../../Neoms~Database/CSS/Databaselog.css", lang: "css", clr: 1, dir: "CSS", desc: "Main stylesheet" },
-  { label: "desktop.css", path: "../../Neoms~Database/CSS/desktop.css", lang: "css", clr: 1, dir: "CSS", desc: "Desktop shell styles" },
-  { label: "desktop-db.css", path: "../../Neoms~Database/CSS/desktop-db.css", lang: "css", clr: 1, dir: "CSS", desc: "Database theme overrides" },
+  { label: "archive.css", path: "../../Neoms~Database/CSS/archive.css", lang: "css", clr: 1, dir: "CSS", desc: "Archive theme" },
   { label: "intake.css", path: "../../Neoms~Database/CSS/intake.css", lang: "css", clr: 1, dir: "CSS", desc: "Intake terminal styles" },
 
   /* ── Windows ── */

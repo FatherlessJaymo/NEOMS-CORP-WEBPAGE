@@ -1,5 +1,5 @@
 /* terminal window JS
-   termKey() and termRun() live in desktop.js — they reference
+   termKey() and termRun() live in JS/db-common.js — they reference
    document.getElementById("term-out") and document.getElementById("term-in")
    which are now inside this window's HTML, so they work as-is. */
 

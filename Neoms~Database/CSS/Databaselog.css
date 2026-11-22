@@ -59,8 +59,6 @@ body::after {
     z-index: 9999;
 }
 
-/* Desktop shell (taskbar, start menu, icons, window chrome) is styled by
-   Neoms~PrimeDrive/CSS/* with DB theme overrides in desktop-db.css. */
 
 /* ── TABS ──────────────────────────────────────────────────── */
 /* FIX H: scroll instead of wrapping/clipping on small windows */

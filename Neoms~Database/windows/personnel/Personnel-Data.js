@@ -26,8 +26,8 @@ const personnel = [
     },
     {
         id: 1002,
-        fname: "Metal",
-        lname: "Sonic",
+        fname: "Nova",
+        lname: "",
         pos: "Overseer Prime",
         dept: "PRIME DIRECTOR",
         clr: 5,

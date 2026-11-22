@@ -105,7 +105,10 @@ function cycleClearance() {
 
 /* ── LOGOUT ──────────────────────────────────────────────────── */
 function doLogout() {
-  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  try {
+    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(LS_CLR_KEY);
+  } catch (e) {}
   window.location.href = INTAKE_URL;
 }
 
