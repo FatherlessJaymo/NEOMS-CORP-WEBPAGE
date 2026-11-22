@@ -107,6 +107,25 @@
   color: #fff;
 }
 
+/* ---- Optional entry image (img field in creators-log-data.js) ---- */
+.Blog-Entry-Img {
+  display: block;
+  margin-top: 8px;
+  max-width: 260px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(168, 200, 232, 0.25);
+  cursor: zoom-in;
+}
+.Blog-Entry-Img:hover {
+  border-color: #a8c8e8;
+}
+.Blog-Entry-Img img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* ---- Copy / action buttons (shared) ---- */
 .copy-btn {
   font-family: "Press Start 2P", monospace;

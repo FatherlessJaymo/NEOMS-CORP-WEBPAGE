@@ -13,10 +13,9 @@
    ADMIN TOOLS (hidden from visitors)
      Toggle with Ctrl+Shift+L, or open the site with ?admin
      in the address (for phones). Remembered per browser.
-     NOTE: the passcode is readable in this public file — it
-     only keeps casual visitors out of the form. Posts never
-     reach the live site; they stay in the browser that made
-     them until you EXPORT and paste them into the data file.
+     Posts never reach the live site; they stay in the browser
+     that made them until you EXPORT and paste them into the
+     data file.
 
    PROMOTE-TO-LIVE FLOW (admin):
      1. Post entries via the admin form (saved in localStorage).
@@ -26,7 +25,6 @@
         already exist in the data file are hidden anyway.)
 ============================================================ */
 (function () {
-    var DIRECTOR_PASS = "neoms--2026";
     var STORAGE_KEY = "directors_log";
     var SORT_KEY = "directors_log_sort";
     var FILTER_KEY = "directors_log_filter";
@@ -119,6 +117,7 @@
                 tag: e.tag || "NOTE",
                 title: e.title || "",
                 body: e.body || "",
+                img: e.img || "",
                 hardcoded: true
             };
         });
@@ -169,7 +168,20 @@
             (e.hardcoded ? "" : '<span class="Blog-Local-Badge" title="Only saved in this browser">LOCAL</span>') +
             "</div>" +
             '<h3 class="Blog-Entry-Title">' + escapeHTML(e.title) + "</h3>" +
-            formatBody(e.body);
+            formatBody(e.body) +
+            (e.img
+                ? '<a class="Blog-Entry-Img" href="' + escapeHTML(e.img) + '" target="_blank" rel="noopener">' +
+                  '<img src="' + escapeHTML(e.img) + '" alt="" loading="lazy"/></a>'
+                : "");
+
+        /* Click the image → fullscreen viewer (falls back to opening it in a new tab) */
+        var link = art.querySelector(".Blog-Entry-Img");
+        if (link && window.NeomsShowcase) {
+            link.addEventListener("click", function (ev) {
+                ev.preventDefault();
+                window.NeomsShowcase.lbOpen([e.img], 0);
+            });
+        }
         return art;
     }
 
@@ -297,25 +309,52 @@
         return header + body + "\n";
     }
 
+    /* Old-style copy via a hidden textarea — works in places where
+       the Clipboard API is blocked (iframes, editor previews) */
+    function legacyCopy(text) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try {
+            ok = document.execCommand("copy");
+        } catch (e) {}
+        document.body.removeChild(ta);
+        return ok;
+    }
+
     function copyToClipboard(text) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            return navigator.clipboard.writeText(text);
-        }
-        return new Promise(function (resolve, reject) {
-            try {
-                var ta = document.createElement("textarea");
-                ta.value = text;
-                ta.style.position = "fixed";
-                ta.style.opacity = "0";
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand("copy");
-                document.body.removeChild(ta);
-                resolve();
-            } catch (e) {
-                reject(e);
-            }
+        var api =
+            navigator.clipboard && navigator.clipboard.writeText
+                ? navigator.clipboard.writeText(text)
+                : Promise.reject();
+        return api.catch(function () {
+            if (!legacyCopy(text)) throw new Error("copy blocked");
         });
+    }
+
+    /* Last resort: show the export text so it can be copied by hand */
+    function showExportBox(text) {
+        var box = document.getElementById("Blog-Export-Box");
+        if (!box) {
+            box = document.createElement("textarea");
+            box.id = "Blog-Export-Box";
+            box.className = "Blog-Admin-Input Blog-Admin-Textarea";
+            box.rows = 8;
+            box.readOnly = true;
+            box.style.marginBottom = "8px";
+            /* Gone as soon as you click away */
+            box.addEventListener("blur", function () {
+                box.remove();
+            });
+            form.parentNode.insertBefore(box, form);
+        }
+        box.value = text;
+        box.focus();
+        box.select();
     }
 
     function flashStatus(btn, msg, isError) {
@@ -330,15 +369,18 @@
     }
 
     function doExport() {
-        var saved = readLocalEntries();
+        /* Skip entries already pasted into the data file */
+        var saved = readLocalEntries().filter(notPromoted);
         if (!saved.length) {
-            flashStatus(exportBtn, "NO LOCAL ENTRIES", true);
+            flashStatus(exportBtn, "NOTHING NEW", true);
             return;
         }
-        copyToClipboard(buildExportJS(saved)).then(function () {
+        var js = buildExportJS(saved);
+        copyToClipboard(js).then(function () {
             flashStatus(exportBtn, "COPIED");
         }).catch(function () {
-            flashStatus(exportBtn, "COPY FAILED", true);
+            showExportBox(js);
+            flashStatus(exportBtn, "COPY BY HAND", true);
         });
     }
 
@@ -395,8 +437,8 @@
                         var d = new Date();
                         dateEl.value = d.getFullYear() + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + String(d.getDate()).padStart(2, "0");
                     }
-                    var passEl = document.getElementById("Blog-Admin-Pass");
-                    if (passEl) passEl.focus();
+                    var titleEl = document.getElementById("Blog-Admin-Title");
+                    if (titleEl) titleEl.focus();
                 }
             });
         }
@@ -413,17 +455,11 @@
         if (form) {
             form.addEventListener("submit", function (ev) {
                 ev.preventDefault();
-                var pass = document.getElementById("Blog-Admin-Pass").value.trim();
                 var date = document.getElementById("Blog-Admin-Date").value.trim();
                 var tag = document.getElementById("Blog-Admin-Tag").value;
                 var title = document.getElementById("Blog-Admin-Title").value.trim();
                 var body = document.getElementById("Blog-Admin-Body").value.trim();
 
-                if (pass !== DIRECTOR_PASS) {
-                    statusEl.textContent = "INCORRECT PASSCODE";
-                    statusEl.className = "Blog-Admin-Status error";
-                    return;
-                }
                 if (!date || !title || !body) {
                     statusEl.textContent = "ALL FIELDS REQUIRED";
                     statusEl.className = "Blog-Admin-Status error";
@@ -511,10 +547,6 @@
               '</div>' +
             '</div>' +
             '<form class="Blog-Admin-Form" id="Blog-Admin-Form" autocomplete="off">' +
-              '<div class="Blog-Admin-Row">' +
-                '<label class="Blog-Admin-Label" for="Blog-Admin-Pass">PASSCODE</label>' +
-                '<input class="Blog-Admin-Input" type="password" id="Blog-Admin-Pass" placeholder="director\'s passcode"/>' +
-              '</div>' +
               '<div class="Blog-Admin-Row Blog-Admin-Row-Split">' +
                 '<div>' +
                   '<label class="Blog-Admin-Label" for="Blog-Admin-Date">DATE</label>' +
