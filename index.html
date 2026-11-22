@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/sticker-hq/sticker-hq.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/CSS/content-windows.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/ranking/ranking-viewer.css" />
+    <link rel="stylesheet" href="Neoms~PrimeDrive/windows/art-gallery/art-gallery.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/friend-codes/friend-codes.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/core-directive/core-directive.css" />
     <link rel="stylesheet" href="Neoms~PrimeDrive/windows/guestbook/guestbook.css" />
@@ -88,6 +89,16 @@
         <!-- RIGHT: apps list (vertical stack) -->
         <div class="start-apps">
           <div class="start-apps-title">APPs</div>
+          <div class="start-item" onclick="openWin('gallery');closeStart()">
+            <img
+              class="start-item-icon"
+              src="Neoms~Universal-Fonts+Images/Icons/Desktop/Filled-Folder.jpg"
+              width="16"
+              height="16"
+              alt=""
+              onerror="this.style.display='none'" />
+            Art Gallery
+          </div>
           <div class="start-item" onclick="openWin('badges');closeStart()">
             <img
               class="start-item-icon"
@@ -217,6 +228,7 @@
     <!-- ===== JS — load order matters =====
     <!-- 1) Data -->
     <script src="Neoms~PrimeDrive/windows/ranking/ranking-data.js"></script>
+    <script src="Neoms~PrimeDrive/windows/art-gallery/art-gallery-data.js"></script>
     <script src="Neoms~PrimeDrive/windows/friend-codes/friend-codes-data.js"></script>
     <script src="Neoms~PrimeDrive/windows/creators-log/creators-log-data.js"></script>
     <script src="Neoms~PrimeDrive/windows/core-directive/core-directive-data.js"></script>
@@ -231,6 +243,7 @@
     <script src="Neoms~PrimeDrive/windows/etc/etc.js"></script>
     <script src="Neoms~PrimeDrive/windows/wallpaper/wallpaper.js"></script>
     <script src="Neoms~PrimeDrive/windows/ranking/ranking-window.js"></script>
+    <script src="Neoms~PrimeDrive/windows/art-gallery/art-gallery.js"></script>
     <script src="Neoms~PrimeDrive/windows/friend-codes/friend-codes.js"></script>
     <script src="Neoms~PrimeDrive/windows/neomix/neomix-builder.js"></script>
     <script src="Neoms~PrimeDrive/windows/neomix/neomix-player.js"></script>

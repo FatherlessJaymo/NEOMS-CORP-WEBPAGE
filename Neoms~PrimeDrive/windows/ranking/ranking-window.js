@@ -16,6 +16,11 @@
             e.g. imgs: ["path/a.jpg", "path/b.jpg"]
      If both are set, imgs takes priority.
      If only img is set, it is treated as a single-image gallery.
+
+   TIER LIST: each image is a draggable tile. Drag between the
+   S–F rows and the UNRANKED pool; placement is saved per
+   category in localStorage. Click a tile to view it full size.
+     tier — optional starting row ("S".."F") for an entry's images
 ============================================================ */
 (function () {
     /* ============================================================
@@ -39,6 +44,7 @@
             '<button class="rlb-arrow rlb-prev" id="rlb-prev" title="Previous">&#8249;</button>',
             '<div class="rlb-img-wrap">',
             '  <img id="rlb-img" src="" alt="Ranking image"/>',
+            '  <iframe id="rlb-embed" src="about:blank" allowfullscreen scrolling="no" allow="autoplay; encrypted-media"></iframe>',
             "</div>",
             '<button class="rlb-arrow rlb-next" id="rlb-next" title="Next">&#8250;</button>',
             '<div class="rlb-counter" id="rlb-counter">1 / 1</div>',
@@ -97,6 +103,9 @@
         if (!LB.el) return;
         LB.el.classList.remove("rlb-open");
         document.body.style.overflow = "";
+        /* Stop any playing Instagram reel */
+        var frame = document.getElementById("rlb-embed");
+        if (frame) frame.src = "about:blank";
     }
 
     function lbPrev() {
@@ -111,7 +120,7 @@
 
     function lbSetBg() {
         var src = LB.imgs[LB.idx];
-        if (!src) return;
+        if (!src || igEmbed(src)) return;
 
         /* Apply directly to body — same pattern as wallpaper.js */
         document.body.style.background = "url('" + src.replace(/'/g, "\\'") + "') no-repeat center center fixed";
@@ -144,16 +153,29 @@
         var counter = document.getElementById("rlb-counter");
         var prev = document.getElementById("rlb-prev");
         var next = document.getElementById("rlb-next");
+        var frame = document.getElementById("rlb-embed");
+        var setBg = document.getElementById("rlb-set-bg");
         if (!img) return;
 
-        /* Fade transition */
-        img.style.opacity = "0";
-        img.src = LB.imgs[LB.idx];
-        img.onload = function () {
-            img.style.opacity = "1";
-        };
-        /* Fallback if image is already cached */
-        if (img.complete) img.style.opacity = "1";
+        /* Instagram post / reel → embedded player instead of <img> */
+        var embed = igEmbed(LB.imgs[LB.idx]);
+        img.style.display = embed ? "none" : "";
+        frame.style.display = embed ? "block" : "none";
+        if (setBg) setBg.style.display = embed ? "none" : "";
+        if (embed) {
+            if (frame.src !== embed) frame.src = embed;
+        } else {
+            frame.src = "about:blank";
+
+            /* Fade transition */
+            img.style.opacity = "0";
+            img.src = LB.imgs[LB.idx];
+            img.onload = function () {
+                img.style.opacity = "1";
+            };
+            /* Fallback if image is already cached */
+            if (img.complete) img.style.opacity = "1";
+        }
 
         if (counter) counter.textContent = LB.idx + 1 + " / " + LB.imgs.length;
 
@@ -190,6 +212,12 @@
             "  opacity: 0; transition: opacity .18s;",
             "  display: block;",
             "}",
+            "#rlb-embed {",
+            "  display: none; border: 0; background: #fff;",
+            "  width: min(400px, 100%); height: min(720px, calc(100vh - 80px));",
+            "  border-radius: 6px;",
+            "  box-shadow: 0 0 60px rgba(0,109,255,.3), 0 0 0 1px rgba(168,200,232,.15);",
+            "}",
             ".rlb-arrow {",
             "  font-family: 'Press Start 2P', monospace;",
             "  font-size: 32px; line-height: 1;",
@@ -219,29 +247,6 @@
             "  padding: 4px 10px; border-radius: 4px; pointer-events: none;",
             "}",
 
-            /* Thumbnail strip on cards */
-            ".rank-thumb-strip {",
-            "  display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;",
-            "}",
-            ".rank-thumb {",
-            "  width: 32px; height: 32px; object-fit: cover; border-radius: 3px;",
-            "  border: 1px solid #1a4a8a; cursor: pointer;",
-            "  transition: .15s; opacity: .7;",
-            "}",
-            ".rank-thumb:hover, .rank-thumb.active { border-color: #a8c8e8; opacity: 1; }",
-            ".rank-img-btn {",
-            "  position: relative; cursor: pointer; flex-shrink: 0; display: block;",
-            "}",
-            ".rank-img-btn::after {",
-            "  content: '⛶';",
-            "  position: absolute; bottom: 4px; right: 4px;",
-            "  font-size: 10px; color: #fff;",
-            "  background: rgba(0,0,0,.55); border-radius: 3px;",
-            "  padding: 1px 3px; pointer-events: none;",
-            "  opacity: 0; transition: opacity .15s;",
-            "}",
-            ".rank-img-btn:hover::after { opacity: 1; }",
-
             /* Set as Background button */
             ".rlb-set-bg {",
             "  position: absolute; bottom: 14px; right: 16px;",
@@ -267,12 +272,27 @@
         return String(s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
 
-    /* Resolve image list for an entry.
-       Priority: entry.imgs (array) > entry.img (string) > [] */
+    /* Resolve image list for an entry as { src, thumb } items.
+       Priority: entry.imgs (array) > entry.img (string) > []
+       Each item may be a path/URL string or { src, thumb }. */
     function resolveImgs(entry) {
-        if (Array.isArray(entry.imgs) && entry.imgs.length) return entry.imgs;
-        if (entry.img) return [entry.img];
-        return [];
+        var list = Array.isArray(entry.imgs) && entry.imgs.length ? entry.imgs : entry.img ? [entry.img] : [];
+        return list
+            .map(function (it) {
+                return typeof it === "string" ? { src: it, thumb: "" } : { src: it.src || "", thumb: it.thumb || "" };
+            })
+            .filter(function (it) {
+                return it.src;
+            });
+    }
+
+    /* Instagram post / reel / tv link → embed URL, else null.
+       Tracking params (?utm_source=...) are dropped. */
+    function igEmbed(url) {
+        var m = /instagram\.com\/(?:[\w.]+\/)?(p|reels?|tv)\/([\w-]+)/i.exec(String(url || ""));
+        if (!m) return null;
+        var type = m[1].toLowerCase() === "reels" ? "reel" : m[1].toLowerCase();
+        return "https://www.instagram.com/" + type + "/" + m[2] + "/embed";
     }
 
     /* ============================================================
@@ -330,70 +350,273 @@
     }
 
     /* ============================================================
-       CARD HTML — now includes thumbnail strip + click-to-fullscreen
+       TIER LIST
+       Every image (each item of imgs / img) is its own tile.
+       Placement is saved per category in localStorage.
+       Optional entry field  tier: "S" | "A" | ... | "F"  sets the
+       starting row; otherwise tiles start in the UNRANKED pool.
     ============================================================ */
-    function buildCard(e) {
-        var imgs = resolveImgs(e);
-        var col = { SSS: "#ff6b35", SS: "#c792ea", S: "#a8c8e8" }[e.rank] || "#a8c8e8";
+    var TIERS = [
+        { id: "S", color: "#f25a78" },
+        { id: "A", color: "#ff9f43" },
+        { id: "B", color: "#ffd166" },
+        { id: "C", color: "#7ee081" },
+        { id: "D", color: "#4ecdc4" },
+        { id: "F", color: "#8a8fa8" }
+    ];
+    var POOL = "pool";
+    var STORE_PREFIX = "neoms-tierlist-";
 
-        /* Main image — clickable to fullscreen */
-        var mainImg = imgs.length
-            ? '<div class="rank-img-btn" data-imgs="' +
-              escAttr(JSON.stringify(imgs)) +
-              '" data-idx="0">' +
-              '<img class="rank-img" src="' +
-              escHtml(imgs[0]) +
-              '" alt="' +
-              escHtml(e.title) +
-              '"/>' +
-              "</div>"
-            : '<div class="rank-img"></div>';
-
-        /* Thumbnail strip (only if 2+ images) */
-        var thumbStrip = "";
-        if (imgs.length > 1) {
-            thumbStrip =
-                '<div class="rank-thumb-strip">' +
-                imgs
-                    .map(function (src, i) {
-                        return (
-                            '<img class="rank-thumb' +
-                            (i === 0 ? " active" : "") +
-                            '" ' +
-                            'src="' +
-                            escHtml(src) +
-                            '" alt="slide ' +
-                            (i + 1) +
-                            '" ' +
-                            'data-imgs="' +
-                            escAttr(JSON.stringify(imgs)) +
-                            '" data-idx="' +
-                            i +
-                            '"/>'
-                        );
-                    })
-                    .join("") +
-                "</div>";
+    function loadPlacement(cat) {
+        try {
+            return JSON.parse(localStorage.getItem(STORE_PREFIX + cat)) || {};
+        } catch (err) {
+            return {};
         }
+    }
+
+    function savePlacement(main) {
+        var cat = main.getAttribute("data-cat");
+        var out = {};
+        main.querySelectorAll(".tier-drop").forEach(function (zone) {
+            out[zone.getAttribute("data-tier")] = Array.prototype.map.call(
+                zone.querySelectorAll(".tier-tile"),
+                function (t) {
+                    return t.getAttribute("data-src");
+                }
+            );
+        });
+        try {
+            localStorage.setItem(STORE_PREFIX + cat, JSON.stringify(out));
+        } catch (err) {}
+    }
+
+    /* Returns { S: [tile,...], ..., pool: [...] } */
+    function placeTiles(cat, entries) {
+        var tiles = {};
+        var order = [];
+        entries.forEach(function (e, ei) {
+            resolveImgs(e).forEach(function (it, i) {
+                var src = it.src;
+                if (tiles[src]) return;
+                tiles[src] = { src: src, thumb: it.thumb, entry: ei, idx: i, title: e.title || "" };
+                order.push(src);
+            });
+        });
+
+        var rows = {};
+        var used = {};
+        var saved = loadPlacement(cat);
+        TIERS.concat({ id: POOL }).forEach(function (t) {
+            rows[t.id] = (saved[t.id] || [])
+                .filter(function (src) {
+                    return tiles[src] && !used[src];
+                })
+                .map(function (src) {
+                    used[src] = true;
+                    return tiles[src];
+                });
+        });
+
+        /* New / never-placed images: entry.tier if valid, else pool */
+        order.forEach(function (src) {
+            if (used[src]) return;
+            var tier = String(entries[tiles[src].entry].tier || "").toUpperCase();
+            (rows[tier] || rows[POOL]).push(tiles[src]);
+        });
+        return rows;
+    }
+
+    var IG_ICON = "Neoms~Universal-Fonts+Images/Icons/App_Icons/Instagram.png";
+
+    /* Thumbnail markup shared by tier tiles and Art Gallery items */
+    function thumbHTML(src, thumb, title) {
+        var embed = igEmbed(src);
+        thumb = thumb || (embed ? "" : src);
+        var inner = thumb
+            ? '<img src="' + escHtml(thumb) + '" alt="' + escHtml(title) + '" draggable="false" loading="lazy"/>'
+            : '<div class="tier-tile-ig"><img src="' +
+              IG_ICON +
+              '" alt="" draggable="false"/><span>' +
+              (/\/reel\//.test(embed) ? "REEL" : "POST") +
+              "</span></div>";
+        if (embed) inner += '<span class="tier-tile-play">&#9654;</span>';
+        return inner;
+    }
+
+    function tileHTML(t) {
+        var inner = thumbHTML(t.src, t.thumb, t.title);
 
         return (
-            '<div class="rank-card" style="--rv-color:' +
-            col +
+            '<div class="tier-tile" data-src="' +
+            escHtml(t.src) +
+            '" data-entry="' +
+            t.entry +
+            '" data-idx="' +
+            t.idx +
+            '" title="' +
+            escHtml(t.title) +
             '">' +
-            mainImg +
-            "<div>" +
-            '<div class="rank-badge">' +
-            escHtml(e.rank) +
-            "</div>" +
-            '<div class="rank-title">' +
-            escHtml(e.title) +
-            "</div>" +
-            renderArtist(e) +
-            (e.notes ? '<div class="rank-notes">' + escHtml(e.notes) + "</div>" : "") +
-            thumbStrip +
-            "</div>" +
+            inner +
             "</div>"
         );
+    }
+
+    function buildBoard(cat, entries) {
+        var rows = placeTiles(cat, entries);
+        var tierRows = TIERS.map(function (t) {
+            return (
+                '<div class="tier-row" style="--tier-color:' +
+                t.color +
+                '">' +
+                '<div class="tier-label">' +
+                t.id +
+                "</div>" +
+                '<div class="tier-drop" data-tier="' +
+                t.id +
+                '">' +
+                rows[t.id].map(tileHTML).join("") +
+                "</div>" +
+                "</div>"
+            );
+        }).join("");
+
+        return (
+            '<div class="tier-toolbar">' +
+            '<span class="tier-heading">// ' +
+            escHtml(cat) +
+            " TIER LIST</span>" +
+            '<button class="tier-reset" type="button">RESET</button>' +
+            "</div>" +
+            '<div class="tier-board">' +
+            tierRows +
+            "</div>" +
+            '<div class="tier-pool-label">UNRANKED // DRAG INTO A TIER &#8593;</div>' +
+            '<div class="tier-drop tier-pool" data-tier="' +
+            POOL +
+            '">' +
+            rows[POOL].map(tileHTML).join("") +
+            "</div>" +
+            '<div class="tier-info" id="tier-info">Hover an image for details. Click to view full size.</div>'
+        );
+    }
+
+    function showInfo(main, tile) {
+        var box = main.querySelector(".tier-info");
+        var entries = main._tierEntries || [];
+        var e = tile && entries[+tile.getAttribute("data-entry")];
+        if (!box || !e) return;
+        box.innerHTML =
+            '<div class="rank-title">' +
+            escHtml(e.title || "Untitled") +
+            "</div>" +
+            renderArtist(e) +
+            (e.notes ? '<div class="rank-notes">' + escHtml(e.notes) + "</div>" : "");
+    }
+
+    /* Index where the dragged tile should go inside zone */
+    function insertBefore(zone, tile, x, y) {
+        var others = zone.querySelectorAll(".tier-tile");
+        for (var i = 0; i < others.length; i++) {
+            if (others[i] === tile) continue;
+            var r = others[i].getBoundingClientRect();
+            if (y < r.top || (y <= r.bottom && x < r.left + r.width / 2)) return others[i];
+        }
+        return null;
+    }
+
+    /* Open the lightbox on el's entry, starting at el's image */
+    function openEntry(main, el) {
+        var entry = (main._tierEntries || [])[+el.getAttribute("data-entry")];
+        var imgs = entry
+            ? resolveImgs(entry).map(function (it) {
+                  return it.src;
+              })
+            : [];
+        if (imgs.length) lbOpen(imgs, +el.getAttribute("data-idx") || 0);
+    }
+
+    /* Pointer-based drag so it works with mouse AND touch */
+    function wireBoard(main) {
+        if (main._tierWired) return;
+        main._tierWired = true;
+
+        main.addEventListener("mouseover", function (e) {
+            var tile = e.target.closest && e.target.closest(".tier-tile");
+            if (tile) showInfo(main, tile);
+        });
+
+        main.addEventListener("click", function (e) {
+            if (!e.target.closest(".tier-reset")) return;
+            try {
+                localStorage.removeItem(STORE_PREFIX + main.getAttribute("data-cat"));
+            } catch (err) {}
+            renderRank(main.getAttribute("data-cat"));
+        });
+
+        main.addEventListener("pointerdown", function (e) {
+            var tile = e.target.closest(".tier-tile");
+            if (!tile || e.button > 0) return;
+            e.preventDefault();
+
+            var startX = e.clientX;
+            var startY = e.clientY;
+            var rect = tile.getBoundingClientRect();
+            var offX = startX - rect.left;
+            var offY = startY - rect.top;
+            var ghost = null;
+            var overZone = null;
+
+            function move(ev) {
+                if (!ghost) {
+                    if (Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) < 6) return;
+                    ghost = tile.cloneNode(true);
+                    ghost.className = "tier-tile tier-ghost";
+                    ghost.style.width = rect.width + "px";
+                    ghost.style.height = rect.height + "px";
+                    document.body.appendChild(ghost);
+                    tile.classList.add("tier-dragging");
+                    showInfo(main, tile);
+                }
+                ghost.style.left = ev.clientX - offX + "px";
+                ghost.style.top = ev.clientY - offY + "px";
+
+                var under = document.elementFromPoint(ev.clientX, ev.clientY);
+                var row = under && under.closest(".tier-row");
+                var zone = under && (under.closest(".tier-drop") || (row && row.querySelector(".tier-drop")));
+                if (zone && !main.contains(zone)) zone = null;
+
+                if (overZone !== zone) {
+                    if (overZone) overZone.classList.remove("tier-over");
+                    if (zone) zone.classList.add("tier-over");
+                    overZone = zone;
+                }
+                if (zone) {
+                    var before = insertBefore(zone, tile, ev.clientX, ev.clientY);
+                    if (tile.nextSibling !== before || tile.parentNode !== zone) zone.insertBefore(tile, before);
+                }
+            }
+
+            function up() {
+                document.removeEventListener("pointermove", move);
+                document.removeEventListener("pointerup", up);
+                document.removeEventListener("pointercancel", up);
+                if (overZone) overZone.classList.remove("tier-over");
+
+                if (!ghost) {
+                    /* Plain click → fullscreen gallery for that entry */
+                    openEntry(main, tile);
+                    return;
+                }
+                ghost.remove();
+                tile.classList.remove("tier-dragging");
+                savePlacement(main);
+            }
+
+            document.addEventListener("pointermove", move);
+            document.addEventListener("pointerup", up);
+            document.addEventListener("pointercancel", up);
+        });
     }
 
     /* ============================================================
@@ -452,33 +675,17 @@
             return;
         }
 
-        main.innerHTML = filled.map(buildCard).join("");
+        main.setAttribute("data-cat", cat);
+        main._tierEntries = filled;
+        main.innerHTML = buildBoard(cat, filled);
+        wireBoard(main);
+    };
 
-        /* Wire click handlers */
-        main.querySelectorAll(".rank-img-btn, .rank-thumb").forEach(function (el) {
-            el.addEventListener("click", function () {
-                var imgs = JSON.parse(this.getAttribute("data-imgs") || "[]");
-                var idx = parseInt(this.getAttribute("data-idx"), 10) || 0;
-                if (imgs.length) lbOpen(imgs, idx);
-
-                /* Highlight active thumb if clicking a thumbnail */
-                if (this.classList.contains("rank-thumb")) {
-                    var strip = this.closest(".rank-thumb-strip");
-                    if (strip) {
-                        strip.querySelectorAll(".rank-thumb").forEach(function (t) {
-                            t.classList.remove("active");
-                        });
-                        this.classList.add("active");
-
-                        /* Also update the main card image to match */
-                        var card = this.closest(".rank-card");
-                        if (card) {
-                            var mainEl = card.querySelector(".rank-img");
-                            if (mainEl) mainEl.src = imgs[idx];
-                        }
-                    }
-                }
-            });
-        });
+    /* Shared with the Art Gallery window (windows/art-gallery) */
+    window.NeomsShowcase = {
+        lbOpen: lbOpen,
+        resolveImgs: resolveImgs,
+        renderArtist: renderArtist,
+        thumbHTML: thumbHTML
     };
 })();

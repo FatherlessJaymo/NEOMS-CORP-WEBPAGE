@@ -64,7 +64,14 @@ var NEOMS_CORE_GUIDE = [
     id: "ranking",
     name: "Showcase",
     category: "Apps",
-    desc: "Tier-list viewer. Categories: Art, Cartoons, Movies, YouTubers. Each entry is ranked SSS / SS / S with notes."
+    desc: "Tier-list viewer. Categories: Cartoons, Movies, YouTubers. Drag images into S–F tiers; placement is saved."
+  },
+
+  {
+    id: "gallery",
+    name: "Art Gallery",
+    category: "Apps",
+    desc: "Art from artists I recommend, with links to their socials. Click any piece to view it fullscreen and swipe through the set."
   },
 
   {

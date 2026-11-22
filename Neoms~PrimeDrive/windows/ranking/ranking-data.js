@@ -9,6 +9,14 @@
      If both are set, imgs takes priority.
      If only img is set it is treated as a one-image gallery.
 
+   INSTAGRAM POSTS / REELS:
+     Paste the link straight into img / imgs (share-link junk
+     like ?utm_source=... is fine). It plays in the fullscreen
+     viewer. Instagram gives no thumbnail, so the tile shows an
+     IG badge unless you add your own with the object form:
+       imgs: [{ src: "https://www.instagram.com/reel/ABC123/",
+                thumb: "Neoms~Universal-Fonts+Images/.../cover.jpg" }]
+
    Each entry:
      { img, imgs, title, artist, artistUrl,
        artistSocials: [{ icon, url, label }],
@@ -16,38 +24,6 @@
 ============================================================ */
 
 var NEOMS_SHOWCASE_DATA = {
-    Art: [
-        {
-            /* Multiple images — user can swipe through them in fullscreen */
-            imgs: [
-                "Neoms~Universal-Fonts+Images/Rankings/Art/YUKI_Slide0.jpeg",
-                "Neoms~Universal-Fonts+Images/Rankings/Art/YUKI_Slide1.jpeg",
-                "Neoms~Universal-Fonts+Images/Rankings/Art/YUKI_Slide2.jpeg",
-                "Neoms~Universal-Fonts+Images/Rankings/Art/YUKI_Slide3.jpeg",
-                "Neoms~Universal-Fonts+Images/Rankings/Art/YUKI_Slide4.jpeg",
-                "Neoms~Universal-Fonts+Images/Rankings/Art/YUKI_Slide5.jpeg"
-            ],
-            title: "GLOBMAGEDDON",
-            artist: "yuk1draw",
-            artistUrl: "",
-            artistSocials: [
-                {
-                    icon: "Neoms~Universal-Fonts+Images/Icons/App_Icons/TikTok.png",
-                    url: "https://www.tiktok.com/@yuk1draw",
-                    label: "TikTok"
-                },
-                {
-                    icon: "Neoms~Universal-Fonts+Images/Icons/App_Icons/Instagram.png",
-                    url: "https://www.instagram.com/yuk1draw/",
-                    label: "Instagram"
-                }
-            ],
-            notes: "Underrated Artist All Around Recommend You Go Follow",
-            rank: "SSS"
-        }
-    ]
-
-    /*
     Cartoons: [
         {
             img: "",
@@ -69,10 +45,10 @@ var NEOMS_SHOWCASE_DATA = {
     YouTubers: [
         {
             img: "",
-            title: "CoryxKenshin",
+            title: "",
             notes: "",
             rank: "SSS"
         }
     ]
-    */
+    
 };

@@ -17,6 +17,7 @@ var ICONS = [
   { id: "sticker", label: "Sticker\nHQ", img: FOLDER_IMG },
   { id: "badges", label: "Badges", img: FOLDER_IMG },
   { id: "ranking", label: "Rankings", img: FOLDER_IMG },
+  { id: "gallery", label: "Art\nGallery", img: FOLDER_IMG },
   { id: "etc", label: "Etc", img: ETC_IMG },
   { id: "friendcodes", label: "Game\nCodes", img: FOLDER_IMG },
   {

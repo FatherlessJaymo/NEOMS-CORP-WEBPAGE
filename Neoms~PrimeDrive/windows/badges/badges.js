@@ -1,6 +1,6 @@
 /* ============================================================
    BADGES
-   Single badge card with a "copy embed code" button.
+   Badge cards, each with a "copy embed code" button.
    Add more badges by appending to NEOMS_BADGES below.
 ============================================================ */
 (function () {
@@ -11,6 +11,27 @@
             link: "https://fatherlessjaymo.neocities.org/",
             preview: "Neoms~Universal-Fonts+Images/Badges/NEOMS-Badge.jpg",
             embed: "https://fatherlessjaymo.neocities.org/Neoms~Universal-Fonts+Images/Badges/NEOMS-Badge.jpg"
+        },
+        {
+            name: "NEOMS OS — Jova",
+            desc: "Jova edition of the NEOMS OS badge.",
+            link: "https://fatherlessjaymo.neocities.org/",
+            preview: "Neoms~Universal-Fonts+Images/Badges/NEOMS-OS-Jova-Badge.png",
+            embed: "https://fatherlessjaymo.neocities.org/Neoms~Universal-Fonts+Images/Badges/NEOMS-OS-Jova-Badge.png"
+        },
+        {
+            name: "NEOMS OS — Nova",
+            desc: "Nova edition of the NEOMS OS badge.",
+            link: "https://fatherlessjaymo.neocities.org/",
+            preview: "Neoms~Universal-Fonts+Images/Badges/NEOMS-OS-Nova-Badge.png",
+            embed: "https://fatherlessjaymo.neocities.org/Neoms~Universal-Fonts+Images/Badges/NEOMS-OS-Nova-Badge.png"
+        },
+        {
+            name: "NEOMS OS — Jova × Nova",
+            desc: "Jova and Nova, together on one badge.",
+            link: "https://fatherlessjaymo.neocities.org/",
+            preview: "Neoms~Universal-Fonts+Images/Badges/NEOMS-OS-JovaXNova-Badge.png",
+            embed: "https://fatherlessjaymo.neocities.org/Neoms~Universal-Fonts+Images/Badges/NEOMS-OS-JovaXNova-Badge.png"
         }
     ];
 

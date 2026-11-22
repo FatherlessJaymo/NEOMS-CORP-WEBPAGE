@@ -529,3 +529,170 @@ body.code-tab-active .Center-Panel {
     display: block;
     pointer-events: none;
 }
+
+/*==TIER LIST (desktop window, built by ranking-window.js)==*/
+.tier-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.tier-heading {
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: #9ac8f6;
+}
+.tier-reset {
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    letter-spacing: 1.5px;
+    padding: 5px 9px;
+    background: rgba(242, 90, 120, 0.12);
+    border: 1px solid #f25a78;
+    border-radius: 3px;
+    color: #f25a78;
+    cursor: pointer;
+    transition: 0.15s;
+}
+.tier-reset:hover {
+    background: #f25a78;
+    color: #000;
+}
+.tier-board {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border: 1px solid #1a4a8a;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.tier-row {
+    display: flex;
+    min-height: 58px;
+    background: rgba(0, 5, 20, 0.6);
+}
+.tier-label {
+    width: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Press Start 2P", monospace;
+    font-size: 14px;
+    color: #000;
+    background: var(--tier-color);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.tier-drop {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 4px;
+    padding: 4px;
+    min-width: 0;
+    transition:
+        background 0.15s,
+        box-shadow 0.15s;
+}
+.tier-drop.tier-over {
+    background: rgba(0, 109, 255, 0.14);
+    box-shadow: inset 0 0 0 1px #006dff;
+}
+.tier-pool-label {
+    font-size: 6px;
+    letter-spacing: 2px;
+    color: #354a5f;
+    margin: 10px 0 4px;
+}
+.tier-pool {
+    min-height: 58px;
+    border: 1px dashed #1a4a8a;
+    border-radius: 4px;
+    background: rgba(0, 5, 20, 0.4);
+}
+.tier-tile {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(168, 200, 232, 0.25);
+    background: #071020;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    transition:
+        border-color 0.15s,
+        transform 0.15s;
+}
+.tier-tile:hover {
+    border-color: #a8c8e8;
+    transform: translateY(-1px);
+}
+.tier-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+.tier-tile {
+    position: relative;
+}
+/* Instagram tile with no thumb set */
+.tier-tile-ig {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #5b2a86, #c1356b 55%, #f2a33a);
+}
+.tier-tile .tier-tile-ig img {
+    width: 18px;
+    height: 18px;
+}
+.tier-tile-ig span {
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    letter-spacing: 1px;
+    color: #fff;
+}
+.tier-tile-play {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 8px;
+    color: #fff;
+    text-shadow: 0 0 3px #000;
+    pointer-events: none;
+}
+.tier-tile.tier-dragging {
+    opacity: 0.3;
+    border-style: dashed;
+}
+.tier-ghost {
+    position: fixed;
+    z-index: 100000;
+    pointer-events: none;
+    cursor: grabbing;
+    transform: scale(1.08);
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.6),
+        0 0 12px rgba(0, 109, 255, 0.5);
+}
+.tier-info {
+    margin-top: 10px;
+    padding: 8px 10px;
+    min-height: 30px;
+    font-size: 7px;
+    line-height: 1.6;
+    color: #354a5f;
+    border: 1px solid #1a4a8a;
+    border-radius: 4px;
+    background: rgba(0, 5, 20, 0.5);
+}

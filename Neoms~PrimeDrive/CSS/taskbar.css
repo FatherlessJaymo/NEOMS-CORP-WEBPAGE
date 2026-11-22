@@ -25,12 +25,14 @@
   font-family: "Press Start 2P", monospace;
   font-size: 7px;
   letter-spacing: 3px;
-  padding: 0 16px 0 12px;
-  height: var(--tb-item-h);
+  padding: 0 18px 0 14px;
+  /* Fill the left end: cancel taskbar's 6px side padding, full height */
+  margin-left: -6px;
+  align-self: stretch;
   background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
   color: #fff;
   border: none;
-  border-radius: 5px 5px 18px 5px;
+  border-radius: 0 5px 18px 0;
   box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
   cursor: pointer;
   display: flex;
@@ -126,12 +128,14 @@
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 100px;
-  padding: 0 10px;
-  height: var(--tb-item-h);
+  padding: 0 14px 0 18px;
+  /* Fill the right end: cancel taskbar's 6px side padding, full height */
+  margin-right: -6px;
+  align-self: stretch;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5px;
+  border-radius: 5px 0 0 18px;
   background: linear-gradient(to bottom, #0050d8 0%, #fff 5%, #d0e8ff 15%, #006dff 100%);
   box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
   text-shadow: 0 1px 2px rgba(0, 0, 80, 0.5);

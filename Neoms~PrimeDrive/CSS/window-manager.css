@@ -216,3 +216,71 @@ body.win-max-active #desktop {
 .win-resize:hover {
   opacity: 1;
 }
+
+/* Split-screen snap preview (drag a window to an edge or corner).
+   Above the lifted desktop (9500), below the taskbar (9999). */
+#snap-preview {
+  position: fixed;
+  z-index: 9600;
+  pointer-events: none;
+  border: 2px solid #a8c8e8;
+  border-radius: 6px;
+  background: rgba(0, 109, 255, 0.18);
+  box-shadow: 0 0 24px rgba(0, 109, 255, 0.45) inset;
+}
+
+/* Snap layouts flyout — hover a window's maximize button, or drag
+   a window to the top of the screen (window-manager.js) */
+#snap-flyout {
+  position: fixed;
+  z-index: 9700;
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  gap: 8px;
+  padding: 10px;
+  background: rgba(4, 14, 40, 0.94);
+  border: 1px solid #1a4a8a;
+  border-radius: 8px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.55),
+    0 0 14px rgba(0, 109, 255, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.15s,
+    transform 0.15s,
+    visibility 0s 0.15s;
+}
+#snap-flyout.snap-show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+}
+.snap-layout {
+  display: grid;
+  gap: 3px;
+  height: 42px;
+  padding: 3px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.snap-cell {
+  border-radius: 3px;
+  background: rgba(168, 200, 232, 0.18);
+  border: 1px solid rgba(168, 200, 232, 0.3);
+  cursor: pointer;
+  transition:
+    background 0.1s,
+    border-color 0.1s,
+    box-shadow 0.1s;
+}
+.snap-cell:hover,
+.snap-cell.snap-hot {
+  background: #006dff;
+  border-color: #a8c8e8;
+  box-shadow: 0 0 8px rgba(0, 109, 255, 0.7);
+}

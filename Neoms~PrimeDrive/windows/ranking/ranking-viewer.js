@@ -7,8 +7,7 @@
         { label: "Memes", key: "Memes" },
         { label: "Cartoons", key: "Cartoons" },
         { label: "Movies", key: "Movies" },
-        { label: "YouTubers", key: "YouTubers" },
-        { label: "Art", key: "Art" }
+        { label: "YouTubers", key: "YouTubers" }
     ];
 
     /* ================================================================
