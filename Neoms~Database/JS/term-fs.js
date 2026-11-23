@@ -413,6 +413,15 @@ function nvRedacted(label, clr) {
   return "<p><b>" + escHtml(label) + ":</b> " + '<span class="nv-redact">████████████████████</span> <em>[CL-' + clr + " CLEARANCE REQUIRED]</em></p>";
 }
 
+/* Photo caption: an entity's own imgCaption, else one that matches
+   its status (only CONTAINED entities are "in containment") */
+function nvImgCaption(e, id) {
+  if (e.imgCaption) return e.imgCaption;
+  if (e.status === "CONTAINED") return "A photograph of " + id + " in containment.";
+  if (e.status === "BREACHED") return "A photograph of " + id + " recorded during an active breach.";
+  return "A photograph of " + id + " under observation.";
+}
+
 function nvEntityDoc(e) {
   var id = termEntId(e.id);
   var cls = typeof CLS_LABELS !== "undefined" && CLS_LABELS[e.cls] ? CLS_LABELS[e.cls] + " (" + e.cls + ")" : e.cls;
@@ -431,7 +440,7 @@ function nvEntityDoc(e) {
     '<article class="nv-doc">' + nvHead(e.clr) + '<div class="nv-body">' +
     (e.img
       ? '<figure class="nv-fig"><img src="' + escHtml(e.img) + '" alt="' + escHtml(id + " — " + e.name) + '" />' +
-        "<figcaption>A photograph of " + escHtml(id) + " in containment.</figcaption></figure>"
+        "<figcaption>" + escHtml(nvImgCaption(e, id)) + "</figcaption></figure>"
       : "") +
     nvField("Item #", id) + nvField("Designation", e.name) + nvField("Object Class", cls) +
     nvField("Power Scale", e.ps) + nvField("Status", e.status) +

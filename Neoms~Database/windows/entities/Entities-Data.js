@@ -416,6 +416,7 @@ const ENTITIES = [
         disc: "20██-████-████",
         glyph: "\u271D",
         img: "../../Neoms~Universal-Fonts+Images/Entities-Data/Seraphim-Ghidorah/Seraphim-Ghidorah(Entity-PFP).gif",
+        imgCaption: "Footage of E-0333 recorded during a manifestation event.",
         bioImages: [
             {
                 src: "../../Neoms~Universal-Fonts+Images/Entities-Data/Seraphim-Ghidorah/Ghidorah-BlackHoles.jpg",
