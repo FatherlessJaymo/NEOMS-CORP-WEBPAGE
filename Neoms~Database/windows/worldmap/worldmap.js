@@ -13,23 +13,11 @@
 ============ */
 
 /* ── Classified locations mentioned in the reports ────────────
-   rep = index of the report filed there (opens on click).
-   All three are NeoMS-original operational designations, not places
-   named in the source; the cross site's coordinates are provisional
-   until the source establishes where the summoning happened. */
+   rep = index of the report filed there (opens on click). */
 const NM_CLASSIFIED = [
-  {
-    label: "Church Cross Site", clr: 4, lat: 35.36, lng: 138.73, ent: 333, rep: 0, unverified: true,
-    role: "Investigate sacrificial summoning and Ghidorah manifestations"
-  },
-  {
-    label: "Kyoto Heritage Zone", clr: 3, lat: 35.01, lng: 135.77, ent: 333, rep: 4,
-    role: "Investigate religious documents and the Priestess's teachings"
-  },
-  {
-    label: "Former Kumamoto Forward Post", clr: 5, lat: 32.8, lng: 130.7, ent: 333, rep: 2,
-    role: "Destroyed in the light-spear impact and sealed; a perimeter team monitors cult activity and stands by for emergency operations"
-  }
+  { label: "Consecrated Cross Site", clr: 4, lat: 35.36, lng: 138.73, ent: 333, rep: 0 },
+  { label: "Fifth Cross Site — Heritage Zone", clr: 3, lat: 35.01, lng: 135.77, ent: 333, rep: 4 },
+  { label: "Forward Post ██", clr: 5, lat: 32.8, lng: 130.7, ent: 333, rep: 2 }
 ];
 
 /* ── Stats header ───────────────────────────────────────────── */
@@ -452,13 +440,7 @@ ENTITIES.forEach(function (e) {
         .attr("class", "nm-cl-label")
         .attr("y", -12)
         .attr("text-anchor", "middle")
-        .text(ok ? c.label.toUpperCase() + (c.unverified ? " · UNVERIFIED" : "") : "[REDACTED] · CL-" + c.clr);
-      /* Hover tooltip: role + where the designation comes from */
-      grp
-        .append("title")
-        .text(ok
-          ? c.label + " — " + c.role + ". NeoMS-original designation" + (c.unverified ? "; coordinates unverified." : ".")
-          : "Classified location — CL-" + c.clr + " required");
+        .text(ok ? c.label.toUpperCase() : "[REDACTED] · CL-" + c.clr);
       function open() {
         const e = ENTITIES.find((x) => x.id === c.ent);
         if (!ok) {
