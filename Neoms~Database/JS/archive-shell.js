@@ -100,6 +100,80 @@ function arcLoadModule(bodyId, winType, data) {
     });
 }
 
+/* ── PANES ───────────────────────────────────────────────────── */
+/* Create a section's pane on first use (the module loads once) */
+function arcEnsurePane(type) {
+  var pane = document.getElementById("wbody_" + type);
+  if (!arcLoaded[type] || !pane) {
+    var tab = arcTab(type);
+    pane = document.createElement("section");
+    pane.className = "arc-pane arc-pane--" + type;
+    pane.id = "wbody_" + type;
+    pane.setAttribute("aria-label", tab.title);
+    pane.innerHTML = '<p class="arc-loading">Loading&#8230;</p>';
+    document.getElementById("arc-panes").appendChild(pane);
+    arcLoaded[type] = true;
+    arcLoadModule(type, type);
+  }
+  pane.classList.toggle("arc-pane--pinned", type === arcPinned);
+  return pane;
+}
+
+/* Show the current pane, plus the pinned one in split view */
+function arcShowPanes() {
+  document.querySelectorAll("#arc-panes .arc-pane").forEach(function (p) {
+    p.hidden = p.id !== "wbody_" + arcCurrent && p.id !== "wbody_" + arcPinned;
+  });
+}
+
+function arcRenderChips() {
+  var tab = arcTab(arcCurrent);
+  if (!tab) return;
+  var pinTab = arcPinned && arcTab(arcPinned);
+  document.getElementById("arc-chips").innerHTML =
+    '<span class="arc-chip on">CLR-' + tab.clr + "</span>" +
+    '<span class="arc-chip">' + String(ARC_TABS.indexOf(tab) + 1).padStart(2, "0") + " / " +
+    String(ARC_TABS.length).padStart(2, "0") + "</span>" +
+    '<button type="button" class="arc-chip arc-pin" id="arc-pin" title="' +
+    (pinTab ? "Close the side panel" : "Keep this section open on the right while you browse others") + '">' +
+    (pinTab ? "&#10005; Unpin " + escHtml(pinTab.title) : "&#8677; Pin to side") +
+    "</button>";
+}
+
+/* ── SPLIT VIEW ──────────────────────────────────────────────── */
+/* Pin a section to the right half; the left half keeps navigating */
+var arcPinned = null;
+var arcPrev = null;
+
+function arcPin(type) {
+  arcPinned = type;
+  document.getElementById("arc-panes").classList.add("split");
+  arcEnsurePane(type);
+
+  /* Fill the left side with the previous section, else the Log */
+  var left = arcPrev && arcPrev !== type ? arcTab(arcPrev) : null;
+  if (!left || userClearance < left.clr) left = arcTab(type === "main" ? "sites" : "main");
+  openWin(left.type);
+  window.dispatchEvent(new Event("resize"));
+}
+
+function arcUnpin() {
+  if (!arcPinned) return;
+  var pane = document.getElementById("wbody_" + arcPinned);
+  if (pane) pane.classList.remove("arc-pane--pinned");
+  arcPinned = null;
+  document.getElementById("arc-panes").classList.remove("split");
+  arcShowPanes();
+  arcRenderChips();
+  window.dispatchEvent(new Event("resize"));
+}
+
+document.addEventListener("click", function (e) {
+  if (!e.target.closest || !e.target.closest("#arc-pin")) return;
+  if (arcPinned) arcUnpin();
+  else arcPin(arcCurrent);
+});
+
 /* ── OPEN / CLOSE (the API window modules call) ──────────────── */
 function openWin(type, data) {
   if (type === "entity" && data !== undefined) {
@@ -116,28 +190,16 @@ function openWin(type, data) {
     return;
   }
 
-  var panes = document.getElementById("arc-panes");
-  if (!arcLoaded[type]) {
-    var pane = document.createElement("section");
-    pane.className = "arc-pane arc-pane--" + type;
-    pane.id = "wbody_" + type;
-    pane.setAttribute("aria-label", tab.title);
-    pane.innerHTML = '<p class="arc-loading">Loading&#8230;</p>';
-    panes.appendChild(pane);
-    arcLoaded[type] = true;
-    arcLoadModule(type, type);
-  }
+  /* Opening the pinned section from the nav brings it back full width */
+  if (type === arcPinned) arcUnpin();
 
-  panes.querySelectorAll(".arc-pane").forEach(function (p) {
-    p.hidden = p.id !== "wbody_" + type;
-  });
+  arcEnsurePane(type);
+  if (arcCurrent && arcCurrent !== type) arcPrev = arcCurrent;
   arcCurrent = type;
+  arcShowPanes();
 
   document.getElementById("arc-panetab").textContent = tab.title;
-  document.getElementById("arc-chips").innerHTML =
-    '<span class="arc-chip on">CLR-' + tab.clr + "</span>" +
-    '<span class="arc-chip">' + String(ARC_TABS.indexOf(tab) + 1).padStart(2, "0") + " / " +
-    String(ARC_TABS.length).padStart(2, "0") + "</span>";
+  arcRenderChips();
   arcRenderNav();
 
   /* The map draws to its container size — nudge it after showing */
@@ -145,6 +207,32 @@ function openWin(type, data) {
   if (type === "terminal") {
     var inp = document.getElementById("term-in");
     if (inp) inp.focus();
+  }
+}
+
+/* Panes are built with the clearance at load time, so drop the cached
+   ones and rebuild the visible one. The terminal and creator keep their
+   state (scrollback, half-filled forms). */
+var ARC_KEEP_ON_CLR = ["terminal", "entitycreator"];
+
+function arcRefreshPanes() {
+  Object.keys(arcLoaded).forEach(function (type) {
+    if (ARC_KEEP_ON_CLR.indexOf(type) !== -1) return;
+    var pane = document.getElementById("wbody_" + type);
+    if (pane) pane.remove();
+    delete arcLoaded[type];
+  });
+  if (arcPinned) {
+    var pinTab = arcTab(arcPinned);
+    if (pinTab && userClearance >= pinTab.clr) arcEnsurePane(arcPinned);
+    else arcUnpin();
+  }
+  if (!arcCurrent) return;
+  var tab = arcTab(arcCurrent);
+  if (tab && userClearance >= tab.clr) {
+    openWin(arcCurrent);
+  } else {
+    openWin("main");
   }
 }
 
@@ -165,7 +253,9 @@ function arcRenderNav() {
       '<a href="#' + t.type + '" data-type="' + t.type + '"' +
       (t.type === arcCurrent ? ' aria-current="page"' : "") +
       (locked ? ' class="locked" title="Requires CL-' + t.clr + '"' : "") +
-      ">" + t.label + (locked ? " <i>&#9632;</i>" : "") + "</a>"
+      ">" + t.label +
+      (locked ? ' <img class="lock-icon" src="../../Neoms~Universal-Fonts+Images/Icons/DB_Icons/Warning_Blue.png" alt="(locked)" />' : "") +
+      "</a>"
     );
   }).join("");
 }
@@ -189,20 +279,45 @@ function arcOpenDossier(id) {
     "E-" + String(id).padStart(4, "0") + (ent ? " · " + ent.name : "");
   body.innerHTML = '<div class="arc-doc-scroll" id="wbody_' + bodyId + '"><p class="arc-loading">Loading&#8230;</p></div>';
   wrap.hidden = false;
+  arcPlaceDossier();
   arcLoadModule(bodyId, "entity-detail", id);
+}
+
+/* In split view the dossier docks over the left column so the pinned
+   section stays visible; maximize still takes the whole screen */
+function arcPlaceDossier() {
+  var wrap = document.getElementById("arc-docwrap");
+  var left = arcPinned && !wrap.classList.contains("max") && document.getElementById("wbody_" + arcCurrent);
+  wrap.classList.toggle("docked", !!left);
+  if (!left) {
+    wrap.removeAttribute("style");
+    return;
+  }
+  var r = left.getBoundingClientRect();
+  wrap.style.left = r.left + "px";
+  wrap.style.top = r.top + "px";
+  wrap.style.width = r.width + "px";
+  wrap.style.height = r.height + "px";
+  wrap.style.right = wrap.style.bottom = "auto";
 }
 
 function arcCloseDossier() {
   var wrap = document.getElementById("arc-docwrap");
   wrap.hidden = true;
-  wrap.classList.remove("max");
+  wrap.classList.remove("max", "docked");
+  wrap.removeAttribute("style");
   document.getElementById("arc-doc-body").innerHTML = "";
 }
+
+window.addEventListener("resize", function () {
+  if (!document.getElementById("arc-docwrap").hidden) arcPlaceDossier();
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("arc-doc-close").addEventListener("click", arcCloseDossier);
   document.getElementById("arc-doc-max").addEventListener("click", function () {
     document.getElementById("arc-docwrap").classList.toggle("max");
+    arcPlaceDossier();
   });
   document.getElementById("arc-docwrap").addEventListener("click", function (e) {
     if (e.target === this) arcCloseDossier();
@@ -318,13 +433,15 @@ function arcLoader() {
 
 /* ── BOOT ────────────────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", function () {
-  /* Re-render the nav whenever clearance changes (setClearance is
-     defined in desktop-core.js, which loads after this file) */
+  /* Re-render the nav and panes whenever clearance changes (setClearance
+     is defined in desktop-core.js, which loads after this file) */
   if (typeof setClearance === "function") {
     var baseSetClearance = setClearance;
     window.setClearance = function (level) {
+      var before = userClearance;
       baseSetClearance(level);
       arcRenderNav();
+      if (userClearance !== before) arcRefreshPanes();
     };
   }
 

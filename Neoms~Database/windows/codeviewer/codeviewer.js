@@ -41,7 +41,7 @@
     btn.style.cssText = accessible ? "" : "opacity:0.4;cursor:not-allowed;";
     btn.innerHTML =
       (file.dir ? '<span class="cv-dir">' + escHtml(file.dir) + '</span>' : '') +
-      (accessible ? "" : '<span style="color:#553333;font-size:9px;display:block;">\u{1F512} CL-' + file.clr + ' REQUIRED</span>') +
+      (accessible ? "" : '<span style="color:#553333;font-size:9px;display:block;"><img class="lock-icon" src="../../Neoms~Universal-Fonts+Images/Icons/DB_Icons/Warning_Blue.png" alt="Locked" /> CL-' + file.clr + ' REQUIRED</span>') +
       escHtml(file.label) +
       (file.desc ? '<span class="cv-fdesc">' + escHtml(file.desc) + '</span>' : '');
     btn.title = accessible ? (file.path || file.label) : "Clearance " + file.clr + " required";

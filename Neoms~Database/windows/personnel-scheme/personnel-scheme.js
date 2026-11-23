@@ -84,23 +84,44 @@ const ROLES = [
   }
 ];
 
+/* Clearance level per position — the source of truth for CL tiers.
+   Pip colours live in Databaselog.css (--clr-1 … --clr-5). */
+const POSITION_CLR = {
+  "Synthetic Unit": 1,
+  "Synthetic Asset": 1,
+  "Core Units Personnel": 2,
+  "Sub Units Personnel": 2,
+  "Core Command Director": 2,
+  "Sub Command Director": 2,
+  "Sentinel Senior Officer Forces": 3,
+  "Sentinel Forces": 3,
+  "Anomaly Research Specialist": 3,
+  "Anomaly Research Analyst": 3,
+  "Directive Control Officer": 4,
+  "Overseer Prime": 5
+};
+
+/* Departments sharing a clearance level use light/dark shades of that level's colour */
 const DEPT_COLORS = {
   "SYNTHETICS":              { border: "#00cc66", color: "#00cc66" },
-  "FACILITY UNITS":          { border: "#4488ff", color: "#4488ff" },
-  "FACILITY COMMAND":        { border: "#ffaa00", color: "#ffaa00" },
+  "FACILITY UNITS":          { border: "#77aaff", color: "#77aaff" },
+  "FACILITY COMMAND":        { border: "#4488ff", color: "#4488ff" },
   "CONTAINMENT ENFORCEMENT": { border: "#ff3366", color: "#ff3366" },
-  "CONTAINMENT RESEARCH":    { border: "#cc44ff", color: "#cc44ff" },
-  "PRIME DIRECTOR":         { border: "#ff6600", color: "#ff6600" }
+  "CONTAINMENT RESEARCH":    { border: "#ff85a8", color: "#ff85a8" },
+  "PRIME DIRECTOR":          { border: "#ff6600", color: "#ff6600" }
 };
+
+const clrBadge = n => `<span class="ss-clr"><span class="clr-pip clr-${n}"></span>CL-${n}</span>`;
 
 const wrap = document.getElementById("scheme-content");
 if (wrap) {
   wrap.innerHTML = ROLES.map(group => {
     const dc = DEPT_COLORS[group.dept] || { border: "#334", color: "#667" };
+    const levels = [...new Set(group.positions.map(p => POSITION_CLR[p.title]))].sort();
 
     const rows = group.positions.map(p => `
       <div class="ss-role-card" style="border-left-color:${dc.border}33;">
-        <div class="ss-role-title">${p.title}</div>
+        <div class="ss-role-title">${p.title} ${clrBadge(POSITION_CLR[p.title])}</div>
         <div class="ss-role-dept" style="color:${dc.color};">${group.dept}</div>
         <div class="ss-role-bio">${p.bio}</div>
       </div>`).join("");
@@ -108,7 +129,7 @@ if (wrap) {
     return `
       <div class="ss-dept-group">
         <div class="ss-dept-header" style="color:${dc.color};border-bottom-color:${dc.border}44;">
-          &#9658; ${group.dept}
+          &#9658; ${group.dept} ${levels.map(clrBadge).join("")}
         </div>
         ${rows}
       </div>`;

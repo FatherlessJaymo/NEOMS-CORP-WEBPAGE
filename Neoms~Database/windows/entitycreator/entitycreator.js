@@ -514,3 +514,315 @@ if (submitBtn) {
       });
   });
 }
+
+/* ── DRAFTS ──────────────────────────────────────────────────
+   Each entity in progress is a draft saved in localStorage, so several
+   can be open as tabs and they survive a reload. There is still one
+   form: switching tabs saves the current draft and loads the other. */
+var EC_DRAFTS_KEY = "neoms_ec_drafts";
+var EC_FIELDS = [
+  "ec-id", "ec-clr", "ec-name", "ec-site", "ec-cls", "ec-status", "ec-ps", "ec-disc",
+  "ec-glyph", "ec-sentient", "ec-hostile", "ec-safety", "ec-img", "ec-discoveredby",
+  "ec-desc", "ec-aprop", "ec-phys", "ec-dims"
+];
+/* Field suffixes inside protocol/report cards, e.g. ec-proto-type-3 */
+var EC_PROTO_KEYS = ["type", "clr", "desc", "equip", "dur", "personnel"];
+var EC_REPORT_KEYS = ["title", "sub", "date", "type", "clr", "summary", "file", "author"];
+var EC_EMPTY_OUTPUT = "// Click ▶ GENERATE to build your entity object.";
+
+var ecStore = ecLoadStore();
+var ecSaveTimer = null;
+
+function ecLoadStore() {
+  try {
+    var s = JSON.parse(localStorage.getItem(EC_DRAFTS_KEY));
+    if (s && Array.isArray(s.drafts)) return s;
+  } catch (e) {}
+  return { drafts: [], open: [], active: null, explorer: false };
+}
+
+function ecPersist() {
+  try {
+    localStorage.setItem(EC_DRAFTS_KEY, JSON.stringify(ecStore));
+  } catch (e) {}
+}
+
+function ecDraft(id) {
+  return ecStore.drafts.filter(function (d) { return d.id === id; })[0];
+}
+
+function ecEsc(s) {
+  return String(s).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+  });
+}
+
+/* ── Form <-> draft data ── */
+function ecEntryValues(prefix, count, keys) {
+  var rows = [];
+  for (var i = 1; i <= count; i++) {
+    if (!document.getElementById(prefix + i)) continue;
+    var row = {};
+    keys.forEach(function (k) {
+      var el = document.getElementById(prefix + k + "-" + i);
+      row[k] = el ? el.value : "";
+    });
+    rows.push(row);
+  }
+  return rows;
+}
+
+function ecFillEntry(prefix, i, row) {
+  Object.keys(row).forEach(function (k) {
+    var el = document.getElementById(prefix + k + "-" + i);
+    if (el) el.value = row[k];
+  });
+}
+
+function ecSnapshot() {
+  var fields = {};
+  EC_FIELDS.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) fields[id] = el.value;
+  });
+  return {
+    fields: fields,
+    protocols: ecEntryValues("ec-proto-", protocolCount, EC_PROTO_KEYS),
+    reports: ecEntryValues("ec-report-", reportCount, EC_REPORT_KEYS)
+  };
+}
+
+function ecApply(data) {
+  EC_FIELDS.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var v = data && data.fields ? data.fields[id] : undefined;
+    if (v === undefined) v = el.tagName === "SELECT" ? el.options[0].value : "";
+    el.value = v;
+  });
+
+  protocolList.innerHTML = '<div class="ec-empty-msg">No protocols added. Click "+ ADD PROTOCOL" to begin.</div>';
+  protocolCount = 0;
+  ((data && data.protocols) || []).forEach(function (p) {
+    addProtocol();
+    ecFillEntry("ec-proto-", protocolCount, p);
+  });
+
+  reportList.innerHTML = '<div class="ec-empty-msg">No reports added. Click "+ ADD REPORT" to begin.</div>';
+  reportCount = 0;
+  ((data && data.reports) || []).forEach(function (r) {
+    addReport();
+    ecFillEntry("ec-report-", reportCount, r);
+  });
+
+  var pre = document.getElementById("ec-output-pre");
+  if (pre) pre.textContent = EC_EMPTY_OUTPUT;
+}
+
+function ecLabel(d) {
+  var f = (d.data && d.data.fields) || {};
+  if (f["ec-name"]) return f["ec-name"];
+  if (f["ec-id"]) return "E-" + String(f["ec-id"]).padStart(4, "0");
+  return "Untitled draft";
+}
+
+/* Nothing typed yet: no text in any input and no protocols/reports */
+function ecIsEmpty(d) {
+  var x = d.data;
+  if (!x) return true;
+  if (x.protocols.length || x.reports.length) return false;
+  return EC_FIELDS.every(function (id) {
+    var el = document.getElementById(id);
+    return (el && el.tagName === "SELECT") || !x.fields[id];
+  });
+}
+
+/* ── Draft actions ── */
+function ecSaveActive() {
+  clearTimeout(ecSaveTimer);
+  var d = ecDraft(ecStore.active);
+  if (!d) return;
+  d.data = ecSnapshot();
+  d.updated = Date.now();
+  ecPersist();
+  ecRenderDrafts();
+}
+
+function ecScheduleSave() {
+  clearTimeout(ecSaveTimer);
+  ecSaveTimer = setTimeout(ecSaveActive, 300);
+}
+
+function ecActivate(id) {
+  if (id === ecStore.active) return;
+  if (ecStore.active) ecSaveActive();
+  var d = ecDraft(id);
+  if (!d) return;
+  if (ecStore.open.indexOf(id) === -1) ecStore.open.push(id);
+  ecStore.active = id;
+  ecApply(d.data);
+  ecPersist();
+  ecRenderDrafts();
+}
+
+function ecNewDraft() {
+  /* Reuse the current draft if nothing has been typed into it yet */
+  var cur = ecDraft(ecStore.active);
+  if (cur) ecSaveActive();
+  if (!cur || !ecIsEmpty(cur)) {
+    var d = { id: "d" + Date.now().toString(36), updated: Date.now(), data: null };
+    ecStore.drafts.unshift(d);
+    ecActivate(d.id);
+  }
+  var profileTab = tabBar && tabBar.querySelector('[data-tab="profile"]');
+  if (profileTab) profileTab.click();
+  var idField = document.getElementById("ec-id");
+  if (idField) idField.focus();
+}
+
+/* Remove id from the open tabs; if it was active, open its neighbour */
+function ecDropTab(id) {
+  var i = ecStore.open.indexOf(id);
+  if (i !== -1) ecStore.open.splice(i, 1);
+  if (id !== ecStore.active) return;
+  ecStore.active = null;
+  var next = ecStore.open[Math.min(i, ecStore.open.length - 1)];
+  if (next) ecActivate(next);
+  else ecNewDraft();
+}
+
+function ecCloseTab(id) {
+  if (id === ecStore.active) ecSaveActive();
+  var d = ecDraft(id);
+  /* Closing a blank draft discards it; anything else stays in DRAFTS */
+  if (d && ecIsEmpty(d)) {
+    ecStore.drafts = ecStore.drafts.filter(function (x) { return x.id !== id; });
+  }
+  ecDropTab(id);
+  ecPersist();
+  ecRenderDrafts();
+}
+
+function ecDeleteDraft(id) {
+  var d = ecDraft(id);
+  if (!d) return;
+  if (id === ecStore.active) ecSaveActive();
+  if (!ecIsEmpty(d) && !confirm('Delete draft "' + ecLabel(d) + '"? This cannot be undone.')) return;
+  ecStore.drafts = ecStore.drafts.filter(function (x) { return x.id !== id; });
+  ecDropTab(id);
+  ecPersist();
+  ecRenderDrafts();
+}
+
+/* ── Rendering ── */
+function ecRenderDrafts() {
+  var tabs = document.getElementById("ec-draft-tabs");
+  if (tabs) {
+    tabs.innerHTML = ecStore.open.map(function (id) {
+      var d = ecDraft(id);
+      if (!d) return "";
+      var on = id === ecStore.active;
+      var label = ecEsc(ecLabel(d));
+      return (
+        '<div class="ec-draft-tab' + (on ? " ec-draft-tab--active" : "") + '">' +
+        '<button class="ec-draft-tab-name" role="tab" aria-selected="' + on + '" data-draft="' + id + '" title="' + label + '">' +
+        label + "</button>" +
+        '<button class="ec-draft-tab-close" data-close="' + id + '" aria-label="Close ' + label +
+        '" title="Close tab (draft stays saved)">&#215;</button></div>'
+      );
+    }).join("");
+  }
+
+  var list = document.getElementById("ec-explorer-list");
+  if (list) {
+    list.innerHTML = ecStore.drafts.length
+      ? ecStore.drafts.map(function (d) {
+          var f = (d.data && d.data.fields) || {};
+          var meta = [
+            f["ec-id"] ? "E-" + String(f["ec-id"]).padStart(4, "0") : null,
+            f["ec-cls"] || null,
+            new Date(d.updated).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+          ].filter(Boolean).join(" · ");
+          var on = d.id === ecStore.active;
+          var open = ecStore.open.indexOf(d.id) !== -1;
+          return (
+            '<li class="ec-explorer-item' + (on ? " ec-explorer-item--active" : "") + '">' +
+            '<button class="ec-explorer-open" data-open="' + d.id + '">' +
+            '<span class="ec-explorer-name">' + (open ? "&#9679; " : "") + ecEsc(ecLabel(d)) + "</span>" +
+            '<span class="ec-explorer-meta">' + ecEsc(meta) + "</span></button>" +
+            '<button class="ec-explorer-del" data-del="' + d.id + '" aria-label="Delete ' + ecEsc(ecLabel(d)) +
+            '" title="Delete draft">&#128465;</button></li>'
+          );
+        }).join("")
+      : '<li class="ec-explorer-empty">No saved drafts.</li>';
+  }
+
+  var count = document.getElementById("ec-drafts-count");
+  if (count) count.textContent = "(" + ecStore.drafts.length + ")";
+}
+
+function ecSetExplorer(show) {
+  var ex = document.getElementById("ec-explorer");
+  var btn = document.getElementById("ec-drafts-toggle");
+  if (ex) ex.hidden = !show;
+  if (btn) btn.setAttribute("aria-expanded", String(show));
+  ecStore.explorer = show;
+  ecPersist();
+}
+
+/* ── Wiring ── */
+var ecDraftTabs = document.getElementById("ec-draft-tabs");
+if (ecDraftTabs) {
+  ecDraftTabs.addEventListener("click", function (e) {
+    var close = e.target.closest("[data-close]");
+    if (close) return ecCloseTab(close.dataset.close);
+    var tab = e.target.closest("[data-draft]");
+    if (tab) ecActivate(tab.dataset.draft);
+  });
+  /* Middle-click closes a tab, like a browser */
+  ecDraftTabs.addEventListener("auxclick", function (e) {
+    var tab = e.button === 1 && e.target.closest("[data-draft]");
+    if (tab) ecCloseTab(tab.dataset.draft);
+  });
+}
+
+var ecExplorerList = document.getElementById("ec-explorer-list");
+if (ecExplorerList) {
+  ecExplorerList.addEventListener("click", function (e) {
+    var del = e.target.closest("[data-del]");
+    if (del) return ecDeleteDraft(del.dataset.del);
+    var open = e.target.closest("[data-open]");
+    if (open) ecActivate(open.dataset.open);
+  });
+}
+
+var ecNewBtn = document.getElementById("ec-draft-new");
+if (ecNewBtn) ecNewBtn.addEventListener("click", ecNewDraft);
+
+var ecToggleBtn = document.getElementById("ec-drafts-toggle");
+if (ecToggleBtn) {
+  ecToggleBtn.addEventListener("click", function () {
+    ecSetExplorer(document.getElementById("ec-explorer").hidden);
+  });
+}
+
+/* Autosave: typing, dropdowns, and adding/removing protocol or report cards */
+var ecBody = document.querySelector(".ec-body");
+if (ecBody) {
+  ecBody.addEventListener("input", ecScheduleSave);
+  ecBody.addEventListener("change", ecScheduleSave);
+  ecBody.addEventListener("click", function (e) {
+    if (e.target.closest(".ec-add-btn, .ec-entry-remove")) ecScheduleSave();
+  });
+}
+window.addEventListener("pagehide", function () {
+  if (ecSaveTimer) ecSaveActive();
+});
+
+/* ── Restore last session ── */
+ecStore.open = ecStore.open.filter(function (id) { return ecDraft(id); });
+var ecStart = ecDraft(ecStore.active) ? ecStore.active : ecStore.open[0];
+ecStore.active = null;
+if (ecStart) ecActivate(ecStart);
+else ecNewDraft();
+ecSetExplorer(!!ecStore.explorer);

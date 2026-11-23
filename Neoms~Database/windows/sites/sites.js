@@ -23,7 +23,7 @@ const cardsHTML = SITES.map(s => {
     if (count > 0) {
       manifestInner = `
         <div class="site-ent-classified">
-          <span class="site-ent-classified-icon">&#128274;</span>
+          <img class="lock-icon site-ent-classified-icon" src="../../Neoms~Universal-Fonts+Images/Icons/DB_Icons/Warning_Blue.png" alt="Locked" />
           <div>
             <div class="site-ent-classified-label">CLASSIFIED</div>
             <div class="site-ent-classified-sub">

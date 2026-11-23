@@ -84,12 +84,26 @@ document.addEventListener("click", function (e) {
 });
 
 /* ── CLEARANCE ───────────────────────────────────────────────── */
+/* Matches the Personnel Position Scheme tiers and colours */
+var CLR_TIERS = {
+  1: { name: "SYNTHETICS",       color: "#00cc66" },
+  2: { name: "FACILITY",         color: "#4488ff" },
+  3: { name: "CONTAINMENT",      color: "#ff3366" },
+  4: { name: "DIRECTIVE CTRL",   color: "#ff6600" },
+  5: { name: "OVERSEER PRIME",   color: "#ffcc33" }
+};
+
 function setClearance(level) {
   level = Math.max(1, Math.min(5, parseInt(level, 10) || 1));
   userClearance = level;
   for (var i = 1; i <= 5; i++) {
     var d = document.getElementById("cd" + i);
     if (d) d.classList.toggle("active", i <= level);
+  }
+  var tier = document.getElementById("clr-tier");
+  if (tier) {
+    tier.textContent = "CL-" + level + " " + CLR_TIERS[level].name;
+    tier.style.color = CLR_TIERS[level].color;
   }
   try { localStorage.setItem(LS_CLR_KEY, String(level)); } catch (e) {}
 }

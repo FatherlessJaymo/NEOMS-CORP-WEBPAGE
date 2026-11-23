@@ -717,7 +717,31 @@ body::after {
     background: rgba(0, 140, 140, 0.06);
 }
 
+/* ── LOCKED / CLASSIFIED ICON ──────────────────────────────── */
+/* Icons/DB_Icons/Warning_Blue.png — sized to the surrounding text */
+.lock-icon {
+    display: inline-block;
+    width: 1.3em;
+    height: 1.3em;
+    vertical-align: middle;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+}
+
 /* ── CLEARANCE PIPS ────────────────────────────────────────── */
+/* One colour per clearance level, shared with the Personnel Position Scheme
+   (personnel-scheme.js) and CLR_TIERS (desktop-core.js):
+   CL-1 Synthetics · CL-2 Facility · CL-3 Containment ·
+   CL-4 Directive Control Officer · CL-5 Overseer Prime. */
+:root {
+    --clr-1: #00cc66;
+    --clr-2: #4488ff;
+    --clr-3: #ff3366;
+    --clr-4: #ff6600;
+    --clr-5: #ffcc33;
+    --clr-5-glow: 0 0 6px #ffcc33;
+}
+
 .clr-pip {
     display: inline-block;
     width: 8px;
@@ -726,19 +750,20 @@ body::after {
 }
 
 .clr-1 {
-    background: #006633;
+    background: var(--clr-1);
 }
 .clr-2 {
-    background: #005588;
+    background: var(--clr-2);
 }
 .clr-3 {
-    background: #886600;
+    background: var(--clr-3);
 }
 .clr-4 {
-    background: #880033;
+    background: var(--clr-4);
 }
 .clr-5 {
-    background: #880000;
+    background: var(--clr-5);
+    box-shadow: var(--clr-5-glow);
 }
 
 /* ── ENTITY GLYPH ──────────────────────────────────────────── */

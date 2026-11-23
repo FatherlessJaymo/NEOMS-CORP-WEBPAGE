@@ -249,6 +249,25 @@ body::after {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
+/* Split view: pinned section on the right, browsing on the left */
+.arc-panes.split .arc-pane {
+  right: calc(50% + 6px);
+}
+.arc-panes.split .arc-pane--pinned {
+  left: calc(50% + 6px);
+  right: 0;
+  border-left: 1px solid var(--arc-line);
+}
+.arc-pin {
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.arc-pin:hover,
+.arc-pin:focus-visible {
+  color: var(--arc-fg);
+  border-color: var(--arc-fg);
+}
 /* Window modules expect to fill their container */
 .arc-pane > * {
   flex: 1 0 auto;
@@ -322,8 +341,18 @@ body::after {
   transform: rotate(45deg);
 }
 .arc-clr .clr-dot.active {
-  background: var(--arc-teal);
-  border-color: var(--arc-teal);
+  border-color: transparent;
+}
+#cd1.active { background: var(--clr-1); }
+#cd2.active { background: var(--clr-2); }
+#cd3.active { background: var(--clr-3); }
+#cd4.active { background: var(--clr-4); }
+#cd5.active { background: var(--clr-5); box-shadow: var(--clr-5-glow); }
+.arc-clr .clr-tier {
+  margin-left: 6px;
+  font-size: 0.75em;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 .arc-hud-brand {
   font-size: 26px;
@@ -521,6 +550,17 @@ body::after {
 }
 .arc-docwrap.max {
   padding: 0;
+}
+/* Docked over the left column of split view (position set in JS) */
+.arc-docwrap.docked {
+  padding: 0;
+  background: none;
+  place-items: stretch;
+}
+.arc-docwrap.docked .arc-docwin {
+  width: 100%;
+  height: 100%;
+  box-shadow: none;
 }
 .arc-docwrap.max .arc-docwin {
   width: 100%;
@@ -801,6 +841,20 @@ body::after {
   }
   .arc-hud {
     display: none;
+  }
+}
+/* Too narrow for side-by-side: stack the pinned section underneath */
+@media (max-width: 800px) {
+  .arc-panes.split .arc-pane {
+    right: 0;
+    bottom: calc(50% + 6px);
+  }
+  .arc-panes.split .arc-pane--pinned {
+    left: 0;
+    top: calc(50% + 6px);
+    bottom: 0;
+    border-left: 0;
+    border-top: 1px solid var(--arc-line);
   }
 }
 @media (max-width: 640px) {
