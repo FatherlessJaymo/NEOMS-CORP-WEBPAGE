@@ -1,0 +1,430 @@
+/* ============================================================
+   NEOMS~DATABASE — FILE BROWSER (JS/file-browser.js), used by the
+   Entity Registry and Personnel tabs. After SCiPNET's DATABASE
+   tab: FILE PATH breadcrumb, toolbar, a gridded panel with
+   NAME / SIZE / MODIFIED / PERMISSIONS, and a status bar.
+   Selectors are prefixed with .fb-root so they beat the archive
+   theme's generic table rules.
+   ============================================================ */
+
+.fb-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 14px 18px 8px;
+  box-sizing: border-box;
+  font-family: "Barlow", system-ui, sans-serif;
+  color: #e6e6e6;
+}
+.fb-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ── Path bar + toolbar ── */
+.fb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  margin-bottom: 12px;
+}
+.fb-crumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font: 700 12px "JetBrains Mono", Consolas, monospace;
+}
+.fb-root .fb-crumb {
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  color: #e6e6e6;
+  font: inherit;
+  cursor: pointer;
+}
+.fb-root .fb-crumb:hover,
+.fb-root .fb-crumb:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+.fb-root .fb-crumb--root {
+  background: #fff;
+  color: #000;
+  padding: 3px 8px;
+}
+.fb-sep {
+  color: #e6e6e6;
+}
+.fb-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.fb-root .fb-icon,
+.fb-root .fb-btn {
+  height: 28px;
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #e6e6e6;
+  font: 600 11px "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.fb-root .fb-icon {
+  width: 28px;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+.fb-root .fb-btn {
+  padding: 0 12px;
+}
+.fb-root .fb-icon:hover:not(:disabled),
+.fb-root .fb-btn:hover:not(:disabled),
+.fb-root .fb-icon:focus-visible,
+.fb-root .fb-btn:focus-visible {
+  border-color: #e6e6e6;
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+.fb-root .fb-icon:disabled,
+.fb-root .fb-btn:disabled {
+  color: #555;
+  border-color: #262626;
+  cursor: not-allowed;
+}
+
+/* ── Panel (faint grid background) ── */
+.fb-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #2e2e2e;
+  padding: 0 10px;
+  background-color: #070707;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.fb-root .fb-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.fb-root .fb-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0 !important;
+  background: #0b0b0b !important;
+  border: 0 !important;
+  border-bottom: 1px solid #3a3a3a !important;
+  text-align: left;
+}
+.fb-root .fb-table th button,
+.fb-root .fb-table th span {
+  display: block;
+  width: 100%;
+  padding: 12px 8px;
+  background: none;
+  border: 0;
+  color: #e6e6e6;
+  font: 700 11px "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+}
+.fb-root .fb-table th span {
+  cursor: default;
+}
+.fb-root .fb-table th button::after {
+  content: " " attr(data-arrow);
+}
+.fb-root .fb-table th button:focus-visible {
+  outline: 1px solid #e6e6e6;
+  outline-offset: -1px;
+}
+.fb-root .fb-table tbody tr {
+  background: transparent !important;
+  outline: none !important;
+  cursor: pointer;
+}
+.fb-root .fb-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+.fb-root .fb-table tbody tr.sel,
+.fb-root .fb-table tbody tr:focus-visible {
+  background: rgba(255, 255, 255, 0.09) !important;
+  outline: 1px solid #555 !important;
+  outline-offset: -1px;
+}
+.fb-root .fb-table td {
+  padding: 8px !important;
+  border: 0 !important;
+  font: 13px "Barlow", system-ui, sans-serif !important;
+  color: #b5b5b5 !important;
+  white-space: nowrap;
+}
+.fb-root .fb-table td.fb-name {
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: 500;
+}
+.fb-col-size {
+  width: 110px;
+}
+.fb-col-mod {
+  width: 220px;
+}
+.fb-col-perm {
+  width: 130px;
+}
+
+/* Icons with a red lock badge for files above your clearance */
+.fb-ico {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  vertical-align: -4px;
+}
+.fb-ico svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #e6e6e6;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+/* Sits on the icon's top-right corner, lock centred in the circle */
+.fb-lock {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid #e0443a;
+  border-radius: 50%;
+  background: #000;
+}
+.fb-ico .fb-lock svg {
+  display: block;
+  width: 8px;
+  height: 8px;
+  stroke: #e0443a;
+  stroke-width: 1.4;
+}
+/* Bigger badge on grid-view tiles */
+.fb-root .fb-tile .fb-lock {
+  top: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+}
+.fb-root .fb-tile .fb-lock svg {
+  width: 11px;
+  height: 11px;
+}
+.fb-root .locked td.fb-name,
+.fb-tile.locked .fb-tile-name {
+  color: #8a8a8a !important;
+}
+
+/* Grid view */
+.fb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  padding: 14px 0;
+}
+.fb-root .fb-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 6px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #fff;
+  font: 13px "Barlow", system-ui, sans-serif;
+  cursor: pointer;
+}
+.fb-root .fb-tile .fb-ico {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+}
+.fb-root .fb-tile:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.fb-root .fb-tile.sel,
+.fb-root .fb-tile:focus-visible {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: #555;
+  outline: none;
+}
+.fb-tile-name {
+  word-break: break-all;
+  text-align: center;
+}
+.fb-empty {
+  padding: 30px 8px !important;
+  color: #8a8a8a;
+  text-align: center;
+}
+
+/* ── Entity preview card (hover / focus) ── */
+.fb-peek {
+  position: fixed;
+  z-index: 1100;
+  width: 340px;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  padding: 12px;
+  background: #0d0d0d;
+  border: 1px solid #3a3a3a;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75);
+  color: #e6e6e6;
+  font: 13px/1.4 "Barlow", system-ui, sans-serif;
+  pointer-events: none;
+  animation: fb-peek-in 0.15s ease;
+}
+.fb-peek[hidden] {
+  display: none;
+}
+@keyframes fb-peek-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fb-peek {
+    animation: none;
+  }
+}
+.fb-peek-img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+}
+.fb-peek-img--locked {
+  display: grid;
+  place-items: center;
+  border-color: #e0443a;
+}
+.fb-peek-img--icon {
+  display: grid;
+  place-items: center;
+}
+.fb-peek-img--icon svg {
+  width: 52px;
+  height: 52px;
+  fill: none;
+  stroke: #8a8a8a;
+  stroke-width: 1.2;
+}
+.fb-peek-img--locked svg {
+  width: 34px;
+  height: 34px;
+  fill: none;
+  stroke: #e0443a;
+  stroke-width: 1;
+}
+.fb-peek-text b {
+  display: block;
+  font: 700 11px "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 0.1em;
+  color: #8a8a8a;
+}
+.fb-peek-text strong {
+  display: block;
+  margin: 2px 0 6px;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.fb-peek-text dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1px 10px;
+  margin: 0;
+  font-size: 12px;
+}
+.fb-peek-text dt {
+  color: #8a8a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  padding-top: 2px;
+}
+.fb-peek-text dd {
+  margin: 0;
+}
+.fb-peek-text .st-CONTAINED { color: #7fd18b; }
+.fb-peek-text .st-MONITORED { color: #e5c454; }
+.fb-peek-text .st-BREACHED { color: #ff5555; }
+.fb-peek-desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid #262626;
+  font-size: 12px;
+  color: #b5b5b5;
+}
+.fb-peek-redact {
+  display: block;
+  margin: 6px 0;
+  color: #e6e6e6;
+  background: #e6e6e6;
+  width: fit-content;
+}
+.fb-peek-deny {
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #e0443a;
+}
+
+/* ── Status bar ── */
+.fb-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+  font-size: 12px;
+  color: #b5b5b5;
+}
+#fb-sel {
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .fb-col-mod,
+  .fb-col-perm {
+    display: none;
+  }
+  .fb-root .fb-btn {
+    padding: 0 8px;
+  }
+}

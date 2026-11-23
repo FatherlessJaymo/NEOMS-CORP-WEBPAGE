@@ -414,20 +414,83 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
         <button class="ed-rpt-sort" data-sort="desc" title="Sort order">NEW &#8595;</button>
       </div>`;
 
-    /* ── Build a single report card ── */
+    /* ── Build a single report — SCP-style collapsible document ──
+       Optional fields on top of the basic ones:
+         location, personnel, foreword  — header block
+         log: [{ t, who, text } | { note } | "plain line"]
+         notes                          — closing statement      */
+    function staffName(sid) {
+      const s =
+        typeof personnel !== "undefined"
+          ? personnel.find(function (x) {
+              return x.id === sid;
+            })
+          : null;
+      return s ? (s.fname + " " + s.lname).trim() + " (S-" + s.id + ")" : "S-" + sid;
+    }
+
+    /* Every report is filed by Nova (S-1002, Overseer Prime). Anyone else
+       on the report — the old `author` field plus `contributors` — is
+       listed under "With". */
+    const REPORT_FILER = 1002;
+    function reportWith(r) {
+      const ids = [r.author].concat(Array.isArray(r.contributors) ? r.contributors : []);
+      return ids
+        .filter(function (sid, i) {
+          return sid && sid !== REPORT_FILER && ids.indexOf(sid) === i;
+        })
+        .map(staffName)
+        .join(", ");
+    }
+
+    function buildLog(log) {
+      const lines = log
+        .map(function (l) {
+          if (typeof l === "string") return `<p>${l}</p>`;
+          if (l.note) return `<p class="ed-log-note">${l.note}</p>`;
+          return `<p>${l.t ? `<span class="ed-log-t">[${l.t}]</span> ` : ""}${
+            l.who ? `<b class="ed-log-who">${l.who}:</b> ` : ""
+          }${l.text || ""}</p>`;
+        })
+        .join("");
+      return `<div class="ed-report-log"><p class="ed-log-mark">&lt;Begin Log&gt;</p>${lines}<p class="ed-log-mark">&lt;End Log&gt;</p></div>`;
+    }
+
     function buildCard(r) {
       const col = TYPE_COLORS[r.type] || "#667788";
       const locked = r.clr && clr < r.clr;
-      const author =
-        r.author && typeof personnel !== "undefined"
-          ? personnel.find(function (x) {
-              return x.id === r.author;
-            })
-          : null;
+      const label = `<span class="ed-report-type" style="color:${col};">${r.type || "REPORT"}</span>
+          <span class="ed-report-title">${r.title}${r.subtitle ? " (" + r.subtitle + ")" : ""}</span>`;
+      const attrs = `data-type="${r.type || ""}" data-date="${r.date || ""}" style="--rpt-col:${col};"`;
 
-      const summaryHTML = locked
-        ? `<div class="ed-report-locked"><img class="lock-icon" src="../../Neoms~Universal-Fonts+Images/Icons/DB_Icons/Warning_Blue.png" alt="Locked" /> SUMMARY CLASSIFIED — CL-${r.clr} CLEARANCE REQUIRED</div>`
-        : `<div class="page-text ed-report-summary">${r.summary || "No summary provided."}</div>`;
+      if (locked) {
+        return `
+    <div class="ed-report-card ed-report-card--locked" ${attrs}>
+      <div class="ed-report-toggle" aria-disabled="true">
+        <span class="ed-report-sign">&#215;</span>
+        <span class="ed-report-label">${label}</span>
+        <span class="ed-report-lock">CL-${r.clr} CLEARANCE REQUIRED</span>
+      </div>
+    </div>`;
+      }
+
+      const fields = [
+        ["Date", r.date],
+        ["Location", r.location],
+        ["Personnel", r.personnel],
+        ["Filed By", staffName(REPORT_FILER)],
+        ["With", reportWith(r)],
+        ["Clearance", r.clr ? "CL-" + r.clr + "+" : ""],
+        ["Foreword", r.foreword],
+        ["Summary", r.summary || (r.log ? "" : "No summary provided.")]
+      ]
+        .filter(function (f) {
+          return f[1];
+        })
+        .map(function (f) {
+          return `<dt>${f[0]}</dt><dd>${f[1]}</dd>`;
+        })
+        .join("");
 
       const fileHTML = r.fileUrl
         ? `<a href="${r.fileUrl}" target="_blank" rel="noopener noreferrer" class="ed-report-file">&#128196; ${r.file || "VIEW FILE"}</a>`
@@ -435,36 +498,20 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
           ? `<span class="ed-report-file-offline">&#128196; ${r.file} <span class="ed-report-file-note">(OFFLINE)</span></span>`
           : "";
 
-      const contribHTML =
-        Array.isArray(r.contributors) && r.contributors.length > 0
-          ? `<span class="ed-report-contribs">With: ${r.contributors
-              .map(function (sid) {
-                const s =
-                  typeof personnel !== "undefined"
-                    ? personnel.find(function (x) {
-                        return x.id === sid;
-                      })
-                    : null;
-                return s ? s.fname + " " + s.lname + " (S-" + s.id + ")" : "S-" + sid;
-              })
-              .join(", ")}</span>`
-          : "";
-
       return `
-    <div class="ed-report-card" style="border-left-color:${col};" data-type="${r.type || ""}" data-date="${r.date || ""}">
-      <div class="ed-report-header">
-        <div>
-          <span class="ed-report-type" style="color:${col};">${r.type || "REPORT"}</span>
-          <span class="ed-report-title">${r.title}${r.subtitle ? " (" + r.subtitle + ")" : ""}</span>
-        </div>
-        <div class="ed-report-date">${r.date || ""}</div>
-      </div>
-      ${summaryHTML}
-      <div class="ed-report-footer">
-        ${fileHTML}
-        ${author ? `<span class="ed-report-author">Filed: ${author.fname} ${author.lname} (S-${author.id})</span>` : ""}
-        ${contribHTML}
-        ${r.clr ? `<span class="ed-report-clr">CL-${r.clr}+</span>` : ""}
+    <div class="ed-report-card" ${attrs}>
+      <button type="button" class="ed-report-toggle" aria-expanded="false">
+        <span class="ed-report-sign">+</span>
+        <span class="ed-report-label">${label}</span>
+        <span class="ed-report-date">${r.date || ""}</span>
+      </button>
+      <div class="ed-report-body" hidden>
+        <div class="ed-report-stamp">By order of the NeoMS Overseer Council${r.clr ? " &middot; CL-" + r.clr : ""}</div>
+        <div class="ed-report-doc-title">${r.title}</div>
+        <dl class="ed-report-fields">${fields}</dl>
+        ${Array.isArray(r.log) && r.log.length ? buildLog(r.log) : ""}
+        ${r.notes ? `<dl class="ed-report-fields ed-report-closing"><dt>Closing Statement</dt><dd>${r.notes}</dd></dl>` : ""}
+        ${fileHTML ? `<div class="ed-report-footer">${fileHTML}</div>` : ""}
       </div>
     </div>`;
     }
@@ -526,6 +573,16 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
         if (empty) empty.remove();
       }
     }
+
+    /* Expand / collapse a report */
+    listEl.addEventListener("click", function (ev) {
+      const btn = ev.target.closest("button.ed-report-toggle");
+      if (!btn) return;
+      const open = btn.getAttribute("aria-expanded") !== "true";
+      btn.setAttribute("aria-expanded", String(open));
+      btn.querySelector(".ed-report-sign").textContent = open ? "−" : "+";
+      btn.nextElementSibling.hidden = !open;
+    });
 
     /* Chip clicks */
     chips.forEach(function (chip) {

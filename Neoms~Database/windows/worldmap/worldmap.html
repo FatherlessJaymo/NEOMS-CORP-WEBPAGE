@@ -21,42 +21,48 @@
   <!-- D3 SVG -->
   <svg id="nm-d3-svg" class="nm-d3-svg"></svg>
 
-  <!-- Site info panel -->
-  <div id="nm-panel" class="nm-panel">
-    <div id="nm-ph" class="nm-panel-header">
-      <span>NEOMS SITE DOSSIER</span>
-      <button onclick="nmClosePanel()" class="nm-panel-close">&#10005;</button>
+  <!-- Site HUD (SCiPNET-style), shown when a site is selected -->
+  <div id="nm-panel" class="nm-panel" role="dialog" aria-label="Site HUD">
+    <div class="nm-hud-top">
+      <span class="nm-hud-tag">SITE HUD</span>
+      <button type="button" onclick="nmClosePanel()" class="nm-panel-close" aria-label="Close site HUD">&#10005;</button>
     </div>
-    <div class="nm-panel-body">
-      <div id="nm-pname" class="nm-pname"></div>
-      <div id="nm-ploc" class="nm-ploc"></div>
-      <div class="nm-pstats-grid">
-        <div>
-          <div class="nm-pstat-label">ENTITIES</div>
-          <div id="nm-pents" class="nm-pstat-val nm-pstat-teal"></div>
-        </div>
-        <div>
-          <div class="nm-pstat-label">personnel</div>
-          <div id="nm-ppersonnel" class="nm-pstat-val nm-pstat-teal"></div>
-        </div>
-        <div>
-          <div class="nm-pstat-label">STATUS</div>
-          <div id="nm-pstatus" class="nm-pstat-val"></div>
-        </div>
-        <div>
-          <div class="nm-pstat-label">EST.</div>
-          <div id="nm-pest" class="nm-pstat-val nm-pstat-green"></div>
-        </div>
-      </div>
-      <div class="nm-pdesc-label">SITE DESCRIPTION</div>
-      <div id="nm-pdesc" class="nm-pdesc"></div>
-      <div id="nm-pbreach" class="nm-pbreach" style="display: none">
-        <div class="nm-pbreach-title">&#9888; ACTIVE BREACH</div>
-        <div id="nm-pbreach-ents" class="nm-pbreach-ents"></div>
-      </div>
-      <div id="nm-pfooter" class="nm-pfooter"></div>
+    <dl class="nm-hud-kv">
+      <dt><span class="nm-hud-chip">COUNTRY</span></dt><dd id="nm-hcountry"></dd>
+      <dt><span class="nm-hud-chip">REGION</span></dt><dd id="nm-hregion"></dd>
+      <dt><span class="nm-hud-chip">IP ADDRESS</span></dt><dd id="nm-hip"></dd>
+    </dl>
+    <div id="nm-hname" class="nm-hud-big"></div>
+    <div class="nm-hud-label">HUME METER <span id="nm-hume"></span></div>
+    <svg id="nm-hwave" class="nm-hwave" viewBox="0 0 240 36" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="nm-hud-label">THREAT DETECTION</div>
+    <div class="nm-threat">
+      <svg id="nm-radar" class="nm-radar" viewBox="0 0 80 80" aria-hidden="true"></svg>
+      <pre id="nm-hstatus" class="nm-hstatus"></pre>
     </div>
+    <dl class="nm-hud-stats">
+      <div><dt>ENTITIES</dt><dd id="nm-pents"></dd></div>
+      <div><dt>PERSONNEL</dt><dd id="nm-ppersonnel"></dd></div>
+      <div><dt>STATUS</dt><dd id="nm-pstatus"></dd></div>
+      <div><dt>EST.</dt><dd id="nm-pest"></dd></div>
+    </dl>
+    <div id="nm-pbreach" class="nm-pbreach" hidden>
+      <div class="nm-pbreach-title">&#9888; ACTIVE BREACH</div>
+      <div id="nm-pbreach-ents" class="nm-pbreach-ents"></div>
+    </div>
+    <button type="button" id="nm-open-file" class="nm-hud-btn">OPEN SITE FILE &#9656;</button>
+    <div class="nm-hud-foot"><span>DISPLAYING FILE</span><span id="nm-visits"></span></div>
   </div>
+
+  <!-- Incident timeline: replay reports as events on the map -->
+  <div class="nm-timeline" role="group" aria-label="Incident timeline">
+    <button type="button" id="nm-tl-play" class="nm-tl-btn" aria-label="Play incident timeline">&#9654;</button>
+    <input type="range" id="nm-tl-range" class="nm-tl-range" min="0" value="0" aria-label="Incident" />
+    <button type="button" id="nm-tl-label" class="nm-tl-label">INCIDENT TIMELINE — press play</button>
+  </div>
+
+  <!-- Hover card for entity pins (styled by CSS/file-browser.css) -->
+  <div id="nm-peek" class="fb-peek" role="tooltip" hidden></div>
 
   <!-- Legend + site list (click a site to fly to it) -->
   <div class="nm-legend">
@@ -68,6 +74,7 @@
     <div class="nm-legend-keys">
       <span><i class="nm-legend-dot nm-legend-dot-active"></i>ACTIVE</span>
       <span><i class="nm-legend-dot nm-legend-dot-breach"></i>BREACH</span>
+      <span><i class="nm-legend-dot nm-legend-dot-classified"></i>CLASSIFIED</span>
     </div>
   </div>
 
@@ -75,6 +82,7 @@
   <div class="nm-hints">
     <div>SCROLL — zoom</div>
     <div>DRAG — pan</div>
-    <div>CLICK SITE — dossier</div>
+    <div>CLICK SITE — site HUD</div>
+    <div>HOVER PIN — entity card</div>
   </div>
 </div>

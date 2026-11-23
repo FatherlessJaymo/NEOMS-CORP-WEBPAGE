@@ -374,13 +374,13 @@ body::after {
 }
 .arc-hud-row {
   display: grid;
-  grid-template-columns: 92px 1fr;
+  grid-template-columns: 118px 1fr;
   gap: 14px;
   align-items: end;
 }
 .arc-ring {
-  width: 84px;
-  height: 84px;
+  width: 112px;
+  height: 112px;
   margin-top: 6px;
 }
 .arc-ring-bg {
@@ -404,11 +404,86 @@ body::after {
   stroke-width: 1;
   stroke-dasharray: 2 3;
 }
-.arc-sweep {
-  stroke: rgba(255, 255, 255, 0.55);
-  stroke-width: 1;
+/* ── Entity tracker radar ── */
+.arc-ring-cross {
+  fill: none;
+  stroke: var(--arc-faint);
+  stroke-width: 0.5;
+}
+.arc-radar-sweep {
   transform-origin: 40px 40px;
-  animation: arc-sweep 4s linear infinite;
+  animation: arc-sweep 4s linear infinite; /* = ARC_SWEEP_S in archive-shell.js */
+}
+.arc-radar-sweep path {
+  fill: rgba(255, 255, 255, 0.12);
+}
+/* The visitor, at the centre */
+.arc-you {
+  fill: var(--arc-teal);
+}
+.arc-blip {
+  cursor: pointer;
+  outline: none;
+}
+.arc-blip-hit {
+  fill: transparent;
+}
+/* Each dot flashes as the sweep passes its bearing */
+.arc-blip-dot {
+  fill: var(--arc-fg);
+  animation: arc-blip 4s linear infinite;
+}
+@keyframes arc-blip {
+  0% {
+    opacity: 1;
+    r: 3;
+  }
+  30% {
+    opacity: 0.35;
+    r: 2.2;
+  }
+  100% {
+    opacity: 0.25;
+    r: 2.2;
+  }
+}
+.arc-blip--monitored .arc-blip-dot {
+  fill: #e5c454;
+}
+.arc-blip--breached .arc-blip-dot {
+  fill: var(--arc-red);
+}
+.arc-blip--unknown .arc-blip-dot {
+  fill: none;
+  stroke: var(--arc-red);
+  stroke-width: 0.8;
+}
+.arc-blip:hover .arc-blip-dot,
+.arc-blip:focus-visible .arc-blip-dot {
+  opacity: 1;
+  stroke: var(--arc-teal);
+  stroke-width: 1.2;
+}
+.arc-hud-track {
+  margin-top: 4px;
+  min-height: 1.6em;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--arc-dim);
+}
+.arc-hud-track--contained { color: var(--arc-green); }
+.arc-hud-track--monitored { color: #e5c454; }
+.arc-hud-track--breached,
+.arc-hud-track--unknown { color: var(--arc-red); }
+@media (prefers-reduced-motion: reduce) {
+  .arc-radar-sweep,
+  .arc-blip-dot {
+    animation: none;
+  }
+  .arc-blip-dot {
+    opacity: 1;
+  }
 }
 @keyframes arc-sweep {
   to {
@@ -506,6 +581,38 @@ body::after {
 }
 .arc-events span {
   color: var(--arc-dim);
+}
+/* Notification feed: terminal activity, newest first */
+.arc-notes b {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--arc-dim);
+}
+.arc-notes span {
+  color: var(--arc-soft);
+}
+.arc-notes li {
+  animation: arc-note-in 0.4s ease;
+}
+.arc-notes li.deny::before {
+  border-color: var(--arc-red);
+}
+.arc-notes li.deny span {
+  color: var(--arc-red);
+}
+.arc-notes li.file::before {
+  border-color: var(--arc-teal);
+}
+@keyframes arc-note-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arc-notes li {
+    animation: none;
+  }
 }
 .arc-hud-big {
   margin-top: auto;
@@ -813,25 +920,14 @@ body::after {
   letter-spacing: 0.08em;
 }
 
-/* Terminal pane → AcademicOS screen */
+/* Terminal pane → SCiPNET-style terminal (styled in terminal.css);
+   only drop its own black so the archive dot grid shows through */
 .arc-pane--terminal .term-root {
-  background: transparent !important;
-  font: 21px/1.15 var(--arc-term) !important;
-}
-.arc-pane--terminal #term-out {
-  font: inherit !important;
-  color: var(--arc-fg) !important;
-}
-.arc-pane--terminal .term-prompt {
-  color: var(--arc-teal) !important;
-  font: inherit !important;
+  background: transparent;
 }
 .arc-pane--terminal #term-in {
-  background: transparent !important;
   border: 0 !important;
-  color: var(--arc-fg) !important;
-  font: inherit !important;
-  caret-color: var(--arc-fg);
+  font-family: inherit !important;
 }
 
 /* ── RESPONSIVE ──────────────────────────────────────────────── */
