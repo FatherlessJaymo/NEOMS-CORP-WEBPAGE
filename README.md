@@ -2,43 +2,28 @@
 
 ![NEOMS Banner](Neoms~Universal-Fonts+Images/Banner/Banner-1.png)
 
-> **NEO Monitoring System** — a retro-OS styled personal homepage and containment-log database you can click around
-> like a desktop computer.
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/docs/Web/JavaScript)
+[![Neocities](https://img.shields.io/badge/Live_on-Neocities-2C3E50?style=for-the-badge)](https://fatherlessjaymo.neocities.org)
+[![Deploy](https://img.shields.io/github/actions/workflow/status/FatherlessJaymo/NEOMS-CORP-WEBPAGE/deploy-neocities.yml?style=for-the-badge&label=Deploy)](https://github.com/FatherlessJaymo/NEOMS-CORP-WEBPAGE/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-## Visit
+> **NEO Monitoring System** — a retro-OS personal homepage and SCP-style containment database.
 
-**[fatherlessjaymo.neocities.org](https://fatherlessjaymo.neocities.org)**
+**[Visit the site → fatherlessjaymo.neocities.org](https://fatherlessjaymo.neocities.org)**
 
----
+## PrimeDrive
 
-## 📖 What is it?
+My homepage, styled like a retro desktop — Creator's Log, NeoMix music player, rankings, stickers, and a guest book.
 
-The site is two "computers" in one:
+![PrimeDrive screenshot](Neoms~Universal-Fonts+Images/Screenshots/PrimeDrive.png)
 
-1. **PrimeDrive** — my homepage, styled like a retro desktop. Open windows from the desktop or start menu to read the
-   Creator's Log, listen to the **NeoMix** music player, check rankings and game codes, collect stickers, and sign the
-   guest book.
-2. **Neoms~Database** — an SCP-style containment terminal. Register as personnel, then browse anomalous **Entities**,
-   **Personnel**, and **Containment Sites**, explore the interactive **Global Facility Map**, and poke around the
-   in-OS **Terminal**. Some records need a higher clearance level to view…
+## Neoms~Database
 
-Open the Database from the PrimeDrive start menu (**Neoms~Database**).
+A containment terminal — browse Entities, Personnel, and Sites, explore the Facility Map, and use the Terminal.
+Open it from the PrimeDrive start menu.
 
----
-
-##  Features
-
-| Feature                       | What it does                                                                |
-| ----------------------------- | --------------------------------------------------------------------------- |
-|  **Desktop window manager** | Drag, resize, minimize, maximize, and stack windows like a real desktop.    |
-|  **NeoMix player**          | Music player with shuffle, seek, and taskbar mini-controls.                 |
-|  **Containment database**   | Wiki-style dossiers for entities, personnel, and sites.                     |
-|  **Facility map**           | Zoom and pan a world map; click a site to open its dossier.                 |
-| **Clearance levels**       | Five clearance tiers — restricted files stay redacted until you're cleared. |
-|  **Terminal**               | Type `HELP` to get started.                                                 |
-
----
+![Neoms~Database screenshot](Neoms~Universal-Fonts+Images/Screenshots/Database.png)
 
 MIT licensed — see [LICENSE](LICENSE). © 2026 FatherlessJaymo.
-
-> _NeoMS — Authorized access only._
