@@ -426,7 +426,7 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
           : null;
 
       const summaryHTML = locked
-        ? `<div class="ed-report-locked"><span>&#128274;</span> SUMMARY CLASSIFIED — CL-${r.clr} CLEARANCE REQUIRED</div>`
+        ? `<div class="ed-report-locked"><img class="lock-icon" src="../../Neoms~Universal-Fonts+Images/Icons/DB_Icons/Warning_Blue.png" alt="Locked" /> SUMMARY CLASSIFIED — CL-${r.clr} CLEARANCE REQUIRED</div>`
         : `<div class="page-text ed-report-summary">${r.summary || "No summary provided."}</div>`;
 
       const fileHTML = r.fileUrl

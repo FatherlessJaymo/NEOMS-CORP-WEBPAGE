@@ -5,9 +5,13 @@
 /* ── GRID LAYOUT ─────────────────────────────────────────────── */
 #sites-cards-wrap {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 14px;
-  padding: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  /* Rows size to their cards; without this the scroll-area's fixed height
+     squeezes the rows and the cards overlap */
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 20px;
+  padding: 18px;
   align-items: start;
 }
 

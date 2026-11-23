@@ -5,6 +5,22 @@
     <div class="page-subtitle">Build a new entity entry — fill in all fields then export the object.</div>
   </div>
 
+  <!-- ── DRAFTS (saved in this browser) ───────────────────── -->
+  <div class="ec-drafts-bar">
+    <button class="ec-drafts-toggle" id="ec-drafts-toggle" aria-expanded="false" aria-controls="ec-explorer">
+      &#9776; DRAFTS <span class="ec-drafts-count" id="ec-drafts-count"></span>
+    </button>
+    <div class="ec-draft-tabs" id="ec-draft-tabs" role="tablist" aria-label="Open drafts"></div>
+    <button class="ec-draft-new" id="ec-draft-new" title="Start a new entity draft">+ NEW</button>
+  </div>
+
+  <div class="ec-workspace">
+  <aside class="ec-explorer" id="ec-explorer" hidden>
+    <div class="ec-explorer-head">ALL DRAFTS</div>
+    <ul class="ec-explorer-list" id="ec-explorer-list"></ul>
+  </aside>
+
+  <div class="ec-editor">
   <div class="ec-tabs" id="ec-tabs">
     <button class="ec-tab ec-tab--active" data-tab="profile">PROFILE</button>
     <button class="ec-tab" data-tab="desc">DESCRIPTIONS</button>
@@ -177,16 +193,9 @@
       <div class="ec-output-bar">
         <span class="ec-output-label">&#128196; Generated Entity Object</span>
         <div class="ec-output-btns">
-          <button class="ec-gen-btn" id="ec-gen-btn">
-            <span><button class="ec-gen-btn" id="ec-gen-btn">&#9654; GENERATE</button>#9654;</span><span>GENERATE</span>
-          </button>
-          <button class="ec-copy-btn" id="ec-copy-btn">
-            <span><button class="ec-copy-btn" id="ec-copy-btn">&#128203; COPY</button>#128203;</span><span>COPY</span>
-          </button>
-          <button class="ec-submit-btn" id="ec-submit-btn">
-            <span><button class="ec-submit-btn" id="ec-submit-btn">&#8679; SUBMIT</button>#8679;</span
-            ><span>SUBMIT</span>
-          </button>
+          <button class="ec-gen-btn" id="ec-gen-btn"><span>&#9654;</span><span>GENERATE</span></button>
+          <button class="ec-copy-btn" id="ec-copy-btn"><span>&#10697;</span><span>COPY</span></button>
+          <button class="ec-submit-btn" id="ec-submit-btn"><span>&#8679;</span><span>SUBMIT</span></button>
         </div>
       </div>
       <div class="ec-output-hint">
@@ -196,5 +205,7 @@
       </div>
       <pre class="ec-output-pre" id="ec-output-pre">// Click ▶ GENERATE to build your entity object.</pre>
     </div>
+  </div>
+  </div>
   </div>
 </div>

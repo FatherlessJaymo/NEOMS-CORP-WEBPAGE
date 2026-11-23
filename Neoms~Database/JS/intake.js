@@ -1,24 +1,18 @@
 /* ============================================================
-   NEOMS — INTAKE TERMINAL LOGIC  (FIXED)
+   NEOMS — INTAKE TERMINAL LOGIC
    Neoms~Database/JS/intake.js
 
-   FIXES applied:
-   1. nextpersonnelId persisted in localStorage — IDs no longer reset
-      on page refresh and two users won't share the same S-ID.
-   2. window._pendingRecord removed — record passed directly as
-      a closure parameter to doTransmit(), eliminating the stale-
-      data bug on double-submit.
-   3. fast-boot now calls setClearance(record.clr) so returning
-      users see the correct clearance indicator immediately.
-   5. doTransmit() error path uses Unicode ▶ instead of HTML entity
-      in btn.textContent so it doesn't render literally.
+   New visitors: boot lines → registration form → optional
+   registry transmission → archive.html.
+   Returning visitors (session in localStorage): short boot,
+   "welcome back", then straight to archive.html.
 ============================================================ */
 "use strict";
 
 const LS_KEY = "neoms_session_personnel";
 const LS_ID_KEY = "neoms_next_personnel_id";
 const FORMSPREE_URL = "https://formspree.io/f/xwvwybya";
-const DESKTOP_URL = "desktop.html";
+const DESKTOP_URL = "archive.html";
 
 /* ── localStorage helpers ─────────────────────────────────── */
 function lsSave(r) {
@@ -107,18 +101,6 @@ function startBoot() {
 
 /* ── RETURNING USER — fast boot then redirect ─────────────── */
 function fastBoot(record) {
-  if (typeof setClearance === "function") {
-    // Prefer the persisted manual clearance over the session record's base clr
-    let savedClr = 1;
-    try {
-      savedClr = parseInt(localStorage.getItem("neoms_clearance"), 10) || record.clr || 1;
-    } catch (e) {
-      savedClr = record.clr || 1;
-    }
-    setClearance(savedClr);
-  }
-  // ... rest of fastBoot unchanged
-
   const lines = [
     { delay: 0, text: "NEOMS_OS v2.1 — Initializing..." },
     { delay: 500, text: "Loading containment partition... OK" },
@@ -170,6 +152,10 @@ function submitInterview() {
   };
 
   lsSave(record);
+  /* New personnel always start at CL-1, whatever this browser had before */
+  try {
+    localStorage.setItem("neoms_clearance", "1");
+  } catch (e) {}
   document.getElementById("iv-form").classList.remove("visible");
   showTransmitStep(record);
 }
@@ -238,18 +224,18 @@ function doTransmit(record) {
 
   btn.disabled = true;
   btn.textContent = "TRANSMITTING...";
-  status.style.color = "#ffaa00";
+  status.className = "is-busy";
   status.textContent = "Establishing link to NeoMS Central Registry...";
 
   transmitToRegistry(record)
     .then(() => {
-      status.style.color = "#00ffaa";
+      status.className = "is-ok";
       status.textContent = "TRANSMISSION CONFIRMED — record logged.";
       btn.textContent = "TRANSMITTED \u2713";
       setTimeout(proceedToDesktop, 1800);
     })
     .catch((err) => {
-      status.style.color = "#ff4444";
+      status.className = "is-err";
       status.textContent = "TRANSMISSION FAILED — " + err.message + ". Session saved locally.";
       btn.disabled = false;
       btn.textContent = "\u25B6 RETRY TRANSMIT";
@@ -262,7 +248,7 @@ function skipTransmit() {
 }
 
 function proceedToDesktop() {
-  printLine("Booting desktop...", true);
+  printLine("Opening containment archive...", true);
   setTimeout(() => {
     document.getElementById("iv-overlay").classList.add("iv-fadeout");
     setTimeout(() => {

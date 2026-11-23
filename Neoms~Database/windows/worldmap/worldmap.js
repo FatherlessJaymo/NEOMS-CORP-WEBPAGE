@@ -371,7 +371,7 @@ window.nmClosePanel = nmClosePanel;
     }
 
     /* window.__worldAtlas is set by world-atlas-loader.js (loaded as a
-       <script> in desktop.html), which avoids Neocities' CSP on fetch */
+       <script> in archive.html), which avoids Neocities' CSP on fetch */
     const atlas = world || window.__worldAtlas;
     if (atlas) {
       try {

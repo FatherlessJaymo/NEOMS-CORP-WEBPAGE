@@ -26,8 +26,8 @@ const personnel = [
     },
     {
         id: 1002,
-        fname: "Metal",
-        lname: "Sonic",
+        fname: "Nova",
+        lname: "",
         pos: "Overseer Prime",
         dept: "PRIME DIRECTOR",
         clr: 5,
@@ -40,7 +40,7 @@ const personnel = [
         lname: "Echo",
         pos: "Anomaly Research Specialist",
         dept: "CONTAINMENT RESEARCH",
-        clr: 4,
+        clr: 3,
         site: 62656,
         active: "Y"
     },
@@ -50,7 +50,7 @@ const personnel = [
         lname: "Akutami",
         pos: "Anomaly Research Specialist",
         dept: "CONTAINMENT RESEARCH",
-        clr: 4,
+        clr: 3,
         site: 10081,
         active: "Y"
     },
@@ -60,7 +60,7 @@ const personnel = [
         lname: "Zilla",
         pos: "Anomaly Research Analyst",
         dept: "CONTAINMENT RESEARCH",
-        clr: 4,
+        clr: 3,
         site: 10047,
         active: "N"
     }

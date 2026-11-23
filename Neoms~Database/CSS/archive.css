@@ -1,0 +1,886 @@
+/* ============================================================
+   NEOMS~DATABASE — ARCHIVE THEME  (archive.html)
+   AcademicOS-style "Archive HUD": black, dot grid, white
+   hairlines, wide-tracked uppercase labels. Teal is kept only
+   for IDs, links and live data. Loaded LAST so it also re-skins
+   the window modules (Databaselog.css + windows/*.css).
+   ============================================================ */
+
+:root {
+  --arc-bg: #000;
+  --arc-fg: #fff;
+  --arc-soft: rgba(255, 255, 255, 0.78);
+  --arc-dim: rgba(255, 255, 255, 0.5);
+  --arc-faint: rgba(255, 255, 255, 0.16);
+  --arc-line: rgba(255, 255, 255, 0.22);
+  --arc-panel: rgba(255, 255, 255, 0.03);
+  --arc-teal: #19d3d5;
+  --arc-orange: #f0953c;
+  --arc-red: #e0443a;
+  --arc-green: #7fd18b;
+  --arc-ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --arc-term: "VT323", "Cascadia Mono", Consolas, monospace;
+  --arc-type: "Courier Prime", "Courier New", monospace;
+
+  /* Remap the Databaselog.css palette the window modules use */
+  --bg: #000;
+  --desk: #000;
+  --teal: rgba(255, 255, 255, 0.5);
+  --teal-b: #fff;
+  --teal-d: rgba(255, 255, 255, 0.16);
+  --mono: var(--arc-ui);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--arc-bg);
+  color: var(--arc-fg);
+  font: 15px/1.5 var(--arc-ui);
+  letter-spacing: 0.04em;
+  user-select: text;
+  -webkit-font-smoothing: antialiased;
+}
+/* Databaselog.css scanlines sit above everything — keep them faint */
+body::after {
+  opacity: 0.5;
+}
+:focus-visible {
+  outline: 1px solid var(--arc-fg);
+  outline-offset: 3px;
+}
+[hidden] {
+  display: none !important;
+}
+
+/* Dot grid backdrop */
+.arc-dots {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1.3px);
+  background-size: 14px 14px;
+  mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.35) 45%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.35) 45%, #000 100%);
+  pointer-events: none;
+}
+
+/* ── LOADER ──────────────────────────────────────────────────── */
+.arc-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.35s ease;
+}
+.arc-loader.gone {
+  opacity: 0;
+  pointer-events: none;
+}
+.arc-loader-mark {
+  width: 64px;
+  height: 64px;
+  color: var(--arc-fg);
+}
+.arc-loader small {
+  color: var(--arc-dim);
+  font-size: 10px;
+  margin-top: 18px;
+}
+.arc-loader-bar {
+  width: 220px;
+  height: 2px;
+  background: var(--arc-faint);
+}
+.arc-loader-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--arc-fg);
+  transition: width 0.07s linear;
+}
+
+/* ── TOP NAV ─────────────────────────────────────────────────── */
+.arc-topnav {
+  position: relative;
+  z-index: 2;
+  padding: 0 clamp(16px, 3vw, 44px);
+  border-bottom: 1px solid var(--arc-faint);
+}
+.arc-topnav nav {
+  display: flex;
+  gap: clamp(14px, 2.6vw, 40px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.arc-topnav nav::-webkit-scrollbar {
+  display: none;
+}
+.arc-topnav a {
+  padding: 12px 4px 9px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--arc-dim);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.arc-topnav a:hover {
+  color: var(--arc-fg);
+}
+.arc-topnav a[aria-current="page"] {
+  color: var(--arc-fg);
+  border-bottom-color: var(--arc-fg);
+}
+.arc-topnav a.locked {
+  color: rgba(255, 255, 255, 0.28);
+}
+.arc-topnav a i {
+  font-style: normal;
+  font-size: 8px;
+  color: var(--arc-red);
+  vertical-align: 2px;
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────── */
+.arc-shell {
+  position: relative;
+  z-index: 1;
+  height: calc(100vh - 45px);
+  height: calc(100dvh - 45px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+}
+.arc-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(18px, 4vh, 44px) clamp(16px, 3vw, 44px) 18px;
+}
+.arc-welcome h1 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.1;
+}
+.arc-emblem-sm {
+  width: 0.75em;
+  height: 0.75em;
+}
+.arc-welcome p {
+  margin: 4px 0 0;
+  font-size: clamp(14px, 1.4vw, 18px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--arc-soft);
+}
+.arc-panehead {
+  margin: 22px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.arc-panetab {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--arc-fg);
+  padding-bottom: 3px;
+}
+.arc-chips {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+.arc-chip {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--arc-line);
+  padding: 3px 9px;
+  color: var(--arc-soft);
+}
+.arc-chip.on {
+  background: var(--arc-fg);
+  color: #000;
+  border-color: var(--arc-fg);
+}
+
+/* ── PANES ───────────────────────────────────────────────────── */
+.arc-panes {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid var(--arc-faint);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+}
+.arc-watermark {
+  position: absolute;
+  width: min(42vh, 330px);
+  height: min(42vh, 330px);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+.arc-pane {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+/* Split view: pinned section on the right, browsing on the left */
+.arc-panes.split .arc-pane {
+  right: calc(50% + 6px);
+}
+.arc-panes.split .arc-pane--pinned {
+  left: calc(50% + 6px);
+  right: 0;
+  border-left: 1px solid var(--arc-line);
+}
+.arc-pin {
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.arc-pin:hover,
+.arc-pin:focus-visible {
+  color: var(--arc-fg);
+  border-color: var(--arc-fg);
+}
+/* Window modules expect to fill their container */
+.arc-pane > * {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+.arc-loading,
+.arc-err {
+  padding: 20px;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--arc-dim);
+}
+.arc-err {
+  color: var(--arc-red);
+}
+.arc-err span {
+  color: var(--arc-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ── HUD SIDEBAR ─────────────────────────────────────────────── */
+.arc-hud {
+  border-left: 1px solid var(--arc-faint);
+  padding: 18px 22px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9));
+}
+.arc-hud-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--arc-dim);
+  margin-top: 12px;
+}
+.arc-hud-kv {
+  margin: 6px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.arc-hud-kv div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px dashed var(--arc-faint);
+  padding: 4px 0;
+}
+.arc-hud-kv dt {
+  color: var(--arc-dim);
+}
+.arc-hud-kv dd {
+  margin: 0;
+  text-align: right;
+}
+.arc-clr {
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+}
+.arc-clr .clr-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--arc-line);
+  transform: rotate(45deg);
+}
+.arc-clr .clr-dot.active {
+  border-color: transparent;
+}
+#cd1.active { background: var(--clr-1); }
+#cd2.active { background: var(--clr-2); }
+#cd3.active { background: var(--clr-3); }
+#cd4.active { background: var(--clr-4); }
+#cd5.active { background: var(--clr-5); box-shadow: var(--clr-5-glow); }
+.arc-clr .clr-tier {
+  margin-left: 6px;
+  font-size: 0.75em;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.arc-hud-brand {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-top: 14px;
+  line-height: 1;
+}
+.arc-hud-brand span {
+  color: var(--arc-teal);
+}
+.arc-wave {
+  width: 100%;
+  height: 34px;
+  margin-top: 4px;
+}
+.arc-wave rect {
+  fill: rgba(255, 255, 255, 0.8);
+}
+.arc-hud-row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  align-items: end;
+}
+.arc-ring {
+  width: 84px;
+  height: 84px;
+  margin-top: 6px;
+}
+.arc-ring-bg {
+  fill: none;
+  stroke: var(--arc-faint);
+  stroke-width: 4;
+}
+.arc-ring-fg {
+  fill: none;
+  stroke: var(--arc-fg);
+  stroke-width: 4;
+  transform: rotate(-90deg);
+  transform-origin: 40px 40px;
+  stroke-dasharray: 213.6;
+  stroke-dashoffset: 213.6;
+  transition: stroke-dashoffset 1.2s ease;
+}
+.arc-ring-in {
+  fill: none;
+  stroke: var(--arc-faint);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+.arc-sweep {
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1;
+  transform-origin: 40px 40px;
+  animation: arc-sweep 4s linear infinite;
+}
+@keyframes arc-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.arc-hud-status {
+  margin: 0;
+  font: 9.5px/1.7 var(--arc-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--arc-soft);
+  white-space: pre;
+}
+.arc-dist {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 5px;
+}
+.arc-dist li {
+  display: grid;
+  grid-template-columns: 1fr 26px;
+  gap: 4px 8px;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--arc-soft);
+}
+.arc-dist li em {
+  font-style: normal;
+  text-align: right;
+  color: var(--arc-dim);
+}
+.arc-dist .bar {
+  grid-column: 1 / -1;
+  height: 3px;
+  background: var(--arc-faint);
+  position: relative;
+}
+.arc-dist .bar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--arc-fg);
+}
+/* Class colours match the entity badges */
+.arc-dist .bar i.cls-HD { background: #00cc66; }
+.arc-dist .bar i.cls-EU { background: #4488ff; }
+.arc-dist .bar i.cls-AR { background: #ff8c00; }
+.arc-dist .bar i.cls-NM { background: #ff3366; }
+.arc-dist .bar i.cls-AP { background: #cc44ff; }
+.arc-dist .bar i.cls-KT { background: var(--arc-red); }
+.arc-pill {
+  background: var(--arc-fg);
+  color: #000;
+  padding: 2px 7px;
+}
+.arc-events {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0 0 0 20px;
+  background: linear-gradient(var(--arc-line), var(--arc-line)) 4px 0 / 1px 100% no-repeat;
+  display: grid;
+  gap: 7px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.arc-events li {
+  position: relative;
+}
+.arc-events li::before {
+  content: "";
+  position: absolute;
+  left: -19px;
+  top: 4px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--arc-fg);
+  transform: rotate(45deg);
+  background: #000;
+}
+.arc-events li.ev-BREACH::before {
+  border-color: var(--arc-red);
+  background: var(--arc-red);
+}
+.arc-events b {
+  display: block;
+  font-weight: 600;
+}
+.arc-events li.ev-BREACH b {
+  color: var(--arc-red);
+}
+.arc-events span {
+  color: var(--arc-dim);
+}
+.arc-hud-big {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.arc-hud-big b {
+  font-size: 44px;
+  line-height: 0.9;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.arc-hud-big span {
+  font-size: 9.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--arc-dim);
+}
+
+/* ── DOSSIER VIEWER ──────────────────────────────────────────── */
+.arc-docwrap {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+  padding: 3vh 3vw;
+}
+.arc-docwin {
+  width: min(900px, 100%);
+  height: min(88vh, 1000px);
+  display: flex;
+  flex-direction: column;
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+  animation: arc-pop 0.18s ease-out;
+}
+.arc-docwrap.max {
+  padding: 0;
+}
+/* Docked over the left column of split view (position set in JS) */
+.arc-docwrap.docked {
+  padding: 0;
+  background: none;
+  place-items: stretch;
+}
+.arc-docwrap.docked .arc-docwin {
+  width: 100%;
+  height: 100%;
+  box-shadow: none;
+}
+.arc-docwrap.max .arc-docwin {
+  width: 100%;
+  height: 100%;
+}
+@keyframes arc-pop {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+.arc-doc-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 0 12px;
+  height: 34px;
+  flex-shrink: 0;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.arc-doc-actions button {
+  background: none;
+  border: 0;
+  color: inherit;
+  width: 32px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.arc-doc-actions button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.arc-doc-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.arc-doc-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.arc-doc-scroll > * {
+  flex: 1 0 auto;
+}
+
+/* ── TOAST ───────────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 9000;
+  background: #000;
+  border: 1px solid var(--arc-fg);
+  color: var(--arc-fg);
+  font: 600 11px var(--arc-ui);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   RE-SKIN OF THE WINDOW MODULES
+   Databaselog.css paints navy panels; flatten them to the
+   Archive look: transparent panels, white hairlines, tracked
+   uppercase labels, teal kept for IDs / live numbers.
+   ============================================================ */
+.arc-pane .page-area,
+.arc-doc-scroll .page-area,
+.arc-pane .scroll-area,
+.arc-pane .nav-sidebar {
+  background: transparent;
+}
+.page-header {
+  background: transparent;
+  border-bottom: 1px solid var(--arc-faint);
+}
+.page-breadcrumb {
+  color: var(--arc-dim);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.page-title {
+  font-family: var(--arc-ui);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--arc-fg);
+  text-shadow: none;
+}
+.page-subtitle {
+  color: var(--arc-dim);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.page-section-title {
+  font-family: var(--arc-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--arc-dim);
+  border-bottom-color: var(--arc-faint);
+}
+.page-text {
+  color: var(--arc-soft);
+  font-family: var(--arc-ui);
+  letter-spacing: 0.03em;
+}
+
+/* Tabs inside modules → AcademicOS chips */
+.win-tabs {
+  background: transparent;
+  border-bottom: 1px solid var(--arc-faint);
+  gap: 8px;
+  padding: 8px 12px;
+}
+.win-tab {
+  border: 1px solid var(--arc-line);
+  color: var(--arc-soft);
+  font: 600 10px var(--arc-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+}
+.win-tab.active-tab {
+  background: var(--arc-fg);
+  color: #000;
+  border-color: var(--arc-fg);
+}
+.win-tab:hover:not(.active-tab) {
+  border-color: var(--arc-fg);
+  color: var(--arc-fg);
+  background: transparent;
+}
+
+/* Stat boxes + home cards → flat hairline tiles */
+.stat-box,
+.home-card {
+  background: var(--arc-panel) !important;
+  border: 1px solid var(--arc-faint) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.home-card:hover {
+  border-color: var(--arc-fg) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+.stat-label {
+  color: var(--arc-dim) !important;
+  font: 600 9.5px var(--arc-ui) !important;
+  letter-spacing: 0.3em !important;
+  text-transform: uppercase;
+}
+.stat-val {
+  font-family: var(--arc-term) !important;
+}
+.home-card-title {
+  color: var(--arc-fg) !important;
+  font-family: var(--arc-ui) !important;
+  font-weight: 600;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase;
+}
+.home-card-desc {
+  color: var(--arc-dim) !important;
+  font-family: var(--arc-ui) !important;
+}
+.home-card-count {
+  color: var(--arc-teal) !important;
+  font-family: var(--arc-term) !important;
+}
+
+/* Tables (entities, personnel, sites) */
+.arc-pane table,
+.arc-doc-scroll table {
+  border-collapse: separate;
+  border-spacing: 0 4px;
+}
+.arc-pane th {
+  background: transparent !important;
+  color: var(--arc-dim) !important;
+  font: 600 9.5px var(--arc-ui) !important;
+  letter-spacing: 0.28em !important;
+  text-transform: uppercase;
+  border: 0 !important;
+  border-bottom: 1px solid var(--arc-faint) !important;
+}
+.arc-pane tbody tr {
+  background: var(--arc-panel) !important;
+  outline: 1px solid var(--arc-faint);
+}
+.arc-pane tbody tr:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  outline-color: var(--arc-fg);
+}
+.arc-pane td {
+  border: 0 !important;
+  font-family: var(--arc-ui);
+  color: var(--arc-soft);
+}
+
+/* Search / filter bars */
+.filter-btn,
+.search-input,
+.arc-pane input,
+.arc-pane select,
+.arc-pane textarea {
+  background: transparent !important;
+  border: 1px solid var(--arc-line) !important;
+  border-radius: 0 !important;
+  color: var(--arc-fg) !important;
+  font-family: var(--arc-ui) !important;
+}
+.filter-btn {
+  font-size: 10px !important;
+  font-weight: 600;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase;
+}
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--arc-fg) !important;
+  color: #000 !important;
+  border-color: var(--arc-fg) !important;
+}
+
+/* Alert banner — keep it loud, but flat */
+.alert-banner {
+  border-radius: 0 !important;
+  font-family: var(--arc-ui) !important;
+  letter-spacing: 0.08em;
+}
+
+/* Terminal pane → AcademicOS screen */
+.arc-pane--terminal .term-root {
+  background: transparent !important;
+  font: 21px/1.15 var(--arc-term) !important;
+}
+.arc-pane--terminal #term-out {
+  font: inherit !important;
+  color: var(--arc-fg) !important;
+}
+.arc-pane--terminal .term-prompt {
+  color: var(--arc-teal) !important;
+  font: inherit !important;
+}
+.arc-pane--terminal #term-in {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--arc-fg) !important;
+  font: inherit !important;
+  caret-color: var(--arc-fg);
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .arc-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .arc-hud {
+    display: none;
+  }
+}
+/* Too narrow for side-by-side: stack the pinned section underneath */
+@media (max-width: 800px) {
+  .arc-panes.split .arc-pane {
+    right: 0;
+    bottom: calc(50% + 6px);
+  }
+  .arc-panes.split .arc-pane--pinned {
+    left: 0;
+    top: calc(50% + 6px);
+    bottom: 0;
+    border-left: 0;
+    border-top: 1px solid var(--arc-line);
+  }
+}
+@media (max-width: 640px) {
+  .arc-welcome {
+    display: none;
+  }
+  .arc-panehead {
+    margin-top: 4px;
+  }
+  .arc-docwrap {
+    padding: 0;
+  }
+  .arc-docwin {
+    width: 100%;
+    height: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arc-sweep {
+    animation: none;
+  }
+  .arc-docwin {
+    animation: none;
+  }
+  .arc-ring-fg,
+  .arc-loader {
+    transition: none;
+  }
+}

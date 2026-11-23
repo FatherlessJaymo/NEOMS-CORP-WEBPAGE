@@ -180,7 +180,7 @@ const ENTITIES = [
         sentient: "U",
         hostile: "Y",
         safety: "LETHAL",
-        discoveredBy: 1003,
+        discoveredBy: 1004,
         contributors: [],
         sources: [
             {
@@ -228,7 +228,7 @@ const ENTITIES = [
                 summary:
                     "Entity was first logged following recovery of Zenin clan summoning records detailing an unsuccessful taming attempt. All summoners involved were confirmed deceased. The exorcism-ritual binding anchors now in use at Site-10081 are adapted from a partial containment schema found within those records. Entity's Dharma wheel was observed rotating continuously for 72 hours following the binding — rotation ceased without explanation. Classified as a PRE-BREACH event. No personnel casualties during initial containment setup.",
                 file: "NMS-008-INC-001.pdf",
-                author: 1003
+                author: 1004
             },
             {
                 title: "Adaptation Confirmation — Cursed Energy Exposure",
@@ -239,7 +239,7 @@ const ENTITIES = [
                 summary:
                     "A CL-4 research team conducted a controlled single-exposure test using a low-grade cursed energy pulse directed at the containment barrier. Entity's Dharma wheel registered a full rotation within 0.3 seconds of exposure. Subsequent identical pulse was deflected entirely — entity had fully adapted. Test was terminated after one exposure per protocol. Confirms that even indirect energy contact through the barrier is sufficient to trigger the tekio cycle. All future observation must be strictly passive.",
                 file: "NMS-008-OBS-001.pdf",
-                author: 1003
+                author: 1004
             },
             {
                 title: "Dharma Wheel Unprompted Rotation — PRE-BREACH Event",
@@ -250,7 +250,7 @@ const ENTITIES = [
                 summary:
                     "At 03:14 local time, the anomaly-spin sensor array registered an unprompted Dharma wheel rotation lasting approximately 8 seconds. No external stimulus was identified. All personnel were placed on PRE-BREACH alert for 48 hours. No breach occurred. Entity returned to dormant posture by morning watch. The cause of the unprompted rotation remains unresolved. Current hypothesis: entity may be adapting to stimuli outside the observable spectrum. Recommendation to upgrade sensor array to Class-5 submitted to Overseer Prime.",
                 file: "NMS-008-BREACH-001.pdf",
-                author: 1003
+                author: 1004
             },
             {
                 title: "Regeneration Rate Assessment",
@@ -261,7 +261,7 @@ const ENTITIES = [
                 summary:
                     "Following a structural failure in the eastern binding anchor (non-entity cause — seismic activity), the entity sustained a minor laceration from the anchor collapse debris before the backup anchor engaged. Full tissue regeneration was documented in 11 minutes. The adaptation cycle was not observed to trigger in response to the physical damage — confirming regeneration and tekio are independent systems. The damaged anchor has since been replaced. No breach occurred. Entity did not react to the repair crew.",
                 file: "NMS-008-OBS-002.pdf",
-                author: 1003
+                author: 1004
             },
             {
                 title: "Summoning Incantation Breach — CRITICAL",
@@ -271,7 +271,7 @@ const ENTITIES = [
                 clr: 5,
                 summary: "[SUMMARY CLASSIFIED — CL-5 CLEARANCE REQUIRED]",
                 file: "NMS-008-BREACH-002.pdf",
-                author: 1003
+                author: 1004
             },
             {
                 title: "Containment Status Review — Binding Integrity",
@@ -281,7 +281,7 @@ const ENTITIES = [
                 clr: 3,
                 summary:
                     "Quarterly binding integrity inspection completed. All 8 exorcism-ritual anchors confirmed at nominal tension. Dharma wheel has not rotated unprompted in 94 days — longest recorded stable period. Positive-energy field emitters operating at 97% output. Entity remains in dormant stance. No vocalisation, movement, or adaptation events logged this quarter. Containment status: STABLE. Note logged for the record: entity has not once faced toward the observation window in 94 days. This is statistically anomalous given prior behavioural data. Monitoring continues.",
-                author: 1003
+                author: 1004
             }
         ]
     },
