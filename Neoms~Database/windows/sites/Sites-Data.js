@@ -50,7 +50,7 @@ const SITES = [
         name: "Site-10047",
         loc: "Izu Islands, Tokyo Prefecture, Japan",
         est: "2016-03-22",
-        desc: "[REDACTED]",
+        desc: "Primary administrative site for E-0333 (distributed / nonphysical containment). Coordinates broadcast screening, records and personnel oversight. Houses the Screening Ward for broadcast-exposed civilians and the Archival Review Room for shielded study of E-0333 material.",
         entities: 1,
         personnel: 8,
         status: "ACTIVE",
