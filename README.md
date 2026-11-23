@@ -61,9 +61,4 @@ Copyright © 2026 FatherlessJaymo.
 
 ---
 
-## 🔗 Links
-
--   **Website:** [fatherlessjaymo.neocities.org](https://fatherlessjaymo.neocities.org)
--   **GitHub:** [github.com/FatherlessJaymo/NEOMS-CORP-WEBPAGE](https://github.com/FatherlessJaymo/NEOMS-CORP-WEBPAGE)
-
 > _NeoMS — Authorized access only._
