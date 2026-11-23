@@ -1,0 +1,173 @@
+/* ============================================================
+   NEOMS — CLASSIFICATION SCHEMES WINDOW STYLES
+   Neoms~Database/windows/schemes/schemes.css
+   Entity classes + power scale, and personnel positions.
+   ============================================================ */
+
+/* Sub-tabs are real buttons — drop the browser's grey button fill */
+.schemes-tab {
+  background: transparent;
+  cursor: pointer;
+}
+.schemes-tab.active-tab {
+  background: #fff;
+}
+.schemes-panel[hidden] {
+  display: none;
+}
+
+/* ── ENTITY CLASSIFICATION SCHEME ─────────────────────────────── */
+
+.scheme-pad {
+  padding: 0 16px 20px;
+}
+
+.scheme-section-title {
+  margin-top: 8px;
+}
+
+/* ── Classification grid ───────────────────────────────────── */
+.scheme-class-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.scheme-class-card {
+  background: #0d1020;
+  border: 1px solid;
+  padding: 10px 12px;
+}
+
+.scheme-class-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.scheme-class-name {
+  font-family: var(--pixel);
+  font-size: 13px;
+}
+
+.scheme-class-desc {
+  font-size: 12px;
+  color: #b0c8dc;
+  line-height: 1.7;
+  font-family: var(--mono);
+}
+
+/* ── Power scale ───────────────────────────────────────────── */
+.scheme-ps-subtitle {
+  font-size: 11px;
+  color: #6a8faa;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+}
+
+.scheme-ps-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid #0d1520;
+}
+
+.scheme-ps-tier {
+  min-width: 64px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-family: var(--mono);
+  padding-top: 4px;
+}
+
+.scheme-ps-right {
+  flex: 1;
+}
+
+.scheme-ps-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.scheme-ps-pill {
+  display: inline-block;
+  padding: 2px 7px;
+  background: #0a0a14;
+  border: 1px solid;
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.5px;
+}
+
+.scheme-ps-note {
+  font-size: 10px;
+  color: #6a8faa;
+  margin-top: 3px;
+  font-family: var(--mono);
+}
+
+/* ── PERSONNEL POSITION SCHEME ────────────────────────────────── */
+
+/* ── Department group ──────────────────────────────────────── */
+.ss-dept-group {
+  margin-bottom: 6px;
+}
+
+.ss-dept-header {
+  font-size: 10px;
+  letter-spacing: 3px;
+  padding: 10px 0 6px;
+  border-bottom: 1px solid;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+}
+
+/* ── Clearance badge ───────────────────────────────────────── */
+.ss-clr {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border: 1px solid #1e2a3a;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #b0c8dc;
+  vertical-align: middle;
+}
+
+/* ── Role card ─────────────────────────────────────────────── */
+.ss-role-card {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: #0d1020;
+  border-left: 2px solid;
+  border-bottom: 1px solid #0d1a2a;
+}
+
+.ss-role-title {
+  font-family: var(--pixel);
+  font-size: 13px;
+  color: #ccdde8;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+.ss-role-dept {
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+}
+
+.ss-role-bio {
+  font-size: 12px;
+  color: #b0c8dc;
+  line-height: 1.75;
+  font-family: var(--mono);
+}

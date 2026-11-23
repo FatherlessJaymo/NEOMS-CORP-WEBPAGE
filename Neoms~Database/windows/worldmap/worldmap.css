@@ -111,6 +111,11 @@
   transform-box: fill-box;
   transform-origin: center;
 }
+/* Labels sit inside the zoomed group: an inherited pixel
+   letter-spacing would be magnified with the zoom, so reset it */
+.nm-d3-svg text {
+  letter-spacing: 0;
+}
 .nm-site-marker .nm-site-label {
   opacity: 0;
   pointer-events: none;
@@ -145,19 +150,21 @@
   }
 }
 
-/* ── Site dossier panel ──────────────────────────────────────── */
+/* ── Site HUD (SCiPNET-style), right side ────────────────────── */
 .nm-panel {
   position: absolute;
   top: 14px;
   right: 14px;
-  width: 290px;
+  width: 320px;
   max-width: calc(100% - 28px);
   max-height: calc(100% - 28px);
   overflow-y: auto;
   z-index: 200;
-  background: rgba(5, 12, 22, 0.97);
-  border: 1px solid #1f5a5a;
-  border-radius: 3px;
+  padding: 12px 14px 10px;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.96), rgba(0, 0, 0, 0.98));
+  border: 1px solid #3a3a3a;
+  color: #e6e6e6;
+  font-family: "Barlow", system-ui, sans-serif;
   opacity: 0;
   transform: translateY(-8px);
   transition:
@@ -170,86 +177,160 @@
   transform: translateY(0);
   pointer-events: auto;
 }
-
-.nm-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 10px;
-  border-bottom: 1px solid #1f5a5a;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: #33dd99;
+.nm-panel--breach {
+  border-color: #ff4444;
 }
-
+.nm-hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+/* Hatched label chips, like SCiPNET's COUNTRY / REGION tags */
+.nm-hud-tag,
+.nm-hud-chip {
+  display: inline-block;
+  padding: 3px 7px;
+  font: 700 10px "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.22em;
+  color: #fff;
+  border: 1px solid #555;
+  background: repeating-linear-gradient(135deg, #2a2a2a 0 3px, #111 3px 6px);
+}
 .nm-panel-close {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 15px;
   line-height: 1;
-  color: #8fc7c7;
-  font-family: "Share Tech Mono", monospace;
+  color: #aaa;
 }
-.nm-panel-close:hover {
+.nm-panel-close:hover,
+.nm-panel-close:focus-visible {
   color: #fff;
+  outline: none;
 }
-
-.nm-panel-body {
-  padding: 10px 12px;
-}
-
-.nm-pname {
-  font-family: "VT323", monospace;
-  font-size: 26px;
-  color: #00e0e0;
-  letter-spacing: 0.06em;
-  margin-bottom: 2px;
-}
-
-.nm-ploc {
-  font-size: 12px;
-  color: #33dd99;
-  margin-bottom: 10px;
-}
-
-.nm-pstats-grid {
+.nm-hud-kv {
+  margin: 0 0 12px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 14px;
-  margin-bottom: 10px;
+  gap: 4px;
 }
-
-.nm-pstat-label,
-.nm-pdesc-label {
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: #6fb49a;
-  margin-bottom: 2px;
+.nm-hud-kv dt {
+  margin-top: 6px;
 }
-
-.nm-pstat-val {
-  font-size: 14px;
-  font-weight: bold;
-}
-.nm-pstat-teal {
-  color: #00e0e0;
-}
-.nm-pstat-green {
-  color: #33dd99;
-}
-
-.nm-pdesc {
+.nm-hud-kv dd {
+  margin: 2px 0 0;
+  padding-left: 8px;
+  border-left: 1px solid #555;
   font-size: 12px;
-  color: #b8d8c8;
-  line-height: 1.55;
+  color: #b5b5b5;
+  letter-spacing: 0.06em;
 }
-
+.nm-hud-big {
+  font: 700 26px/1.1 "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.1em;
+  margin: 6px 0 4px;
+}
+.nm-hud-label {
+  margin-top: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: #8a8a8a;
+}
+.nm-hud-label span {
+  letter-spacing: 0.1em;
+  color: #e6e6e6;
+}
+.nm-hwave {
+  display: block;
+  width: 100%;
+  height: 36px;
+  margin-top: 4px;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+}
+.nm-hwave rect {
+  fill: rgba(255, 255, 255, 0.85);
+}
+.nm-threat {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin-top: 6px;
+}
+.nm-radar {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #444;
+}
+.nm-radar-ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 0.6;
+}
+.nm-radar-sweep {
+  transform-origin: 40px 40px;
+  animation: nm-sweep 3s linear infinite;
+}
+.nm-radar-sweep path {
+  fill: rgba(255, 255, 255, 0.14);
+}
+@keyframes nm-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.nm-blip {
+  fill: #fff;
+  animation: nm-blip 3s linear infinite;
+}
+.nm-blip--bad {
+  fill: #ff4444;
+}
+@keyframes nm-blip {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  10% {
+    opacity: 1;
+  }
+}
+.nm-hstatus {
+  margin: 0;
+  font: 8.5px/1.55 "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 0.04em;
+  color: #9a9a9a;
+  white-space: pre-wrap;
+}
+.nm-hud-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #2a2a2a;
+}
+.nm-hud-stats dt {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: #8a8a8a;
+}
+.nm-hud-stats dd {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+}
 .nm-pbreach {
   margin-top: 10px;
   padding: 6px 8px;
   background: #2a0606;
   border-left: 2px solid #ff4444;
+}
+.nm-pbreach[hidden] {
+  display: none;
 }
 .nm-pbreach-title {
   font-size: 11px;
@@ -261,14 +342,238 @@
   color: #ff9999;
   margin-top: 2px;
 }
-
-.nm-pfooter {
+.nm-hud-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #fff;
+  color: #000;
+  font: 700 11px "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.25em;
+  cursor: pointer;
+}
+.nm-hud-btn:hover,
+.nm-hud-btn:focus-visible {
+  background: transparent;
+  color: #fff;
+  outline: none;
+}
+.nm-hud-foot {
+  display: flex;
+  justify-content: space-between;
   margin-top: 10px;
-  padding-top: 6px;
-  border-top: 1px solid #1f5a5a;
-  font-size: 10px;
-  color: #6fa8a8;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #8a8a8a;
+}
+
+/* ── Entity picture pins ─────────────────────────────────────── */
+.nm-pin-stem {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+.nm-pin-head {
+  cursor: pointer;
+  outline: none;
+}
+.nm-pin-bg {
+  fill: #111;
+}
+.nm-pin-ring {
+  fill: none;
+  stroke: #e6e6e6;
+  stroke-width: 1.5;
+}
+.nm-pin-ring--bad {
+  stroke: #ff4444;
+}
+.nm-pin-head:hover .nm-pin-ring,
+.nm-pin-head:focus-visible .nm-pin-ring {
+  stroke: #00e0e0;
+  stroke-width: 2.5;
+}
+.nm-pin--locked .nm-pin-ring {
+  stroke: #e0443a;
+  stroke-dasharray: 3 2;
+}
+
+/* ── Classified locations ────────────────────────────────────── */
+.nm-classified {
+  cursor: pointer;
+  outline: none;
+}
+.nm-cl-hit {
+  fill: transparent;
+}
+.nm-cl-diamond {
+  fill: rgba(255, 154, 60, 0.2);
+  stroke: #ff9a3c;
+  stroke-width: 1.5;
+}
+.nm-cl-label {
+  font: 9px "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 0.08em;
+  fill: #ff9a3c;
+  paint-order: stroke fill;
+  stroke: #050b14;
+  stroke-width: 3px;
+}
+.nm-classified:hover .nm-cl-diamond,
+.nm-classified:focus-visible .nm-cl-diamond {
+  fill: rgba(255, 154, 60, 0.5);
+}
+/* Labels only when hovered/focused or zoomed in close (they crowd
+   the Tokyo-area sites otherwise) */
+.nm-cl-label {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.nm-classified:hover .nm-cl-label,
+.nm-classified:focus-visible .nm-cl-label,
+.nm-cl-labels-on .nm-cl-label {
+  opacity: 1;
+}
+/* Above your clearance: a glitching [REDACTED] marker */
+.nm-classified--fog .nm-cl-diamond {
+  fill: rgba(255, 68, 68, 0.15);
+  stroke: #ff4444;
+  stroke-dasharray: 2 2;
+}
+.nm-classified--fog .nm-cl-label {
+  fill: #ff5555;
+}
+.nm-cl-labels-on .nm-classified--fog .nm-cl-label,
+.nm-classified--fog:hover .nm-cl-label,
+.nm-classified--fog:focus-visible .nm-cl-label {
+  animation: nm-glitch 2.4s steps(1) infinite;
+}
+@keyframes nm-glitch {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  8% {
+    opacity: 0.2;
+    transform: translateX(2px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-2px);
+  }
+  12% {
+    transform: translateX(0);
+  }
+  60% {
+    opacity: 0.6;
+  }
+  62% {
+    opacity: 1;
+  }
+}
+
+/* ── Event rings (timeline) and live pings ───────────────────── */
+.nm-fx {
+  pointer-events: none;
+}
+.nm-fx-ring {
+  fill: none;
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: nm-ring 1.6s ease-out 2 both;
+}
+@keyframes nm-ring {
+  from {
+    transform: scale(0.1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+.nm-fx--breach .nm-fx-ring,
+.nm-fx--incident .nm-fx-ring { stroke: #ff4444; }
+.nm-fx--observation .nm-fx-ring { stroke: #6b9cff; }
+.nm-fx--sighting .nm-fx-ring { stroke: #ffaa00; }
+.nm-fx--broadcast .nm-fx-ring { stroke: #ff4444; stroke-width: 2.5; }
+.nm-fx--ping .nm-fx-ring { stroke: #00e0e0; }
+.nm-fx-dot {
+  fill: #fff;
+}
+
+/* ── Incident timeline (bottom centre) ───────────────────────── */
+.nm-timeline {
+  position: absolute;
+  left: 260px;
+  right: 170px;
+  bottom: 12px;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: rgba(5, 12, 22, 0.94);
+  border: 1px solid #1f5a5a;
+}
+.nm-tl-btn {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid #1f5a5a;
+  color: #8fc7c7;
+  font-size: 11px;
+  cursor: pointer;
+}
+.nm-tl-btn:hover,
+.nm-tl-btn:focus-visible {
+  border-color: #00e0e0;
+  color: #00e0e0;
+  outline: none;
+}
+.nm-tl-range {
+  width: 160px;
+  flex-shrink: 0;
+  accent-color: #00e0e0;
+}
+.nm-tl-label {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #cfe8e8;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px;
   letter-spacing: 0.04em;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.nm-tl-label:hover,
+.nm-tl-label:focus-visible {
+  color: #00e0e0;
+  text-decoration: underline;
+  outline: none;
+}
+.nm-tl-label--locked {
+  color: #ff8888;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-radar-sweep,
+  .nm-blip,
+  .nm-classified--fog .nm-cl-label {
+    animation: none;
+  }
 }
 
 /* ── Legend + site list ──────────────────────────────────────── */
@@ -389,6 +694,11 @@
 .nm-legend-dot-breach {
   background: #ff4444;
 }
+.nm-legend-dot-classified {
+  background: #ff9a3c;
+  border-radius: 0;
+  transform: rotate(45deg);
+}
 
 /* ── Hints ───────────────────────────────────────────────────── */
 .nm-hints {
@@ -409,5 +719,19 @@
   .nm-header-meta,
   .nm-hints {
     display: none;
+  }
+}
+/* Narrow: timeline spans the bottom, legend moves above it */
+@media (max-width: 900px) {
+  .nm-timeline {
+    left: 12px;
+    right: 12px;
+  }
+  .nm-legend {
+    bottom: 60px;
+    max-height: calc(100% - 190px);
+  }
+  .nm-tl-range {
+    width: 100px;
   }
 }

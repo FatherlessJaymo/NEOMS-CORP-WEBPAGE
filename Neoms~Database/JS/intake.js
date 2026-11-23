@@ -1,11 +1,15 @@
 /* ============================================================
-   NEOMS — INTAKE TERMINAL LOGIC
+   NEOMS — INTAKE: ACCESS APPLICATION FORM
    Neoms~Database/JS/intake.js
 
-   New visitors: boot lines → registration form → optional
-   registry transmission → archive.html.
-   Returning visitors (session in localStorage): short boot,
-   "welcome back", then straight to archive.html.
+   After SCiPNET's Access Application Form: a white document in a
+   terminal window. New visitors fill in the form (a live checklist
+   gates SUBMIT) → optional registry transmission → archive.html.
+   Returning visitors (session in localStorage) see their record,
+   then go straight to archive.html.
+
+   The saved record keeps the same shape the archive expects:
+   { id, fname, lname, pos, dept, clr, site, active }.
 ============================================================ */
 "use strict";
 
@@ -13,6 +17,10 @@ const LS_KEY = "neoms_session_personnel";
 const LS_ID_KEY = "neoms_next_personnel_id";
 const FORMSPREE_URL = "https://formspree.io/f/xwvwybya";
 const DESKTOP_URL = "archive.html";
+const MAX_LEN = 40;
+const NAME_OK = /^[\p{L}\p{N} .'\-]+$/u;
+
+const $ = (id) => document.getElementById(id);
 
 /* ── localStorage helpers ─────────────────────────────────── */
 function lsSave(r) {
@@ -27,11 +35,9 @@ function lsLoad() {
     return null;
   }
 }
-
-/* ── Persistent personnel ID counter ─────────────────────────── */
 function loadNextId() {
   try {
-    var stored = parseInt(localStorage.getItem(LS_ID_KEY), 10);
+    const stored = parseInt(localStorage.getItem(LS_ID_KEY), 10);
     return isNaN(stored) ? 2000 : stored;
   } catch (e) {
     return 2000;
@@ -43,160 +49,161 @@ function saveNextId(id) {
   } catch (e) {}
 }
 
-var nextpersonnelId = loadNextId();
+let nextpersonnelId = loadNextId();
+
+/* ── Background: a terminal file listing behind the window ── */
+function fillBackground() {
+  const names = [];
+  for (let i = 1; i <= 1200; i++) names.push("nms-" + String(i).padStart(4, "0") + ".nms");
+  $("ap-bg").textContent = names.join("  ");
+}
+
+/* ── Record summary (dl) ──────────────────────────────────── */
+function siteName(id) {
+  const s = (typeof SITES !== "undefined" ? SITES : []).find((x) => x.id === id);
+  return s ? s.name + " — " + s.loc : "Site-" + id;
+}
+function renderRecord(el, r) {
+  const rows = [
+    ["Personnel ID", "S-" + r.id],
+    ["Name", (r.fname + " " + r.lname).trim()],
+    ["Department", r.dept],
+    ["Position", r.pos],
+    ["Clearance", "CL-" + r.clr],
+    ["Working site", siteName(r.site)]
+  ];
+  el.innerHTML = rows
+    .map(([k, v]) => {
+      const dt = document.createElement("dt");
+      const dd = document.createElement("dd");
+      dt.textContent = k;
+      dd.textContent = v;
+      return dt.outerHTML + dd.outerHTML;
+    })
+    .join("");
+}
 
 /* ── On page load ─────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", function () {
-  /* Randomise the site/node ID shown in the titlebar */
-  (function () {
-    var sites = ["62656", "61107", "07301", "07302", "07303"];
-    var site = sites[Math.floor(Math.random() * sites.length)];
-    var node = String(Math.floor(Math.random() * 9) + 1).padStart(3, "0");
-    var el = document.querySelector("#iv-titlebar span:last-child");
-    if (el) el.textContent = "SITE-" + site + " // NODE-" + node;
-  })();
-
+  fillBackground();
   const saved = lsLoad();
-  if (saved && saved.fname && saved.lname) {
-    fastBoot(saved);
-  } else {
-    startBoot();
-  }
+  if (saved && saved.fname && saved.lname) showSession(saved);
+  else showForm();
 });
 
-/* ── BOOT LINES ───────────────────────────────────────────── */
-const BOOT_LINES = [
-  { delay: 0, text: "NEOMS_OS v2.1 — Initializing..." },
-  { delay: 600, text: "Loading containment partition... OK" },
-  { delay: 1100, text: "Soul-coherence arrays: ONLINE" },
-  { delay: 1600, text: "boundary monitors: ELEVATED" },
-  { delay: 2200, text: "Personnel authentication required." },
-  { delay: 2800, text: "────────────────────────────────────────" },
-  { delay: 3200, text: "NEW SYNTHETIC UNIT INTAKE PROTOCOL" },
-  { delay: 3700, text: "Please provide identification for system registration." }
-];
+/* ── RETURNING USER — record, then redirect ──────────────── */
+let resumeTimer = null;
 
-function printLine(text, ok) {
-  const screen = document.getElementById("iv-screen");
-  const d = document.createElement("div");
-  d.className = "iv-line" + (ok ? " iv-line-ok" : "");
-  d.textContent = text;
-  screen.appendChild(d);
-  screen.scrollTop = screen.scrollHeight;
-}
-
-/* ── NEW USER — full interview ────────────────────────────── */
-function startBoot() {
-  let maxDelay = 0;
-  BOOT_LINES.forEach(({ delay, text }) => {
-    maxDelay = Math.max(maxDelay, delay);
-    setTimeout(() => printLine(text, false), delay);
+function showSession(record) {
+  $("ap-session").hidden = false;
+  renderRecord($("ap-session-record"), record);
+  $("ap-session-msg").textContent = "Welcome back, " + record.fname + ". Resuming session…";
+  resumeTimer = setTimeout(proceedToDesktop, 2600);
+  $("ap-new").addEventListener("click", function () {
+    clearTimeout(resumeTimer);
+    try {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem("neoms_clearance");
+    } catch (e) {}
+    $("ap-session").hidden = true;
+    showForm();
   });
-  setTimeout(() => {
-    const previewEl = document.getElementById("iv-preview-id");
-    if (previewEl) previewEl.textContent = nextpersonnelId;
-    document.getElementById("iv-form").classList.add("visible");
-  }, maxDelay + 600);
 }
 
-/* ── RETURNING USER — fast boot then redirect ─────────────── */
-function fastBoot(record) {
-  const lines = [
-    { delay: 0, text: "NEOMS_OS v2.1 — Initializing..." },
-    { delay: 500, text: "Loading containment partition... OK" },
-    { delay: 900, text: "Soul-coherence arrays: ONLINE" },
-    { delay: 1200, text: "────────────────────────────────────────" },
-    { delay: 1400, text: "SESSION RECORD FOUND" },
-    { delay: 1600, text: "personnel ID : S-" + record.id },
-    { delay: 1750, text: "NAME     : " + record.fname + " " + record.lname },
-    { delay: 1900, text: "DEPT     : " + record.dept },
-    { delay: 2050, text: "CLR      : CL-" + record.clr },
-    { delay: 2200, text: "────────────────────────────────────────" },
-    { delay: 2400, text: "Welcome back, " + record.fname + ". Resuming session..." }
-  ];
-  lines.forEach(({ delay, text }) => {
-    setTimeout(() => printLine(text, true), delay);
+/* ── NEW USER — the application form ─────────────────────── */
+function showForm() {
+  const form = $("ap-form");
+  form.hidden = false;
+  $("ap-id").textContent = "S-" + nextpersonnelId;
+
+  /* Working site options from the site data */
+  const sel = $("ap-site");
+  (typeof SITES !== "undefined" ? SITES : [{ id: 62656, name: "Site-62656", loc: "" }]).forEach(function (s) {
+    const o = document.createElement("option");
+    o.value = s.id;
+    o.textContent = s.name + (s.loc ? " — " + s.loc : "");
+    sel.appendChild(o);
   });
-  setTimeout(() => {
-    document.getElementById("iv-overlay").classList.add("iv-fadeout");
-    setTimeout(() => {
-      window.location.href = DESKTOP_URL;
-    }, 2100);
-  }, 2900);
+  sel.value = "62656";
+
+  form.addEventListener("input", updateChecklist);
+  form.addEventListener("change", updateChecklist);
+  form.addEventListener("submit", submitApplication);
+  updateChecklist();
+  $("ap-fname").focus();
 }
 
-/* ── SUBMIT FORM ──────────────────────────────────────────── */
-function submitInterview() {
-  const fname = document.getElementById("iv-fname").value.trim();
-  const lname = document.getElementById("iv-lname").value.trim();
-  const err = document.getElementById("iv-err");
+/* Live checklist: each row ticks itself; SUBMIT unlocks when all pass */
+function checks() {
+  const f = $("ap-fname").value.trim();
+  const l = $("ap-lname").value.trim();
+  return {
+    filled: !!(f && l),
+    length: f.length <= MAX_LEN && l.length <= MAX_LEN,
+    chars: (!f || NAME_OK.test(f)) && (!l || NAME_OK.test(l)),
+    ack: $("ap-ack").checked
+  };
+}
+function updateChecklist() {
+  const c = checks();
+  document.querySelectorAll("#ap-check [data-check]").forEach(function (li) {
+    const ok = c[li.dataset.check];
+    li.classList.toggle("ok", ok);
+    li.setAttribute("aria-label", li.textContent + (ok ? " — done" : " — not yet"));
+  });
+  document.querySelector(".ap-check-ack").classList.toggle("ok", c.ack);
+  $("ap-submit").disabled = !(c.filled && c.length && c.chars && c.ack);
+}
 
-  if (!fname || !lname) {
-    err.textContent = "BOTH FIELDS REQUIRED";
-    return;
-  }
-  err.textContent = "";
+function submitApplication(e) {
+  e.preventDefault();
+  const c = checks();
+  if (!(c.filled && c.length && c.chars && c.ack)) return;
 
   const newId = nextpersonnelId++;
   saveNextId(nextpersonnelId);
-
   const record = {
     id: newId,
-    fname,
-    lname,
+    fname: $("ap-fname").value.trim(),
+    lname: $("ap-lname").value.trim(),
     pos: "Synthetic Intake Unit",
     dept: "SYNTHETICS",
     clr: 1,
-    site: 62656,
+    site: parseInt($("ap-site").value, 10) || 62656,
     active: "Y"
   };
-
   lsSave(record);
   /* New personnel always start at CL-1, whatever this browser had before */
   try {
     localStorage.setItem("neoms_clearance", "1");
-  } catch (e) {}
-  document.getElementById("iv-form").classList.remove("visible");
+  } catch (e2) {}
+
+  $("ap-form").hidden = true;
   showTransmitStep(record);
 }
 
 /* ── TRANSMIT STEP ────────────────────────────────────────── */
 function showTransmitStep(record) {
-  const confirmLines = [
-    "────────────────────────────────────────",
-    "REGISTRATION COMPLETE",
-    "personnel ID : S-" + record.id,
-    "NAME     : " + record.fname + " " + record.lname,
-    "DEPT     : SYNTHETICS",
-    "CLR      : CL-1",
-    "SITE     : Site-62656",
-    "────────────────────────────────────────"
-  ];
-  confirmLines.forEach((t, i) => {
-    setTimeout(() => printLine(t, true), i * 110);
-  });
-  setTimeout(
-    () => {
-      const panel = document.getElementById("iv-transmit");
-      if (panel) {
-        const txBtn = document.getElementById("iv-tx-btn");
-        const skipBtn = document.getElementById("iv-tx-skip");
-        if (txBtn)
-          txBtn.onclick = function () {
-            doTransmit(record);
-          };
-        if (skipBtn)
-          skipBtn.onclick = function () {
-            skipTransmit();
-          };
-        panel.classList.add("visible");
-      }
-    },
-    confirmLines.length * 110 + 200
-  );
+  const sec = $("ap-transmit");
+  renderRecord($("ap-record"), record);
+  sec.hidden = false;
+  document.querySelector(".ap-scroll").scrollTop = 0;
+  $("ap-tx").onclick = function () {
+    doTransmit(record);
+  };
+  $("ap-skip").onclick = function () {
+    setStatus("Transmission skipped. Session saved locally only.", "");
+    setTimeout(proceedToDesktop, 700);
+  };
+  $("ap-tx").focus();
 }
 
-/* ── TRANSMIT REGISTRY ────────────────────────────────────── */
+function setStatus(text, cls) {
+  const s = $("ap-status");
+  s.className = "ap-status" + (cls ? " is-" + cls : "");
+  s.textContent = text;
+}
+
 function transmitToRegistry(record) {
   return fetch(FORMSPREE_URL, {
     method: "POST",
@@ -218,41 +225,27 @@ function transmitToRegistry(record) {
 }
 
 function doTransmit(record) {
-  const btn = document.getElementById("iv-tx-btn");
-  const status = document.getElementById("iv-tx-status");
-  if (!btn || !status) return;
-
+  const btn = $("ap-tx");
   btn.disabled = true;
-  btn.textContent = "TRANSMITTING...";
-  status.className = "is-busy";
-  status.textContent = "Establishing link to NeoMS Central Registry...";
+  btn.textContent = "TRANSMITTING…";
+  setStatus("Establishing link to NeoMS Central Registry…", "busy");
 
   transmitToRegistry(record)
     .then(() => {
-      status.className = "is-ok";
-      status.textContent = "TRANSMISSION CONFIRMED — record logged.";
-      btn.textContent = "TRANSMITTED \u2713";
-      setTimeout(proceedToDesktop, 1800);
+      setStatus("TRANSMISSION CONFIRMED — record logged.", "ok");
+      btn.textContent = "TRANSMITTED ✓";
+      setTimeout(proceedToDesktop, 1500);
     })
     .catch((err) => {
-      status.className = "is-err";
-      status.textContent = "TRANSMISSION FAILED — " + err.message + ". Session saved locally.";
+      setStatus("TRANSMISSION FAILED — " + err.message + ". Session saved locally.", "err");
       btn.disabled = false;
-      btn.textContent = "\u25B6 RETRY TRANSMIT";
+      btn.textContent = "RETRY TRANSMIT";
     });
 }
 
-function skipTransmit() {
-  printLine("Transmission skipped. Session saved locally only.", false);
-  setTimeout(proceedToDesktop, 800);
-}
-
 function proceedToDesktop() {
-  printLine("Opening containment archive...", true);
+  document.body.classList.add("ap-fadeout");
   setTimeout(() => {
-    document.getElementById("iv-overlay").classList.add("iv-fadeout");
-    setTimeout(() => {
-      window.location.href = DESKTOP_URL;
-    }, 2100);
-  }, 600);
+    window.location.href = DESKTOP_URL;
+  }, 900);
 }

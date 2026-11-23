@@ -1,0 +1,696 @@
+/* ============================================================
+   NEOMS~DATABASE — SECURED VIEWER WINDOWS
+   Floating document windows opened by the terminal's `cat`,
+   after SCiPNET's viewer: dark window chrome with a hatched
+   label tag, and a white typewriter document inside.
+   ============================================================ */
+
+/* ── Window chrome ───────────────────────────────────────────── */
+.nv-win {
+  position: fixed;
+  width: min(915px, calc(100vw - 40px));
+  height: min(800px, calc(100vh - 80px));
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  border: 1px solid #3a3a3a;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  letter-spacing: normal;
+}
+.nv-win.nv-max {
+  inset: 0 !important;
+  width: auto;
+  height: auto;
+}
+.nv-win[hidden] {
+  display: none;
+}
+
+/* ── Minimise dock (bottom-left) ─────────────────────────────── */
+.nv-dock {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 1150;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  max-width: calc(100vw - 20px);
+}
+.nv-dock:empty {
+  display: none;
+}
+.nv-chip {
+  display: flex;
+  align-items: center;
+  width: 265px;
+  height: 38px;
+  padding-left: 10px;
+  background: #161616;
+  border: 1px solid #3a3a3a;
+  border-bottom: 0;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5);
+}
+.nv-chip button {
+  height: 100%;
+  background: none;
+  border: 0;
+  color: #cfcfcf;
+  cursor: pointer;
+}
+.nv-chip button:not(.nv-chip-tag) {
+  width: 38px;
+  font-size: 14px;
+}
+.nv-chip .nv-chip-tag {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+/* The label keeps the hatched tag look from the window title bar */
+.nv-chip .nv-tag {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.nv-chip button:hover,
+.nv-chip button:focus-visible {
+  background: #2a2a2a;
+  color: #fff;
+  outline: none;
+}
+.nv-chip button[data-nv="close"]:hover {
+  background: #b3261e;
+}
+
+.nv-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding-left: 8px;
+  background: #161616;
+  border-bottom: 1px solid #2a2a2a;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+  flex-shrink: 0;
+}
+/* Hatched label tag, as on SCiPNET's "SCP-994" tab */
+.nv-tag {
+  font: 11px/1 "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 1px;
+  color: #e6e6e6;
+  padding: 5px 8px;
+  border: 1px solid #555;
+  background: repeating-linear-gradient(135deg, #2a2a2a 0 3px, #161616 3px 6px);
+}
+.nv-btns {
+  display: flex;
+  height: 100%;
+}
+.nv-btns button {
+  width: 42px;
+  height: 100%;
+  background: none;
+  border: 0;
+  color: #cfcfcf;
+  font-size: 15px;
+  cursor: pointer;
+}
+.nv-btns button:hover,
+.nv-btns button:focus-visible {
+  background: #2a2a2a;
+  color: #fff;
+  outline: none;
+}
+.nv-btns button[data-nv="close"]:hover {
+  background: #b3261e;
+}
+
+.nv-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #fff;
+}
+
+/* ── White document ──────────────────────────────────────────── */
+.nv-doc {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 60px 70px;
+  color: #111;
+  font: 16px/2 "Courier Prime", "Courier New", monospace;
+  letter-spacing: 0.06em;
+}
+.nv-head {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #111;
+}
+.nv-logo {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  color: #111;
+}
+.nv-head small {
+  display: block;
+  font: 600 13px "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.22em;
+  color: #888;
+}
+.nv-head h1 {
+  margin: 4px 0 0;
+  font: 700 42px/1.1 "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+.nv-bar {
+  margin: 30px 0;
+  padding: 10px 14px;
+  background: #111;
+  color: #fff;
+  text-align: center;
+  font: 700 15px "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.35em;
+}
+.nv-body {
+  display: flow-root;
+  border: 1px solid #ccc;
+  padding: 50px 70px;
+}
+.nv-body p {
+  margin: 0 0 1.2em;
+}
+.nv-body b {
+  font-weight: 700;
+}
+.nv-body code {
+  font: inherit;
+  font-size: 13px;
+  background: #f0f0f0;
+  padding: 0 4px;
+}
+
+/* Photo floated right with a black caption bar */
+.nv-fig {
+  float: right;
+  width: 42%;
+  margin: 0 0 24px 40px;
+}
+.nv-fig img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  background: #ddd;
+}
+.nv-fig figcaption {
+  padding: 12px;
+  background: #111;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.nv-pre {
+  margin: 0;
+  font: inherit;
+  white-space: pre-wrap;
+}
+.nv-redact {
+  background: #111;
+  color: #111;
+  user-select: none;
+}
+.nv-addenda {
+  margin: 0 0 1.2em;
+  padding-left: 1.4em;
+}
+/* Custom bullet pinned to the first line (buttons don't wrap
+   inline, so the default marker would drop to the last line) */
+.nv-addenda {
+  list-style: none;
+}
+.nv-addenda li {
+  position: relative;
+  margin-bottom: 0.8em;
+  line-height: 1.6;
+}
+.nv-addenda li::before {
+  content: "•";
+  position: absolute;
+  left: -1em;
+  top: 0;
+}
+.nv-addenda code {
+  display: block;
+  width: fit-content;
+  margin-top: 4px;
+}
+/* Report titles in the Addenda open the report */
+.nv-report-link {
+  display: inline;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: #111;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.nv-report-link:hover,
+.nv-report-link:focus-visible {
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Log transcript */
+.nv-log {
+  margin: 0 0 1.4em;
+  padding: 12px 18px;
+  border-left: 3px solid #111;
+  background: #f4f4f4;
+  line-height: 1.7;
+}
+.nv-log p {
+  margin: 0.3em 0;
+}
+.nv-t {
+  color: #666;
+}
+.nv-mark {
+  text-align: center;
+  color: #777;
+}
+.nv-note {
+  font-style: italic;
+  color: #555;
+}
+
+/* ── Dark documents (◐ toggle in the title bar) ──────────────── */
+.nv-theme-btn[aria-pressed="true"] {
+  color: #fff;
+}
+body.nv-dark-docs .nv-win:not(.nv-win--dark) .nv-scroll {
+  background: #0e0e0e;
+}
+body.nv-dark-docs .nv-doc {
+  color: #dcdcdc;
+}
+body.nv-dark-docs .nv-head {
+  border-bottom-color: #dcdcdc;
+}
+body.nv-dark-docs .nv-logo {
+  color: #dcdcdc;
+}
+body.nv-dark-docs .nv-head small {
+  color: #8a8a8a;
+}
+body.nv-dark-docs .nv-bar {
+  background: #dcdcdc;
+  color: #0e0e0e;
+}
+body.nv-dark-docs .nv-body {
+  border-color: #333;
+}
+body.nv-dark-docs .nv-body code {
+  background: #1e1e1e;
+  color: #cfcfcf;
+}
+body.nv-dark-docs .nv-fig img {
+  background: #1a1a1a;
+}
+body.nv-dark-docs .nv-fig figcaption {
+  background: #dcdcdc;
+  color: #0e0e0e;
+}
+body.nv-dark-docs .nv-redact {
+  background: #dcdcdc;
+  color: #dcdcdc;
+}
+body.nv-dark-docs .nv-log {
+  background: #161616;
+  border-left-color: #dcdcdc;
+}
+body.nv-dark-docs .nv-t,
+body.nv-dark-docs .nv-mark {
+  color: #8a8a8a;
+}
+body.nv-dark-docs .nv-note {
+  color: #9a9a9a;
+}
+body.nv-dark-docs .nv-report-link {
+  color: #dcdcdc;
+}
+body.nv-dark-docs .nv-report-link:hover,
+body.nv-dark-docs .nv-report-link:focus-visible {
+  background: #dcdcdc;
+  color: #0e0e0e;
+}
+
+/* ── Dark app windows (INBOX, PERSONNEL ACTIVITY) ────────────── */
+.nv-win--app {
+  width: min(1000px, calc(100vw - 40px));
+  height: min(640px, calc(100vh - 80px));
+}
+.nv-win--dark .nv-scroll {
+  background: #1e1e1e;
+  overflow: hidden;
+}
+.nv-app {
+  height: 100%;
+  display: flex;
+  color: #e6e6e6;
+  font: 14px/1.5 "Barlow", system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+.nv-empty {
+  margin: auto;
+  color: #8a8a8a;
+  text-align: center;
+}
+.nv-empty-inline {
+  color: #8a8a8a;
+  margin: 0;
+}
+.nv-app button {
+  font: inherit;
+  color: inherit;
+}
+.nv-cmd {
+  background: #2b2b2b;
+  border: 1px solid #444;
+  padding: 0 6px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", Consolas, monospace !important;
+  font-size: 12px !important;
+  text-align: left;
+}
+.nv-cmd:hover,
+.nv-cmd:focus-visible {
+  border-color: #e6e6e6;
+  outline: none;
+}
+.nv-redact-dark {
+  background: #e6e6e6;
+  color: #e6e6e6;
+}
+.nv-mail-meta {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 4px 12px;
+  margin: 0 0 18px;
+  font-size: 13px;
+}
+.nv-mail-meta dt {
+  color: #8a8a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
+  padding-top: 2px;
+}
+.nv-mail-meta dd {
+  margin: 0;
+}
+
+/* Inbox: list left, message right */
+.nv-inbox-list {
+  width: 330px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid #333;
+  background: #232323;
+}
+.nv-mail {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #333;
+  text-align: left;
+  cursor: pointer;
+}
+.nv-mail:hover,
+.nv-mail:focus-visible {
+  background: #2c2c2c;
+  outline: none;
+}
+.nv-mail.on {
+  background: #333;
+}
+.nv-mail-from {
+  font-weight: 600;
+}
+.nv-mail.unread .nv-mail-from::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #fff;
+  vertical-align: middle;
+}
+.nv-mail-date {
+  font-size: 12px;
+  color: #8a8a8a;
+}
+.nv-mail-subj {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: #b5b5b5;
+}
+.nv-mail.unread .nv-mail-subj {
+  color: #fff;
+}
+.nv-mail-locked {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #ff5555;
+}
+.nv-inbox-read {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 32px;
+  overflow-y: auto;
+}
+.nv-inbox-read h2 {
+  margin: 0 0 14px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.nv-mail-body {
+  white-space: pre-wrap;
+  font: 14px/1.7 "JetBrains Mono", Consolas, monospace;
+  color: #d8d8d8;
+  border-top: 1px solid #333;
+  padding-top: 18px;
+}
+
+/* Personnel activity */
+.nv-world {
+  flex-direction: column;
+}
+.nv-world-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #262626;
+  border-bottom: 1px solid #333;
+}
+.nv-avatar {
+  font-size: 26px;
+  line-height: 1;
+}
+.nv-world-head b {
+  display: block;
+}
+.nv-world-head small {
+  color: #8a8a8a;
+}
+.nv-refresh {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.nv-refresh:hover,
+.nv-refresh:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+.nv-world-search {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #222;
+  border-bottom: 1px solid #333;
+}
+.nv-world-search input,
+.nv-world-search select {
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  color: #e6e6e6;
+  font: inherit;
+  padding: 6px 10px;
+}
+.nv-world-search input {
+  flex: 1;
+  min-width: 0;
+}
+.nv-world-search input:focus,
+.nv-world-search select:focus {
+  border-color: #8a8a8a;
+  outline: none;
+}
+.nv-world-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.nv-world-list {
+  width: 340px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  border-right: 1px solid #333;
+}
+.nv-person {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #333;
+  text-align: left;
+  cursor: pointer;
+}
+.nv-person:hover,
+.nv-person:focus-visible {
+  background: #2c2c2c;
+  outline: none;
+}
+.nv-person.on {
+  background: #333;
+}
+.nv-person-name {
+  font-weight: 600;
+}
+.nv-live {
+  color: #5fd068;
+  margin-right: 6px;
+  font-size: 11px;
+}
+.nv-person-lvl {
+  font-size: 12px;
+  color: #8a8a8a;
+}
+.nv-person-sub {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: #8a8a8a;
+}
+.nv-world-detail {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 30px;
+  overflow-y: auto;
+}
+.nv-world-detail h3 {
+  margin: 0;
+  font-size: 22px;
+}
+.nv-world-detail h4 {
+  margin: 14px 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+}
+.nv-world-detail ul {
+  margin: 0;
+  padding-left: 1.1em;
+}
+.nv-world-detail li {
+  margin: 4px 0;
+}
+.nv-person-id {
+  margin: 2px 0 16px;
+  color: #8a8a8a;
+}
+.nv-world-foot {
+  padding: 8px 16px;
+  border-top: 1px solid #333;
+  background: #232323;
+  font-size: 12px;
+  color: #b5b5b5;
+}
+
+@media (max-width: 760px) {
+  .nv-inbox,
+  .nv-world-main {
+    flex-direction: column;
+  }
+  .nv-inbox-list,
+  .nv-world-list {
+    width: auto;
+    max-height: 40%;
+    border-right: 0;
+    border-bottom: 1px solid #333;
+  }
+}
+
+@media (max-width: 760px) {
+  .nv-doc {
+    padding: 28px 18px 40px;
+    font-size: 14px;
+  }
+  .nv-head {
+    gap: 18px;
+  }
+  .nv-logo {
+    width: 64px;
+    height: 64px;
+  }
+  .nv-head h1 {
+    font-size: 26px;
+  }
+  .nv-bar {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+  .nv-body {
+    padding: 22px 18px;
+  }
+  .nv-fig {
+    float: none;
+    width: 100%;
+    margin: 0 0 20px;
+  }
+}
