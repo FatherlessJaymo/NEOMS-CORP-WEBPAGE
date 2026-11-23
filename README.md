@@ -5,7 +5,7 @@
 > **NEO Monitoring System** — a retro-OS styled personal homepage and containment-log database you can click around
 > like a desktop computer.
 
-## 🌐 Visit
+## Visit
 
 **[fatherlessjaymo.neocities.org](https://fatherlessjaymo.neocities.org)**
 
@@ -26,16 +26,16 @@ Open the Database from the PrimeDrive start menu (**Neoms~Database**).
 
 ---
 
-## 🚀 Features
+##  Features
 
 | Feature                       | What it does                                                                |
 | ----------------------------- | --------------------------------------------------------------------------- |
-| 🖥️ **Desktop window manager** | Drag, resize, minimize, maximize, and stack windows like a real desktop.    |
-| 🎵 **NeoMix player**          | Music player with shuffle, seek, and taskbar mini-controls.                 |
-| 📚 **Containment database**   | Wiki-style dossiers for entities, personnel, and sites.                     |
-| 🌐 **Facility map**           | Zoom and pan a world map; click a site to open its dossier.                 |
-| 🔐 **Clearance levels**       | Five clearance tiers — restricted files stay redacted until you're cleared. |
-| ⌨️ **Terminal**               | Type `HELP` to get started.                                                 |
+|  **Desktop window manager** | Drag, resize, minimize, maximize, and stack windows like a real desktop.    |
+|  **NeoMix player**          | Music player with shuffle, seek, and taskbar mini-controls.                 |
+|  **Containment database**   | Wiki-style dossiers for entities, personnel, and sites.                     |
+|  **Facility map**           | Zoom and pan a world map; click a site to open its dossier.                 |
+| **Clearance levels**       | Five clearance tiers — restricted files stay redacted until you're cleared. |
+|  **Terminal**               | Type `HELP` to get started.                                                 |
 
 ---
 
