@@ -433,9 +433,11 @@ function nvEntityDoc(e) {
       ? '<figure class="nv-fig"><img src="' + escHtml(e.img) + '" alt="' + escHtml(id + " — " + e.name) + '" />' +
         "<figcaption>A photograph of " + escHtml(id) + " in containment.</figcaption></figure>"
       : "") +
-    nvField("Item #", id) + nvField("Designation", e.name) + nvField("Object Class", cls) +
-    nvField("Power Scale", e.ps) + nvField("Status", e.status) +
-    nvField("Assigned Site", e.site ? "Site-" + e.site : "") + nvField("Interaction Safety", e.safety) +
+    nvField("Item #", id) + nvField("Designation", e.name) + nvField("Also Known As", e.alias) +
+    nvField("Object Class", cls) + nvField("Power Scale", e.ps) + nvField("Status", e.status) +
+    nvField("Containment Type", e.containment) +
+    nvField(e.adminSite ? "Primary Administrative Site" : "Assigned Site", e.adminSite || (e.site ? "Site-" + e.site : "")) +
+    nvField("Threat Vectors", (e.vectors || []).join(", ")) + nvField("Interaction Safety", e.safety) +
     protos + nvField("Description", e.desc) + nvField("Anomalous Properties", e.aprop) +
     nvField("Physical Description", e.phys) + nvField("Dimensions", e.dims) +
     (addenda ? '<p><b>Addenda:</b></p><ul class="nv-addenda">' + addenda + "</ul>" : "") +

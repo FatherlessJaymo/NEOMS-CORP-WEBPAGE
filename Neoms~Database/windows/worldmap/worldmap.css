@@ -501,6 +501,7 @@
 .nm-fx--incident .nm-fx-ring { stroke: #ff4444; }
 .nm-fx--observation .nm-fx-ring { stroke: #6b9cff; }
 .nm-fx--sighting .nm-fx-ring { stroke: #ffaa00; }
+.nm-fx--intelligence .nm-fx-ring { stroke: #ff9a3c; stroke-dasharray: 4 3; }
 .nm-fx--broadcast .nm-fx-ring { stroke: #ff4444; stroke-width: 2.5; }
 .nm-fx--ping .nm-fx-ring { stroke: #00e0e0; }
 .nm-fx-dot {
