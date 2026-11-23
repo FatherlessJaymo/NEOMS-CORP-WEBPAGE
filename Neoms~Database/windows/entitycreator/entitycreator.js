@@ -187,16 +187,46 @@ function addReport() {
     '" style="height:80px;" placeholder="Report summary…"></textarea>' +
     "</div>" +
     '<div class="ec-field">' +
+    '<label class="ec-label">LOCATION (optional)</label>' +
+    '<input class="ec-input" id="ec-report-location-' +
+    idx +
+    '" type="text" placeholder="e.g. Site-62656, Research Wing C">' +
+    "</div>" +
+    '<div class="ec-field">' +
+    '<label class="ec-label">PERSONNEL (optional)</label>' +
+    '<input class="ec-input" id="ec-report-personnel-' +
+    idx +
+    '" type="text" placeholder="e.g. 3 research staff (exposed)">' +
+    "</div>" +
+    '<div class="ec-field ec-span2">' +
+    '<label class="ec-label">FOREWORD (optional)</label>' +
+    '<textarea class="ec-input ec-ta" id="ec-report-foreword-' +
+    idx +
+    '" style="height:50px;" placeholder="Context before the log…"></textarea>' +
+    "</div>" +
+    '<div class="ec-field ec-span2">' +
+    '<label class="ec-label">LOG (optional — one line per entry)</label>' +
+    '<textarea class="ec-input ec-ta ec-log-ta" id="ec-report-log-' +
+    idx +
+    '" style="height:110px;" placeholder="[14:02] Emulation boots on quarantined terminal.\n[14:06] REWRITE: Hi! Who\'s watching?\n████: [No response, per protocol]\nNote: Entity remained in default state. — S-1003"></textarea>' +
+    "</div>" +
+    '<div class="ec-field ec-span2">' +
+    '<label class="ec-label">CLOSING STATEMENT (optional)</label>' +
+    '<textarea class="ec-input ec-ta" id="ec-report-notes-' +
+    idx +
+    '" style="height:50px;" placeholder="Outcome, follow-up actions…"></textarea>' +
+    "</div>" +
+    '<div class="ec-field">' +
     '<label class="ec-label">FILE REFERENCE (optional)</label>' +
     '<input class="ec-input" id="ec-report-file-' +
     idx +
     '" type="text" placeholder="NMS-XXX-TYPE-001.pdf">' +
     "</div>" +
     '<div class="ec-field">' +
-    '<label class="ec-label">AUTHOR (personnel ID)</label>' +
+    '<label class="ec-label">WITH (personnel IDs — filed by Nova)</label>' +
     '<input class="ec-input" id="ec-report-author-' +
     idx +
-    '" type="number" placeholder="e.g. 1003">' +
+    '" type="text" placeholder="e.g. 1003, 2004">' +
     "</div>" +
     "</div>";
 
@@ -255,13 +285,52 @@ function collectProtocols() {
   return results;
 }
 
+/* ── Parse the LOG textarea into entries ─────────────────────
+     "[14:06] REWRITE: Hi!" → { t, who, text }
+     "Note: …"              → { note }
+     anything else          → plain string line                */
+function parseLog(raw) {
+  if (!raw) return [];
+  return raw
+    .split(/\r?\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(Boolean)
+    .map(function (line) {
+      if (/^note:/i.test(line)) return { note: line };
+      var entry = {};
+      var ts = line.match(/^\[([^\]]+)\]\s*(.*)$/);
+      if (ts) {
+        entry.t = ts[1];
+        line = ts[2];
+      }
+      var who = line.match(/^([^:\[]{1,30}):\s+(.+)$/);
+      if (who) {
+        entry.who = who[1].trim();
+        line = who[2];
+      }
+      if (!entry.t && !entry.who) return line;
+      entry.text = line;
+      return entry;
+    });
+}
+
 /* ── Collect reports ─────────────────────────────────────── */
 function collectReports() {
   var results = [];
   for (var i = 1; i <= reportCount; i++) {
     if (!document.getElementById("ec-report-" + i)) continue;
     var fileVal = gv("ec-report-file-" + i);
-    var authorVal = gn("ec-report-author-" + i);
+    /* "With" box: any personnel IDs, comma/space separated → contributors */
+    var withIds = (gv("ec-report-author-" + i) || "")
+      .split(/[\s,]+/)
+      .map(function (s) {
+        return parseInt(s.replace(/^S-/i, ""), 10);
+      })
+      .filter(function (n) {
+        return n > 0;
+      });
     var entry = {
       title: gv("ec-report-title-" + i) || "",
       subtitle: gv("ec-report-sub-" + i) || "",
@@ -270,59 +339,47 @@ function collectReports() {
       clr: parseInt(gv("ec-report-clr-" + i) || "1", 10),
       summary: gv("ec-report-summary-" + i) || ""
     };
+    ["location", "personnel", "foreword"].forEach(function (k) {
+      var v = gv("ec-report-" + k + "-" + i);
+      if (v) entry[k] = v;
+    });
+    var log = parseLog(gv("ec-report-log-" + i));
+    if (log.length) entry.log = log;
+    var notesVal = gv("ec-report-notes-" + i);
+    if (notesVal) entry.notes = notesVal;
     if (fileVal) entry.file = fileVal;
-    if (authorVal) entry.author = authorVal;
+    if (withIds.length) entry.contributors = withIds;
     results.push(entry);
   }
   return results;
 }
 
-/* ── JS object pretty-printer ────────────────────────────── */
+/* ── JS object pretty-printer ────────────────────────────────
+   Recursive, so nested arrays (e.g. a report's log lines) get
+   one entry per line instead of being crammed onto one.     */
+function formatValue(v, indent) {
+  if (v === null || v === undefined) return "null";
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (typeof v === "string") return JSON.stringify(v);
+  var inner = indent + "  ";
+  if (Array.isArray(v)) {
+    if (v.length === 0) return "[]";
+    return "[\n" + v.map(function (item) {
+      return inner + formatValue(item, inner);
+    }).join(",\n") + "\n" + indent + "]";
+  }
+  var keys = Object.keys(v);
+  if (keys.length === 0) return "{}";
+  return "{\n" + keys.map(function (k) {
+    return inner + k + ": " + formatValue(v[k], inner);
+  }).join(",\n") + "\n" + indent + "}";
+}
+
 function stringify(obj, indent) {
   indent = indent || "    ";
-  var lines = [];
-  var keys = Object.keys(obj);
-  keys.forEach(function (k, ki) {
-    var v = obj[k];
-    var comma = ki < keys.length - 1 ? "," : "";
-    var key = k + ": ";
-    if (v === null) {
-      lines.push(indent + key + "null" + comma);
-    } else if (typeof v === "number") {
-      lines.push(indent + key + v + comma);
-    } else if (typeof v === "string") {
-      lines.push(indent + key + JSON.stringify(v) + comma);
-    } else if (Array.isArray(v)) {
-      if (v.length === 0) {
-        lines.push(indent + key + "[]" + comma);
-      } else {
-        lines.push(indent + key + "[");
-        v.forEach(function (item, ii) {
-          var subComma = ii < v.length - 1 ? "," : "";
-          if (typeof item === "object" && item !== null) {
-            lines.push(indent + "  {");
-            var subKeys = Object.keys(item);
-            subKeys.forEach(function (sk, ski) {
-              var sc = ski < subKeys.length - 1 ? "," : "";
-              var sv = item[sk];
-              if (sv === null) {
-                lines.push(indent + "    " + sk + ": null" + sc);
-              } else if (typeof sv === "number") {
-                lines.push(indent + "    " + sk + ": " + sv + sc);
-              } else {
-                lines.push(indent + "    " + sk + ": " + JSON.stringify(sv) + sc);
-              }
-            });
-            lines.push(indent + "  }" + subComma);
-          } else {
-            lines.push(indent + "  " + JSON.stringify(item) + subComma);
-          }
-        });
-        lines.push(indent + "]" + comma);
-      }
-    }
-  });
-  return lines.join("\n");
+  return Object.keys(obj).map(function (k) {
+    return indent + k + ": " + formatValue(obj[k], indent);
+  }).join(",\n");
 }
 
 /* ── Generate output ─────────────────────────────────────── */
@@ -527,7 +584,10 @@ var EC_FIELDS = [
 ];
 /* Field suffixes inside protocol/report cards, e.g. ec-proto-type-3 */
 var EC_PROTO_KEYS = ["type", "clr", "desc", "equip", "dur", "personnel"];
-var EC_REPORT_KEYS = ["title", "sub", "date", "type", "clr", "summary", "file", "author"];
+var EC_REPORT_KEYS = [
+  "title", "sub", "date", "type", "clr", "summary",
+  "location", "personnel", "foreword", "log", "notes", "file", "author"
+];
 var EC_EMPTY_OUTPUT = "// Click ▶ GENERATE to build your entity object.";
 
 var ecStore = ecLoadStore();

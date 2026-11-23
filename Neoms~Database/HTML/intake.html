@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="NeoMS — Synthetic Intake Terminal" />
+    <meta name="description" content="NeoMS — Access Application Form" />
     <meta name="theme-color" content="#000000" />
-    <title>NeoMs | Intake Terminal</title>
+    <title>NeoMs | Access Application</title>
     <link rel="icon" type="image/png" href="../../Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=VT323&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=VT323&display=swap"
       rel="stylesheet" />
     <link rel="stylesheet" href="../../Neoms~Database/CSS/intake.css" />
   </head>
@@ -23,80 +23,132 @@
       </symbol>
     </svg>
 
-    <div class="iv-dots" aria-hidden="true"></div>
+    <!-- Terminal file listing behind the window (filled by intake.js) -->
+    <pre class="ap-bg" id="ap-bg" aria-hidden="true"></pre>
 
-    <div id="iv-overlay">
-      <header class="iv-head">
-        <svg class="iv-emblem" aria-hidden="true"><use href="#emblem" /></svg>
-        <div>
-          <h1>NEOMS<span>~</span>DB</h1>
-          <p>Synthetic intake terminal</p>
-        </div>
-      </header>
+    <main class="ap-win" id="ap-win">
+      <div class="ap-titlebar"><span class="ap-tag">NEOMS ACCESS APPLICATION FORM</span></div>
 
-      <div id="iv-inner">
-        <div id="iv-titlebar">
-          <span>Intake // Personnel authentication</span>
-          <span>SITE-62656 // NODE-001</span>
-        </div>
-        <div id="iv-screen" role="log" aria-live="polite"></div>
+      <div class="ap-scroll">
+        <article class="ap-doc">
+          <p class="ap-level">LEVEL 0/NEOMS</p>
+          <header class="ap-head">
+            <svg class="ap-logo" aria-hidden="true"><use href="#emblem" /></svg>
+            <h1>NEOMS ACCESS APPLICATION FORM</h1>
+          </header>
+          <div class="ap-bar">CONFIDENTIAL DOCUMENT</div>
 
-        <!-- Registration form -->
-        <div id="iv-form">
-          <div class="iv-name-grid">
-            <label>
-              <span class="iv-form-label">First name</span>
-              <input class="iv-form-input" id="iv-fname" placeholder="Given name" autocomplete="off" />
-            </label>
-            <label>
-              <span class="iv-form-label">Last name / designation</span>
-              <input
-                class="iv-form-input"
-                id="iv-lname"
-                placeholder="Family name"
-                autocomplete="off"
-                onkeydown="if(event.key==='Enter') submitInterview()" />
-            </label>
-          </div>
-          <div>
-            <div class="iv-form-label">Auto-assigned parameters</div>
-            <dl class="iv-auto-fields">
-              <div><dt>Personnel ID</dt><dd>S-<span id="iv-preview-id">2000</span></dd></div>
-              <div><dt>Department</dt><dd>Synthetics</dd></div>
-              <div><dt>Clearance</dt><dd>CL-1</dd></div>
-              <div><dt>Assigned site</dt><dd>Site-62656</dd></div>
-              <div><dt>Position</dt><dd>Synthetic Intake Unit</dd></div>
-              <div><dt>Status</dt><dd class="iv-af-val--active">Active</dd></div>
-            </dl>
-          </div>
-          <div class="iv-form-footer">
-            <span id="iv-err"></span>
-            <button class="iv-submit" onclick="submitInterview()">Register &amp; boot &#9656;</button>
-          </div>
-        </div>
+          <!-- Returning visitor: session found, then straight to the archive -->
+          <section id="ap-session" hidden aria-live="polite">
+            <h2>SESSION RECORD FOUND</h2>
+            <dl class="ap-record" id="ap-session-record"></dl>
+            <p id="ap-session-msg"></p>
+            <p class="ap-small">
+              Not you?
+              <button type="button" class="ap-link" id="ap-new">Submit a new application</button>
+            </p>
+          </section>
 
-        <!-- Transmission step -->
-        <div id="iv-transmit">
-          <div class="iv-tx-header">
-            Optional — Registry transmission
-            <span>Transmit record to NeoMS Central Registry?</span>
-          </div>
-          <div class="iv-tx-desc">
-            Your intake record has been <b>saved locally</b> to this device. You may optionally transmit it to the
-            <b>NeoMS Central Registry</b> — this logs your designation to the director's dashboard for official
-            recognition.
-            <span class="iv-tx-note">Transmission is voluntary. Skip to boot immediately.</span>
-          </div>
-          <div class="iv-tx-actions">
-            <button id="iv-tx-btn">Transmit to registry &#9656;</button>
-            <button id="iv-tx-skip">Skip — boot now</button>
-            <span id="iv-tx-status"></span>
-          </div>
-        </div>
+          <!-- New visitor: the application -->
+          <form id="ap-form" novalidate hidden>
+            <p>
+              <b class="ap-u">1. PURPOSE OF APPLICATION:</b> This document constitutes a formal request for authorised
+              access credentials to the NeoMS Direct Access Terminal. NeoMS provides encrypted connections to
+              compartmentalised containment databanks, essential for anomalous research, containment strategy
+              formulation, Sentinel Forces coordination, and inter-departmental dissemination of restricted
+              intelligence. Access is governed by the Principle of Least Privilege.
+            </p>
+            <p>
+              <b class="ap-u">2. INSTRUCTIONS FOR APPLICANT:</b> <i>a.</i> Complete all sections of this form with
+              <b>ABSOLUTE ACCURACY AND TRUTHFULNESS</b>. Falsification, omission, or obfuscation of information will
+              result in immediate application denial and may warrant further disciplinary review. <i>b.</i> Upon
+              submission, this document becomes CLASSIFIED LEVEL 3/NEOMS. Unauthorised disclosure or mishandling
+              will result in disciplinary action (refer to Directive-Prime memorandum MP-04).
+            </p>
+            <p>To apply, please accurately complete this form in full and provide your relevant information.</p>
+
+            <h2>IDENTIFICATION</h2>
+            <div class="ap-row ap-row--2">
+              <div class="ap-field">
+                <label class="ap-field-label" for="ap-fname">FIRST NAME</label>
+                <input id="ap-fname" autocomplete="off" maxlength="60" aria-describedby="ap-fname-help" required />
+                <p class="ap-field-help" id="ap-fname-help">Your given name, as it will appear in the personnel registry.</p>
+              </div>
+              <div class="ap-field">
+                <label class="ap-field-label" for="ap-lname">LAST NAME / DESIGNATION</label>
+                <input id="ap-lname" autocomplete="off" maxlength="60" aria-describedby="ap-lname-help" required />
+                <p class="ap-field-help" id="ap-lname-help">Your family name or unit designation.</p>
+              </div>
+            </div>
+
+            <h2>INFORMATION</h2>
+            <div class="ap-row ap-row--3">
+              <div class="ap-field">
+                <span class="ap-field-label" id="ap-id-label">PERSONNEL ID</span>
+                <output class="ap-fixed" id="ap-id" aria-labelledby="ap-id-label">S-2000</output>
+                <p class="ap-field-help">Assigned automatically on intake.</p>
+              </div>
+              <div class="ap-field">
+                <span class="ap-field-label" id="ap-dept-label">DEPARTMENT</span>
+                <output class="ap-fixed" aria-labelledby="ap-dept-label">SYNTHETICS</output>
+                <p class="ap-field-help">All new personnel are processed through Synthetics.</p>
+              </div>
+              <div class="ap-field">
+                <label class="ap-field-label" for="ap-site">WORKING SITE</label>
+                <select id="ap-site" aria-describedby="ap-site-help"></select>
+                <p class="ap-field-help" id="ap-site-help">The facility you are assigned to. (e.g. Site-62656, Site-10081)</p>
+              </div>
+            </div>
+            <div class="ap-row ap-row--2">
+              <div class="ap-field">
+                <span class="ap-field-label" id="ap-pos-label">POSITION</span>
+                <output class="ap-fixed" aria-labelledby="ap-pos-label">Synthetic Intake Unit</output>
+                <p class="ap-field-help">Your personnel classification on entry.</p>
+              </div>
+              <div class="ap-field">
+                <span class="ap-field-label" id="ap-clr-label">CLEARANCE LEVEL</span>
+                <output class="ap-fixed" aria-labelledby="ap-clr-label">Level 1</output>
+                <p class="ap-field-help">Your security clearance. Raised only by directive.</p>
+              </div>
+            </div>
+
+            <h2>CHECKLIST</h2>
+            <p>Before submitting the form, ensure that:</p>
+            <ul class="ap-check" id="ap-check">
+              <li data-check="filled">The form is completely filled out</li>
+              <li data-check="length">All entries do not exceed 40 characters</li>
+              <li data-check="chars">Names contain only letters, numbers, spaces, hyphens, full stops or apostrophes</li>
+              <li class="ap-check-ack">
+                <input type="checkbox" id="ap-ack" />
+                <label for="ap-ack">I acknowledge that all activity on NeoMS terminals is logged and monitored</label>
+              </li>
+            </ul>
+
+            <p class="ap-policy"><i>By submitting this form, you agree to Directive-Prime memorandum MP-04.</i></p>
+            <button type="submit" class="ap-submit" id="ap-submit" disabled>SUBMIT <span aria-hidden="true">&#10003;</span></button>
+          </form>
+
+          <!-- After submitting: optional registry transmission -->
+          <section id="ap-transmit" hidden aria-live="polite">
+            <h2>REGISTRATION COMPLETE</h2>
+            <dl class="ap-record" id="ap-record"></dl>
+            <h2>REGISTRY TRANSMISSION</h2>
+            <p>
+              Your intake record has been <b>saved locally</b> to this device. You may optionally transmit it to the
+              <b>NeoMS Central Registry</b>, which logs your designation to the director's dashboard for official
+              recognition. <i>Transmission is voluntary.</i>
+            </p>
+            <div class="ap-actions">
+              <button type="button" class="ap-submit ap-submit--on" id="ap-tx">TRANSMIT TO REGISTRY</button>
+              <button type="button" class="ap-submit ap-submit--ghost" id="ap-skip">SKIP — OPEN ARCHIVE</button>
+            </div>
+            <p class="ap-status" id="ap-status" role="status"></p>
+          </section>
+        </article>
       </div>
+    </main>
 
-      <footer class="iv-foot">NeoMS Database · Schema v2.1 · Unauthorized access is logged</footer>
-    </div>
+    <script src="../../Neoms~Database/windows/sites/Sites-Data.js"></script>
     <script src="../../Neoms~Database/JS/intake.js"></script>
   </body>
 </html>

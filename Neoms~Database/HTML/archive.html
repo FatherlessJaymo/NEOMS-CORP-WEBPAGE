@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="../../Neoms~Universal-Fonts+Images/Icons/NeomsCorp/NEOMS-CORP-1.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Share+Tech+Mono&family=VT323&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Share+Tech+Mono&family=VT323&display=swap"
       rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
@@ -21,6 +21,8 @@
     <!-- DB window content styles, then the Archive theme on top -->
     <link rel="stylesheet" href="../../Neoms~Database/CSS/Databaselog.css" />
     <link rel="stylesheet" href="../../Neoms~Database/CSS/archive.css" />
+    <link rel="stylesheet" href="../../Neoms~Database/CSS/term-viewer.css" />
+    <link rel="stylesheet" href="../../Neoms~Database/CSS/file-browser.css" />
   </head>
   <body>
     <!-- NeoMS emblem, reused by loader, header and watermark -->
@@ -86,21 +88,31 @@
         <div class="arc-hud-row">
           <div>
             <div class="arc-hud-label">Containment</div>
-            <svg class="arc-ring" viewBox="0 0 80 80" aria-hidden="true">
+            <!-- Outer ring: % contained. Inside: entity tracker radar —
+                 one blip per entity (built by archive-shell.js) -->
+            <svg class="arc-ring" viewBox="0 0 80 80" role="group" aria-label="Entity tracker">
               <circle cx="40" cy="40" r="34" class="arc-ring-bg" />
               <circle cx="40" cy="40" r="34" class="arc-ring-fg" id="hud-ring" />
               <circle cx="40" cy="40" r="22" class="arc-ring-in" />
-              <line x1="40" y1="40" x2="40" y2="6" class="arc-sweep" />
+              <circle cx="40" cy="40" r="11" class="arc-ring-in" />
+              <path d="M40 9V71M9 40H71" class="arc-ring-cross" />
+              <g class="arc-radar-sweep"><path d="M40 40L40 9A31 31 0 0 1 61.9 18.1Z" /></g>
+              <circle cx="40" cy="40" r="1.8" class="arc-you"><title>You (origin from your time zone)</title></circle>
+              <g id="hud-blips"></g>
             </svg>
           </div>
           <pre id="hud-status" class="arc-hud-status"></pre>
         </div>
+        <div id="hud-track" class="arc-hud-track" aria-live="polite">Tracking 0 signals — hover a blip</div>
 
         <div class="arc-hud-label">Class distribution</div>
         <ul id="hud-dist" class="arc-dist"></ul>
 
         <div class="arc-hud-label"><span class="arc-pill">Incident log</span></div>
         <ol id="hud-events" class="arc-events"></ol>
+
+        <div class="arc-hud-label"><span class="arc-pill">Notifications</span></div>
+        <ol id="hud-notes" class="arc-events arc-notes" aria-live="polite"></ol>
 
         <div class="arc-hud-big"><b id="hud-pct">0%</b><span>Entities<br />contained</span></div>
       </aside>
@@ -126,9 +138,11 @@
     <script src="../../Neoms~Database/windows/entities/Entities-Data.js"></script>
     <script src="../../Neoms~Database/windows/personnel/Personnel-Data.js"></script>
     <script src="../../Neoms~Database/windows/sites/Sites-Data.js"></script>
-    <script src="../../Neoms~Database/windows/codeviewer/codeviewer-files.js"></script>
     <!-- ── SHELL JS (order matters) ─────────────────────────────── -->
     <script src="../../Neoms~Database/JS/db-common.js"></script>
+    <script src="../../Neoms~Database/JS/term-fs.js"></script>
+    <script src="../../Neoms~Database/JS/term-apps.js"></script>
+    <script src="../../Neoms~Database/JS/file-browser.js"></script>
     <script src="../../Neoms~Database/JS/archive-shell.js"></script>
     <script src="../../Neoms~Database/JS/desktop-core.js"></script>
   </body>

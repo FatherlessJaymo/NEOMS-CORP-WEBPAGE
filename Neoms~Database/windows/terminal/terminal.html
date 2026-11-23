@@ -1,10 +1,34 @@
 <div class="term-root">
-  <div id="term-out"></div>
-  <div class="term-input-row">
-    <span class="term-prompt">C:\NEOMS&gt;</span>
-    <input id="term-in"
-      onkeydown="termKey(event)"
-      autocomplete="off"
-      spellcheck="false" />
+  <!-- SCiPNET-style header: system name, operator, terminal tag -->
+  <div class="term-head">
+    <div class="term-welcome">
+      <span class="term-welcome-text">NeoMS</span>
+      <svg class="term-welcome-logo" aria-hidden="true"><use href="#emblem" /></svg>
+      <span class="term-welcome-user" id="term-user">Operator</span>
+    </div>
+    <div class="term-sub">NEOMS DIRECT ACCESS TERMINAL</div>
+    <!-- Terminal instances (tabs), built by terminal.js -->
+    <div class="term-insts" id="term-tabs" role="tablist" aria-label="Terminals"></div>
+    <div class="term-tools">
+      <span class="term-tag">NEOMS TERMINAL</span>
+      <button type="button" class="term-tool" id="term-inbox">&#9993; INBOX<span class="term-dot" hidden></span></button>
+      <button type="button" class="term-tool" id="term-world">&#9678; WORLD</button>
+    </div>
+  </div>
+
+  <div class="term-frame">
+    <div class="term-body">
+      <svg class="term-watermark" aria-hidden="true"><use href="#emblem" /></svg>
+      <!-- One output pane per tab; the active one carries id="term-out" -->
+      <div class="term-outs" id="term-outs"></div>
+      <div class="term-input-row">
+        <span class="term-prompt" id="term-prompt">neoms@neoms-core:~$</span>
+        <input id="term-in"
+          onkeydown="termKey(event)"
+          aria-label="Terminal input"
+          autocomplete="off"
+          spellcheck="false" />
+      </div>
+    </div>
   </div>
 </div>
