@@ -396,7 +396,7 @@ const ENTITIES = [
        ════════════════════════════════════════════════════════ */
     {
         id: 333,
-        clr: 5,
+        clr: 4,
         site: 10047,
         name: "SERAPHIM GHIDORAH",
         cls: "KT",
@@ -448,7 +448,7 @@ const ENTITIES = [
             {
                 type: "CONTAINMENT",
                 clr: 5,
-                desc: "Containment is distributed and nonphysical — there is no body to restrain. Site-10047 coordinates all operations. (1) PREVENT SUMMONING: track Church of Ghidorah activity and disrupt any gathering that could lead to a mass sacrifice before the blood-cloud phase begins; once the sacrifice begins, manifestation cannot be prevented. (2) SCREEN BROADCASTS: all regional broadcast infrastructure carries Ghidorah-signal filters; compromised feeds and exposed civilians are routed to the Site-10047 Screening Ward. (3) TRACK THE CHURCH: the Kyoto Heritage Zone team investigates the Church's documents and the Priestess's teachings; the Kumamoto Forward Post monitors cult movement and stands ready for emergency operations. Suspected cross sites are surveyed and, where cleared, dismantled.",
+                desc: "Containment is distributed and nonphysical — there is no body to restrain. Site-10047 coordinates all operations. (1) PREVENT SUMMONING: track Church of Ghidorah activity and disrupt any gathering that could lead to a mass sacrifice before the blood-cloud phase begins; once the sacrifice begins, manifestation cannot be prevented. (2) SCREEN BROADCASTS: all regional broadcast infrastructure carries Ghidorah-signal filters; compromised feeds and exposed civilians are routed to the Site-10047 Screening Ward. (3) TRACK THE CHURCH: the Kyoto Heritage Zone team investigates the Church's documents and the Priestess's teachings; a field team at the perimeter of the former Kumamoto Forward Post (sealed after the light-spear impact) monitors cult movement and stands ready for emergency operations. Suspected cross sites are surveyed and, where cleared, dismantled.",
                 equipment:
                     "Broadcast signal isolation array, Ghidorah-signal filters, CODC-grade memetic shielding, ritual disruption units, cult surveillance network",
                 duration: null,
@@ -643,7 +643,7 @@ const ENTITIES = [
                 summary:
                     "Intelligence reconstruction of the full Ghidorah sequence: the Priestess's indoctrination of the Church, the sacrificial summoning at the cross, the entity's physical manifestation and battle with Godzilla, and the broadcast hijacking that followed. Each finding is marked as SOURCE (confirmed by the recovered record) or NEOMS (an interpretation by NeoMS analysts). This report replaces earlier assumptions of a permanent physical body; E-0333 is now handled under a distributed, nonphysical containment model administered from Site-10047.",
                 location: "Site-10047, Archival Review Room — compiled from recovered records and field reports",
-                personnel: "Site-10047 intelligence cell; Kyoto Heritage Zone and Kumamoto Forward Post field teams",
+                personnel: "Site-10047 intelligence cell; Kyoto Heritage Zone and former Kumamoto Forward Post field teams",
                 foreword:
                     "Entries tagged SOURCE are events established by the recovered record. Entries tagged NEOMS are analyst interpretation and must not be cited as fact. Locations marked UNVERIFIED have no confirmed coordinates.",
                 log: [
@@ -660,7 +660,7 @@ const ENTITIES = [
                     { note: "Note: The model 'three Archangels — Michael, Gabriel, Raphael' is how the Church presents the entity. It is a NEOMS record of their belief, not a confirmed fact about what the entity is. — S-1007" }
                 ],
                 notes:
-                    "E-0333 reclassified: CL-5 / Existential Threat. Containment type: Distributed / Nonphysical. No Antarctic or other permanent body site is to be established without new evidence. Kyoto Heritage Zone, Kumamoto Forward Post and the Church Cross Site are NeoMS-original operational designations.",
+                    "E-0333 classification: CL-4 / Existential Threat. Containment type: Distributed / Nonphysical. No Antarctic or other permanent body site is to be established without new evidence. Kyoto Heritage Zone, the former Kumamoto Forward Post (destroyed in the light-spear impact; perimeter team only) and the Church Cross Site are NeoMS-original operational designations.",
                 file: "NEOMS-10047.pdf",
                 author: 1007
             }
