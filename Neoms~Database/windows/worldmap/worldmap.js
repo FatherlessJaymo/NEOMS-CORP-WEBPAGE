@@ -370,8 +370,8 @@ const nmFocusEvents = () => NM_EVENTS.filter((ev) => nmFocus === null || ev.e.id
           '<button class="nm-site-row nm-rep-row" data-rep="' + ev.i + '" title="' +
           escHtml(locked ? "[REDACTED] · CL-" + need : ev.r.title) + '">' +
           '<span class="nm-legend-dot nm-dot--' + escHtml(String(ev.r.type).toLowerCase()) + '"></span>' +
-          String(ev.i + 1).padStart(2, "0") + " " + escHtml(ev.r.type) +
-          '<span class="nm-site-row-loc">' + escHtml(ev.where) + "</span></button>"
+          '<span class="nm-rep-row-txt"><b>' + String(ev.i + 1).padStart(2, "0") + " " + escHtml(ev.r.type) + "</b>" +
+          "<small>" + escHtml(ev.where) + "</small></span></button>"
         );
       }).join("") || '<p class="nm-site-row-loc">No reports on file.</p>';
       return;
@@ -432,9 +432,24 @@ const nmFocusEvents = () => NM_EVENTS.filter((ev) => nmFocus === null || ev.e.id
     const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
     const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
     const y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+    /* Fit into the open part of the map: right of the legend, below
+       the header, above the timeline */
     const r = svgEl.getBoundingClientRect();
-    const k = Math.max(1, Math.min(8, 0.5 * Math.min(r.width / Math.max(x1 - x0, 1), r.height / Math.max(y1 - y0, 1))));
-    const t = d3.zoomIdentity.translate(r.width / 2, r.height / 2).scale(k).translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+    const legend = document.querySelector(".nm-legend");
+    const lw = legend ? legend.getBoundingClientRect() : null;
+    const left = lw && lw.width < r.width * 0.45 ? lw.right - r.left + 12 : 12;
+    const box = { x: left, y: Math.min(110, r.height * 0.2), w: r.width - left - 12, h: 0 };
+    box.h = r.height - box.y - 70;
+    /* Report markers and the entity pin reach ~55px out from their spot, so leave room */
+    const m = 150;
+    const dx = x1 - x0, dy = y1 - y0;
+    const k = dx < 1 && dy < 1
+      ? 8
+      : Math.max(1, Math.min(30, (box.w - m) / Math.max(dx, 1), (box.h - m) / Math.max(dy, 1)));
+    const t = d3.zoomIdentity
+      .translate(box.x + box.w / 2, box.y + box.h / 2)
+      .scale(k)
+      .translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
     svg.transition().duration(750).call(zoom.transform, t);
   }
 

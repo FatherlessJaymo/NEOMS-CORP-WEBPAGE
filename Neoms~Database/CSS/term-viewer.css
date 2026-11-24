@@ -251,11 +251,6 @@
   left: -1em;
   top: 0;
 }
-.nv-addenda code {
-  display: block;
-  width: fit-content;
-  margin-top: 4px;
-}
 /* Report titles in the Addenda open the report */
 .nv-report-link {
   display: inline;
@@ -276,6 +271,58 @@
   color: #fff;
   text-decoration: none;
   outline: none;
+}
+
+/* Additional photographs (e.bioImages) */
+.nv-gallery {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0 0 1.4em;
+}
+.nv-gallery figure {
+  margin: 0;
+}
+.nv-gallery img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #ddd;
+}
+.nv-gallery figcaption {
+  padding: 8px;
+  background: #111;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+  text-transform: uppercase;
+}
+body.nv-dark-docs .nv-gallery img {
+  background: #1a1a1a;
+}
+body.nv-dark-docs .nv-gallery figcaption {
+  background: #dcdcdc;
+  color: #0e0e0e;
+}
+
+/* Sources: external wiki / video links */
+.nv-sources a {
+  color: #111;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+.nv-sources a:hover,
+.nv-sources a:focus-visible {
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  outline: none;
+}
+.nv-src-tag {
+  font-weight: 700;
 }
 
 /* Log transcript */
@@ -353,11 +400,14 @@ body.nv-dark-docs .nv-mark {
 body.nv-dark-docs .nv-note {
   color: #9a9a9a;
 }
-body.nv-dark-docs .nv-report-link {
+body.nv-dark-docs .nv-report-link,
+body.nv-dark-docs .nv-sources a {
   color: #dcdcdc;
 }
 body.nv-dark-docs .nv-report-link:hover,
-body.nv-dark-docs .nv-report-link:focus-visible {
+body.nv-dark-docs .nv-report-link:focus-visible,
+body.nv-dark-docs .nv-sources a:hover,
+body.nv-dark-docs .nv-sources a:focus-visible {
   background: #dcdcdc;
   color: #0e0e0e;
 }

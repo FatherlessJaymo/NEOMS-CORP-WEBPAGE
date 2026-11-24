@@ -186,8 +186,10 @@ document.addEventListener("click", function (e) {
 
 /* ── OPEN / CLOSE (the API window modules call) ──────────────── */
 function openWin(type, data) {
+  /* Entity files open in the secured viewer (JS/term-fs.js) */
   if (type === "entity" && data !== undefined) {
-    arcOpenDossier(data);
+    var ent = (typeof ENTITIES !== "undefined" ? ENTITIES : []).filter(function (e) { return e.id === data; })[0];
+    if (ent && typeof termViewer === "function") termViewer("E-" + String(ent.id).padStart(4, "0"), nvEntityDoc(ent));
     return;
   }
 
@@ -246,10 +248,8 @@ function arcRefreshPanes() {
   }
 }
 
-function closeWin(id) {
-  if (String(id).indexOf("entity_") === 0) arcCloseDossier();
-}
 /* Desktop-only actions — nothing to do in a single-page layout */
+function closeWin() {}
 function focusWin() {}
 function minWin() {}
 function maxWin() {}
@@ -277,66 +277,6 @@ document.addEventListener("click", function (e) {
   if (!a) return;
   e.preventDefault();
   openWin(a.getAttribute("data-type"));
-});
-
-/* ── DOSSIER VIEWER (entity files) ───────────────────────────── */
-function arcOpenDossier(id) {
-  var ent = (typeof ENTITIES !== "undefined" ? ENTITIES : []).filter(function (e) {
-    return e.id === id;
-  })[0];
-  var wrap = document.getElementById("arc-docwrap");
-  var body = document.getElementById("arc-doc-body");
-  var bodyId = "entity_" + id;
-  document.getElementById("arc-doc-title").textContent =
-    "E-" + String(id).padStart(4, "0") + (ent ? " · " + ent.name : "");
-  body.innerHTML = '<div class="arc-doc-scroll" id="wbody_' + bodyId + '"><p class="arc-loading">Loading&#8230;</p></div>';
-  wrap.hidden = false;
-  arcPlaceDossier();
-  arcLoadModule(bodyId, "entity-detail", id);
-}
-
-/* In split view the dossier docks over the left column so the pinned
-   section stays visible; maximize still takes the whole screen */
-function arcPlaceDossier() {
-  var wrap = document.getElementById("arc-docwrap");
-  var left = arcPinned && !wrap.classList.contains("max") && document.getElementById("wbody_" + arcCurrent);
-  wrap.classList.toggle("docked", !!left);
-  if (!left) {
-    wrap.removeAttribute("style");
-    return;
-  }
-  var r = left.getBoundingClientRect();
-  wrap.style.left = r.left + "px";
-  wrap.style.top = r.top + "px";
-  wrap.style.width = r.width + "px";
-  wrap.style.height = r.height + "px";
-  wrap.style.right = wrap.style.bottom = "auto";
-}
-
-function arcCloseDossier() {
-  var wrap = document.getElementById("arc-docwrap");
-  wrap.hidden = true;
-  wrap.classList.remove("max", "docked");
-  wrap.removeAttribute("style");
-  document.getElementById("arc-doc-body").innerHTML = "";
-}
-
-window.addEventListener("resize", function () {
-  if (!document.getElementById("arc-docwrap").hidden) arcPlaceDossier();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("arc-doc-close").addEventListener("click", arcCloseDossier);
-  document.getElementById("arc-doc-max").addEventListener("click", function () {
-    document.getElementById("arc-docwrap").classList.toggle("max");
-    arcPlaceDossier();
-  });
-  document.getElementById("arc-docwrap").addEventListener("click", function (e) {
-    if (e.target === this) arcCloseDossier();
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && !document.getElementById("arc-docwrap").hidden) arcCloseDossier();
-  });
 });
 
 /* ── Entity tracker (inside the containment ring) ───────────────

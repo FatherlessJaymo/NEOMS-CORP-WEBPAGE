@@ -23,7 +23,7 @@ const personnel = [
         clr: 5,
         site: null,
         active: "Y",
-        img: "../../Neoms~Universal-Fonts+Images/Creator/Creator-icon-2.png"
+        img: "../../Neoms~Universal-Fonts+Images/Creator/frames/jova_001.png"
     },
     {
         id: 1002,

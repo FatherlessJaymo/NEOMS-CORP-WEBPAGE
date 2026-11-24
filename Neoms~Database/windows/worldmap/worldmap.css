@@ -11,6 +11,8 @@
   background: #050b14;
   position: relative;
   overflow: hidden;
+  /* Lets the hints react to the map's own width (it may be pinned to a side) */
+  container-type: inline-size;
 }
 
 /* ── Header overlay ──────────────────────────────────────────── */
@@ -725,6 +727,29 @@
 .nm-site-marker--dim {
   opacity: 0.25;
 }
+/* Focus list rows: "03 OBSERVATION" on one line, location under it */
+.nm-rep-row {
+  align-items: flex-start;
+}
+.nm-rep-row .nm-legend-dot {
+  margin-top: 5px;
+}
+.nm-rep-row-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.nm-rep-row-txt b {
+  font-weight: normal;
+  white-space: nowrap;
+}
+.nm-rep-row-txt small {
+  font-size: 10px;
+  color: #6fa8a8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /* Report type dots in the focus list */
 .nm-dot--breach,
 .nm-dot--incident { background: #ff4444; }
@@ -788,6 +813,13 @@
 @media (max-width: 700px) {
   .nm-header-sub2,
   .nm-header-meta,
+  .nm-hints {
+    display: none;
+  }
+}
+/* Hints share the bottom-right corner with the timeline; drop them
+   once the map itself is too narrow for both */
+@container (max-width: 900px) {
   .nm-hints {
     display: none;
   }
