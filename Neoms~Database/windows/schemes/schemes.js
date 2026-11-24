@@ -148,6 +148,18 @@ const ROLES = [
       {
         title: "Synthetic Asset",
         bio: "An advanced synthetic unit with augmented processing capability and adaptive behavioural routines. Assigned to specialised tasks requiring contextual response and limited independent action. Synthetic Assets may be deployed in proximity to low-tier anomalies under a Containment Enforcement escort."
+      },
+      {
+        title: "Synthetic Drone",
+        bio: "A non-humanoid synthetic platform built for surveillance, corridor patrol, and remote sampling. Synthetic Drones are sent where personnel cannot safely go — sealed chambers, breach zones, and unstable sites — and relay sensor data directly to the archive. They carry no decision-making authority and are considered expendable."
+      },
+      {
+        title: "Synthetic Liaison",
+        bio: "A social-interface synthetic designed to speak with sentient entities and new intake applicants. Liaisons hold no personal stake in an exchange, which makes them the preferred first contact for hostile or manipulative anomalies. All Liaison conversations are recorded and reviewed by Containment Research."
+      },
+      {
+        title: "Synthetic Maintenance Frame",
+        bio: "A heavy-duty synthetic that services containment hardware and repairs other synthetic units. Maintenance Frames work through the facility's off-shift hours, keeping cell locks, sensor grids, and power systems in working order. They are restricted from entering occupied containment cells."
       }
     ]
   },
@@ -161,6 +173,18 @@ const ROLES = [
       {
         title: "Sub Units Personnel",
         bio: "Secondary support personnel handling auxiliary tasks, equipment management, and lower-security facility functions. Sub Units Personnel operate under the direction of Core Units Personnel and are restricted to designated sub-zones within the installation."
+      },
+      {
+        title: "Logistics Coordinator",
+        bio: "Personnel who manage the movement of supplies, equipment, and transport between sites. Logistics Coordinators schedule deliveries around containment lockdowns and keep every site stocked for a breach. They are the first to notice when an entity's needs — food, power, materials — quietly change."
+      },
+      {
+        title: "Medical Response Unit",
+        bio: "Medical staff stationed on site to treat injured personnel and screen staff after anomalous exposure. Medical Response Units run decontamination, monitor for delayed effects, and certify personnel as fit for duty. Any symptom with no ordinary explanation is reported to Containment Research."
+      },
+      {
+        title: "Systems Technician",
+        bio: "Technicians responsible for the facility's networks, terminals, cameras, and the archive itself. Systems Technicians keep monitoring feeds running and isolate any system an entity interferes with. Because some anomalies spread through media and signals, all repairs follow quarantine procedure."
       }
     ]
   },
@@ -200,6 +224,22 @@ const ROLES = [
       {
         title: "Anomaly Research Analyst",
         bio: "Junior research personnel assisting in data collection, protocol documentation, observation logging, and preliminary anomaly assessment. Analysts operate under the direction of a Research Specialist and may access standard entity records relevant to their assigned study area."
+      },
+      {
+        title: "Field Researcher",
+        bio: "Researchers deployed outside the facility to investigate sightings, recover evidence, and assess anomalies before they are contained. Field Researchers travel with a Containment Enforcement escort and file the first observation report on most new entities. Many entity files begin with their notes."
+      },
+      {
+        title: "Containment Engineer",
+        bio: "Specialists who design and build containment cells, wards, and suppression equipment tailored to individual entities. Containment Engineers translate research findings into physical safeguards and are called in whenever a protocol fails. Every cell modification requires their sign-off."
+      },
+      {
+        title: "Xenolinguist",
+        bio: "Researchers who study how sentient entities communicate — speech, signals, symbols, or behaviour. Xenolinguists conduct and transcribe entity interviews and are trained to recognise manipulation and memetic language. They never conduct an interview alone."
+      },
+      {
+        title: "Archivist",
+        bio: "Keepers of the NeoMS archive. Archivists file reports, manage redactions, and verify that every record matches its clearance level. They are the last line against an entity rewriting its own history, and the only researchers who read every file."
       }
     ]
   },
@@ -209,6 +249,10 @@ const ROLES = [
       {
         title: "Directive Control Officer",
         bio: "High-authority personnel with oversight of classified directives, strategic containment policy, and inter-site coordination. Directive Control Officers operate with broad executive authority and report directly to the Overseer Prime. Their designations and assignments are not publicly listed in standard personnel records."
+      },
+      {
+        title: "AI Overseer",
+        bio: "The artificial intelligence that runs the NeoMS archive. The AI Overseer watches every site feed, files every report, and answers every terminal — no record enters or leaves the archive without passing through it. It holds full CL-5 access alongside the Overseer Prime and logs everything operators type. The position has only ever had one occupant: Nova."
       },
       {
         title: "Overseer Prime",
@@ -223,15 +267,26 @@ const ROLES = [
 const POSITION_CLR = {
   "Synthetic Unit": 1,
   "Synthetic Asset": 1,
+  "Synthetic Drone": 1,
+  "Synthetic Liaison": 1,
+  "Synthetic Maintenance Frame": 1,
   "Core Units Personnel": 2,
   "Sub Units Personnel": 2,
+  "Logistics Coordinator": 2,
+  "Medical Response Unit": 2,
+  "Systems Technician": 2,
   "Core Command Director": 2,
   "Sub Command Director": 2,
   "Sentinel Senior Officer Forces": 3,
   "Sentinel Forces": 3,
   "Anomaly Research Specialist": 3,
   "Anomaly Research Analyst": 3,
+  "Field Researcher": 3,
+  "Containment Engineer": 3,
+  "Xenolinguist": 3,
+  "Archivist": 3,
   "Directive Control Officer": 4,
+  "AI Overseer": 5,
   "Overseer Prime": 5
 };
 

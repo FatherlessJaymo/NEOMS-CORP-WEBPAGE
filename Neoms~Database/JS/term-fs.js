@@ -454,6 +454,24 @@ function nvEntityDoc(e) {
   );
 }
 
+/* Personnel file — optional photo, specialty, start date and bio */
+function nvPersonDoc(p) {
+  var sid = "S-" + p.id;
+  var name = ((p.fname || "") + " " + (p.lname || "")).trim();
+  return (
+    '<article class="nv-doc">' + nvHead(p.clr) + '<div class="nv-body">' +
+    (p.img
+      ? '<figure class="nv-fig"><img src="' + escHtml(p.img) + '" alt="' + escHtml(sid + " — " + name) + '" />' +
+        "<figcaption>" + escHtml("Personnel photograph of " + sid + ".") + "</figcaption></figure>"
+      : "") +
+    nvField("Personnel #", sid) + nvField("Name", name) + nvField("Position", p.pos) +
+    nvField("Department", p.dept) + nvField("Specialty", p.specialty) + nvField("Clearance", "Level " + p.clr) +
+    nvField("Site", p.site ? "Site-" + p.site : "Unassigned") + nvField("Joined", p.joined) +
+    nvField("Status", p.active === "Y" ? "Active" : "Inactive") + nvField("Profile", p.bio) +
+    "</div></article>"
+  );
+}
+
 function nvReportDoc(e, r) {
   var withIds = [r.author].concat(r.contributors || []).filter(function (sid, i, all) {
     return sid && sid !== TERM_FILER && all.indexOf(sid) === i;

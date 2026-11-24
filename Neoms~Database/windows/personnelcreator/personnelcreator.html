@@ -1,0 +1,199 @@
+<!-- Personnel Creator — the guided form for a new staff file, with a live
+     preview of the finished personnel document. Shares the Entity
+     Creator's ec-* styles; pc-* IDs belong to this form. -->
+<div class="win-page-root ec-root pc-root">
+  <div class="page-header">
+    <div class="page-breadcrumb">NEOMS_OS &gt; PERSONNEL_CREATOR</div>
+    <div class="page-title">Personnel Creator</div>
+    <div class="page-subtitle">Submit a new staff member to the NeoMS archive — follow the steps, watch the file build itself.</div>
+  </div>
+
+  <!-- ── WHICH CREATOR ─────────────────────────────────────── -->
+  <div class="ec-mode" role="tablist" aria-label="What are you creating?">
+    <button type="button" class="ec-mode-btn" role="tab" aria-selected="false" data-open="entitycreator">Entity file</button>
+    <button type="button" class="ec-mode-btn ec-mode-btn--on" role="tab" aria-selected="true">Personnel file</button>
+    <button type="button" class="pc-reset" id="pc-reset" title="Clear the form and start again">&#8634; Start over</button>
+  </div>
+
+  <div class="ec-editor">
+  <!-- ── STEPS ──────────────────────────────────────────────── -->
+  <div class="ec-tabs ec-steps" id="pc-tabs" role="tablist" aria-label="Creator steps">
+    <button type="button" class="ec-tab ec-tab--active" role="tab" data-tab="identity"><b>1</b> Identity</button>
+    <button type="button" class="ec-tab" role="tab" data-tab="photo"><b>2</b> Photo <i>optional</i></button>
+    <button type="button" class="ec-tab" role="tab" data-tab="assignment"><b>3</b> Assignment</button>
+    <button type="button" class="ec-tab" role="tab" data-tab="profile"><b>4</b> Profile <i>optional</i></button>
+    <button type="button" class="ec-tab ec-tab--output" role="tab" data-tab="review"><b>5</b> Review &amp; Submit</button>
+  </div>
+
+  <div class="ec-split">
+  <div class="scroll-area ec-body">
+    <!-- ── 1 · IDENTITY ───────────────────────────────────── -->
+    <section class="ec-panel" id="pc-panel-identity" role="tabpanel">
+      <h3 class="ec-step-title">Step 1 — Who are they?</h3>
+      <p class="ec-step-intro">Name the staff member and give them a personnel number. Fields marked <span class="ec-req">*</span> are required.</p>
+      <div class="ec-grid">
+        <div class="ec-field">
+          <label class="ec-label" for="pc-fname">First name / title <span class="ec-req">*</span></label>
+          <input class="ec-input" id="pc-fname" type="text" placeholder="e.g. Dr.Springless" />
+          <p class="ec-help">Titles go here too — Dr., Agent, Cpt.</p>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-lname">Last name</label>
+          <input class="ec-input" id="pc-lname" type="text" placeholder="e.g. Echo" />
+          <p class="ec-help">Leave blank for a single-name codename.</p>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-id">Personnel number <span class="ec-req">*</span></label>
+          <input class="ec-input" id="pc-id" type="number" min="1" placeholder="e.g. 1010" />
+          <p class="ec-help" id="pc-id-hint">Becomes their S-number, e.g. 1010 → S-1010.</p>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-active">Status</label>
+          <select class="ec-input" id="pc-active">
+            <option value="Y">Active — currently on staff</option>
+            <option value="N">Inactive — retired, missing, or deceased</option>
+          </select>
+        </div>
+      </div>
+      <div class="ec-step-nav"><span></span><button type="button" class="ec-next" data-goto="photo">Next: Photo &#9656;</button></div>
+    </section>
+
+    <!-- ── 2 · PHOTO ──────────────────────────────────────── -->
+    <section class="ec-panel ec-hidden" id="pc-panel-photo" role="tabpanel">
+      <h3 class="ec-step-title">Step 2 — ID photo <span class="ec-optional">optional</span></h3>
+      <p class="ec-step-intro">
+        Pick a picture from your device to see it in the preview straight away. To include it in your submission,
+        also paste a <b>link</b> to it — upload it to Imgur (or similar), then copy the image address.
+        Pictures picked from your device aren't saved, only the link is.
+      </p>
+      <div class="ec-pic ec-pic--main">
+        <div class="ec-pic-thumb" id="pc-img-thumb" aria-hidden="true"><span>No photo</span></div>
+        <div class="ec-pic-fields">
+          <span class="ec-label">ID photo</span>
+          <label class="ec-file">
+            <input type="file" id="pc-img-file" accept="image/*" />
+            <span>&#8682; Choose from device…</span>
+          </label>
+          <label class="ec-label" for="pc-img">Image link (for your submission)</label>
+          <input class="ec-input" id="pc-img" type="url" placeholder="https://i.imgur.com/example.png" />
+        </div>
+      </div>
+      <div class="ec-step-nav">
+        <button type="button" class="ec-back" data-goto="identity">&#9666; Back</button>
+        <button type="button" class="ec-next" data-goto="assignment">Next: Assignment &#9656;</button>
+      </div>
+    </section>
+
+    <!-- ── 3 · ASSIGNMENT ─────────────────────────────────── -->
+    <section class="ec-panel ec-hidden" id="pc-panel-assignment" role="tabpanel">
+      <h3 class="ec-step-title">Step 3 — Assignment</h3>
+      <p class="ec-step-intro">What's their job, which department are they in, and how much of the archive can they read?</p>
+      <div class="ec-grid">
+        <div class="ec-field">
+          <label class="ec-label" for="pc-dept">Department <span class="ec-req">*</span></label>
+          <select class="ec-input" id="pc-dept"></select>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-pos">Position <span class="ec-req">*</span></label>
+          <select class="ec-input" id="pc-pos"></select>
+          <input class="ec-input pc-pos-custom" id="pc-pos-custom" type="text" placeholder="Type the position" aria-label="Custom position" hidden />
+          <p class="ec-help" id="pc-pos-help">Positions for this department, from the Schemes tab.</p>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-clr">Clearance level <span class="ec-req">*</span></label>
+          <select class="ec-input" id="pc-clr">
+            <option value="1">CL-1</option>
+            <option value="2">CL-2</option>
+            <option value="3" selected>CL-3</option>
+            <option value="4">CL-4</option>
+          </select>
+          <p class="ec-help">Set from the position. CL-5 is reserved for command.</p>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-site">Assigned site</label>
+          <select class="ec-input" id="pc-site">
+            <option value="">— Unassigned —</option>
+          </select>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-specialty">Specialty</label>
+          <input class="ec-input" id="pc-specialty" type="text" placeholder="e.g. Memetic hazards" />
+        </div>
+      </div>
+      <div class="ec-step-nav">
+        <button type="button" class="ec-back" data-goto="photo">&#9666; Back</button>
+        <button type="button" class="ec-next" data-goto="profile">Next: Profile &#9656;</button>
+      </div>
+    </section>
+
+    <!-- ── 4 · PROFILE ────────────────────────────────────── -->
+    <section class="ec-panel ec-hidden" id="pc-panel-profile" role="tabpanel">
+      <h3 class="ec-step-title">Step 4 — Profile <span class="ec-optional">optional</span></h3>
+      <p class="ec-step-intro">A short service record: how they joined, what they're known for, any incidents on file.</p>
+      <div class="ec-stack">
+        <div class="ec-field">
+          <label class="ec-label" for="pc-joined">Joined NeoMS</label>
+          <input class="ec-input" id="pc-joined" type="text" placeholder="20██-██-██" />
+          <p class="ec-help">Redact digits with █ for that classified look.</p>
+        </div>
+        <div class="ec-field">
+          <label class="ec-label" for="pc-bio">Profile</label>
+          <textarea class="ec-input ec-ta" id="pc-bio" maxlength="1500" placeholder="Recruited after… Known for… Present during the E-0333 breach…"></textarea>
+        </div>
+      </div>
+      <div class="ec-step-nav">
+        <button type="button" class="ec-back" data-goto="assignment">&#9666; Back</button>
+        <button type="button" class="ec-next" data-goto="review">Next: Review &#9656;</button>
+      </div>
+    </section>
+
+    <!-- ── 5 · REVIEW & SUBMIT ────────────────────────────── -->
+    <section class="ec-panel ec-hidden" id="pc-panel-review" role="tabpanel">
+      <h3 class="ec-step-title">Step 5 — Review &amp; submit</h3>
+      <p class="ec-step-intro">Check the preview, fix anything flagged below, then send it in. Submissions are reviewed before they're added to the archive.</p>
+
+      <ul class="ec-review" id="pc-review" aria-live="polite"></ul>
+
+      <div class="ec-field">
+        <label class="ec-label" for="pc-credit">Your name or handle (for credit, optional)</label>
+        <input class="ec-input" id="pc-credit" type="text" maxlength="60" placeholder="e.g. JDM" />
+      </div>
+
+      <div class="ec-submit-row">
+        <button type="button" class="ec-submit-btn" id="pc-submit-btn"><span>&#8679;</span><span>SUBMIT FOR REVIEW</span></button>
+        <span class="ec-submit-msg" id="pc-submit-msg" role="status"></span>
+      </div>
+
+      <details class="ec-advanced">
+        <summary>Advanced — generated code for Personnel-Data.js</summary>
+        <div class="ec-output-bar">
+          <span class="ec-output-label">&#128196; Generated Personnel Object</span>
+          <div class="ec-output-btns">
+            <button type="button" class="ec-copy-btn" id="pc-copy-btn"><span>&#10697;</span><span>COPY</span></button>
+          </div>
+        </div>
+        <div class="ec-output-hint">
+          Paste this block into <span class="ec-code">Personnel-Data.js</span> inside the
+          <span class="ec-code">personnel</span> array.
+        </div>
+        <pre class="ec-output-pre" id="pc-output-pre"></pre>
+      </details>
+
+      <div class="ec-step-nav">
+        <button type="button" class="ec-back" data-goto="profile">&#9666; Back</button>
+        <span></span>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── LIVE PREVIEW of the finished personnel file ──────── -->
+  <aside class="ec-preview" aria-label="Live preview">
+    <div class="ec-preview-head">
+      <span>LIVE PREVIEW</span>
+      <button type="button" class="ec-preview-open" id="pc-preview-open" title="Open the preview in a full window">&#9634; Open full</button>
+    </div>
+    <div class="ec-preview-doc" id="pc-preview"></div>
+  </aside>
+  </div>
+  </div>
+</div>

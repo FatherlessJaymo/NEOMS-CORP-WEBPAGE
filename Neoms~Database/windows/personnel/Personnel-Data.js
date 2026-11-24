@@ -28,7 +28,7 @@ const personnel = [
         id: 1002,
         fname: "Nova",
         lname: "",
-        pos: "Overseer Prime",
+        pos: "AI Overseer",
         dept: "PRIME DIRECTOR",
         clr: 5,
         site: null,

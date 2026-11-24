@@ -900,6 +900,16 @@ body::after {
   color: var(--arc-fg) !important;
   font-family: var(--arc-ui) !important;
 }
+/* The open dropdown list is drawn by the browser — the transparent
+   background above would leave white text on its white popup */
+.arc-pane select option,
+.arc-pane select optgroup {
+  background: #0b0f16;
+  color: var(--arc-fg);
+}
+.arc-pane select option:checked {
+  background: #1f3a52;
+}
 .filter-btn {
   font-size: 10px !important;
   font-weight: 600;

@@ -530,7 +530,49 @@ select.ec-input {
    GUIDED CREATOR — steps, live preview, pictures, review
    ════════════════════════════════════════════════════════════ */
 
-/* Step bar: numbered steps, "optional" tag */
+/* Entity file / Personnel file switch (shared with the Personnel Creator) */
+.ec-mode {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #04080e;
+  border-bottom: 1px solid #1a2a4a;
+  flex-shrink: 0;
+  font-family: var(--mono, "Share Tech Mono", monospace);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+.ec-mode-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid #1a2a4a;
+  color: #67809a;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.ec-mode-btn:hover {
+  color: #d0dce8;
+  border-color: #2a4a6a;
+}
+.ec-mode-btn--on {
+  color: #00cccc;
+  border-color: #00cccc;
+  background: rgba(0, 180, 200, 0.08);
+  cursor: default;
+}
+
+/* Step bar: numbered steps, "optional" tag — wraps so every step stays visible */
+.ec-steps {
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+.ec-steps .ec-tab {
+  flex: 1 0 auto;
+  white-space: nowrap;
+}
 .ec-steps .ec-tab b {
   display: inline-grid;
   place-items: center;

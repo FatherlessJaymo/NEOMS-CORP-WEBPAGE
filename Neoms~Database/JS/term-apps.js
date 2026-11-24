@@ -19,7 +19,7 @@ var NV_INBOX = [
     date: "20██-04-02",
     subject: "Welcome to the NeoMS Direct Access Terminal",
     body:
-      "Operator,\n\nYour terminal access is live. Everything you need is in the file tree: type ls to look around, cd entities to move, and cat any .nms file to open it in the secured viewer.\n\nEach entity has its own folder under ~/entities, with its reports inside. Read them in order. The order matters.\n\nStart here: cat ~/readme.txt\n\nEverything you type on this terminal is logged. I read the logs.\n\n— Nova\nOverseer Prime"
+      "Operator,\n\nYour terminal access is live. Everything you need is in the file tree: type ls to look around, cd entities to move, and cat any .nms file to open it in the secured viewer.\n\nEach entity has its own folder under ~/entities, with its reports inside. Read them in order. The order matters.\n\nStart here: cat ~/readme.txt\n\nEverything you type on this terminal is logged. I read the logs.\n\n— Nova\nAI Overseer"
   },
   {
     id: "m2",

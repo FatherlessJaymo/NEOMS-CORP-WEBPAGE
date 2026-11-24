@@ -26,8 +26,17 @@ var ARC_TABS = [
   { type: "worldmap", label: "Map", title: "Global Facility Map", clr: 1 },
   { type: "schemes", label: "Schemes", title: "Classification Schemes", clr: 2 },
   { type: "terminal", label: "Terminal", title: "NeoMS Terminal", clr: 4 },
-  { type: "entitycreator", label: "Creator", title: "Entity Creator", clr: 4 }
+  { type: "entitycreator", label: "Creator", title: "Entity Creator", clr: 4 },
+  /* Reached from the Creator tab's switch; borrows the Entity Creator's styles */
+  { type: "personnelcreator", label: "Creator", title: "Personnel Creator", clr: 4, parent: "entitycreator", css: ["entitycreator"] }
 ];
+
+/* Tabs shown in the nav (sub-sections like the Personnel Creator live under a parent) */
+function arcNavTabs() {
+  return ARC_TABS.filter(function (t) {
+    return !t.parent;
+  });
+}
 
 var arcCurrent = null;
 var arcLoaded = {};
@@ -51,16 +60,19 @@ function arcLoadModule(bodyId, winType, data) {
       if (!body) return;
       body.innerHTML = html;
 
-      var cssId = "wincss_" + winType;
-      if (!document.getElementById(cssId)) {
+      /* Its own stylesheet, plus any it borrows (tab.css) */
+      var tab = arcTab(winType);
+      ((tab && tab.css) || []).concat(winType).forEach(function (type) {
+        var cssId = "wincss_" + type;
+        if (document.getElementById(cssId)) return;
         var lnk = document.createElement("link");
         lnk.id = cssId;
         lnk.rel = "stylesheet";
-        lnk.href = WIN_BASE + winType + "/" + winType + ".css";
+        lnk.href = WIN_BASE + type + "/" + type + ".css";
         /* Before archive.css so the Archive theme still wins */
         var theme = document.querySelector('link[href$="archive.css"]');
         document.head.insertBefore(lnk, theme);
-      }
+      });
 
       return fetch(WIN_BASE + winType + "/" + winType + ".js")
         .then(function (r2) {
@@ -127,10 +139,11 @@ function arcRenderChips() {
   var tab = arcTab(arcCurrent);
   if (!tab) return;
   var pinTab = arcPinned && arcTab(arcPinned);
+  var navTabs = arcNavTabs();
   document.getElementById("arc-chips").innerHTML =
     '<span class="arc-chip on">CLR-' + tab.clr + "</span>" +
-    '<span class="arc-chip">' + String(ARC_TABS.indexOf(tab) + 1).padStart(2, "0") + " / " +
-    String(ARC_TABS.length).padStart(2, "0") + "</span>" +
+    '<span class="arc-chip">' + String(navTabs.indexOf(arcTab(tab.parent || tab.type)) + 1).padStart(2, "0") + " / " +
+    String(navTabs.length).padStart(2, "0") + "</span>" +
     '<button type="button" class="arc-chip arc-pin" id="arc-pin" title="' +
     (pinTab ? "Close the side panel" : "Keep this section open on the right while you browse others") + '">' +
     (pinTab ? "&#10005; Unpin " + escHtml(pinTab.title) : "&#8677; Pin to side") +
@@ -210,7 +223,7 @@ function openWin(type, data) {
 /* Panes are built with the clearance at load time, so drop the cached
    ones and rebuild the visible one. The terminal and creator keep their
    state (scrollback, half-filled forms). */
-var ARC_KEEP_ON_CLR = ["terminal", "entitycreator"];
+var ARC_KEEP_ON_CLR = ["terminal", "entitycreator", "personnelcreator"];
 
 function arcRefreshPanes() {
   Object.keys(arcLoaded).forEach(function (type) {
@@ -244,11 +257,13 @@ function maxWin() {}
 /* ── TOP NAV ─────────────────────────────────────────────────── */
 function arcRenderNav() {
   var nav = document.getElementById("arc-nav");
-  nav.innerHTML = ARC_TABS.map(function (t) {
+  var cur = arcTab(arcCurrent);
+  var curNav = cur && cur.parent ? cur.parent : arcCurrent;
+  nav.innerHTML = arcNavTabs().map(function (t) {
     var locked = userClearance < t.clr;
     return (
       '<a href="#' + t.type + '" data-type="' + t.type + '"' +
-      (t.type === arcCurrent ? ' aria-current="page"' : "") +
+      (t.type === curNav ? ' aria-current="page"' : "") +
       (locked ? ' class="locked" title="Requires CL-' + t.clr + '"' : "") +
       ">" + t.label +
       (locked ? ' <img class="lock-icon" src="../../Neoms~Universal-Fonts+Images/Icons/DB_Icons/Warning_Blue.png" alt="(locked)" />' : "") +

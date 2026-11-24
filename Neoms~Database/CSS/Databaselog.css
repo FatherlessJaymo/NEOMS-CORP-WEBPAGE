@@ -730,7 +730,7 @@ body::after {
 
 /* ── CLEARANCE PIPS ────────────────────────────────────────── */
 /* One colour per clearance level, shared with the Personnel Position Scheme
-   (personnel-scheme.js) and CLR_TIERS (desktop-core.js):
+   (schemes.js) and CLR_TIERS (desktop-core.js):
    CL-1 Synthetics · CL-2 Facility · CL-3 Containment ·
    CL-4 Directive Control Officer · CL-5 Overseer Prime. */
 :root {

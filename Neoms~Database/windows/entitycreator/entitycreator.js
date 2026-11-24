@@ -5,6 +5,15 @@
    sessionpersonnel, userClearance, openWin, closeWin
    ============================================================ */
 
+/* This creator's own pane — the Personnel Creator shares the ec-* classes */
+var ecPane = document.getElementById("wbody_" + winId) || document;
+
+/* Entity file / Personnel file switch */
+ecPane.querySelector(".ec-mode").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-open]");
+  if (b) openWin(b.dataset.open);
+});
+
 /* ── Populate site dropdown from live SITES data ─────────── */
 var siteSelect = document.getElementById("ec-site");
 if (siteSelect && SITES && SITES.length) {
@@ -26,10 +35,10 @@ function ecGoTo(target) {
     t.classList.toggle("ec-tab--active", on);
     t.setAttribute("aria-selected", String(on));
   });
-  document.querySelectorAll(".ec-panel").forEach(function (p) {
+  ecPane.querySelectorAll(".ec-panel").forEach(function (p) {
     p.classList.toggle("ec-hidden", p.id !== "ec-panel-" + target);
   });
-  var body = document.querySelector(".ec-body");
+  var body = ecPane.querySelector(".ec-body");
   if (body) body.scrollTop = 0;
   if (target === "review") ecRenderReview();
   ecRenderPreview();
@@ -42,7 +51,7 @@ if (tabBar) {
   });
 }
 /* Back / Next buttons at the foot of each step */
-document.querySelector(".ec-body").addEventListener("click", function (e) {
+ecPane.querySelector(".ec-body").addEventListener("click", function (e) {
   var nav = e.target.closest("[data-goto]");
   if (nav) ecGoTo(nav.dataset.goto);
 });
@@ -778,12 +787,12 @@ document.getElementById("ec-review").addEventListener("click", function (e) {
 });
 
 /* Typing anywhere refreshes the preview (and review if it's open) */
-document.querySelector(".ec-body").addEventListener("input", function () {
+ecPane.querySelector(".ec-body").addEventListener("input", function () {
   ecSchedulePreview();
   if (!document.getElementById("ec-panel-review").classList.contains("ec-hidden")) ecRenderReview();
 });
-document.querySelector(".ec-body").addEventListener("change", ecSchedulePreview);
-document.querySelector(".ec-body").addEventListener("click", function (e) {
+ecPane.querySelector(".ec-body").addEventListener("change", ecSchedulePreview);
+ecPane.querySelector(".ec-body").addEventListener("click", function (e) {
   if (e.target.closest(".ec-add-btn, .ec-entry-remove")) ecSchedulePreview();
 });
 
@@ -898,7 +907,7 @@ function ecApply(data) {
 
   /* Device pictures belong to the draft they were picked in */
   ecLocalImgs = {};
-  document.querySelectorAll('.ec-root input[type="file"]').forEach(function (f) { f.value = ""; });
+  ecPane.querySelectorAll('.ec-root input[type="file"]').forEach(function (f) { f.value = ""; });
   ecRefreshThumbs();
   ecIdHint();
   ecRenderPreview();
@@ -1091,7 +1100,7 @@ if (ecToggleBtn) {
 }
 
 /* Autosave: typing, dropdowns, and adding/removing protocol or report cards */
-var ecBody = document.querySelector(".ec-body");
+var ecBody = ecPane.querySelector(".ec-body");
 if (ecBody) {
   ecBody.addEventListener("input", ecScheduleSave);
   ecBody.addEventListener("change", ecScheduleSave);

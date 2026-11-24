@@ -62,21 +62,11 @@ function fbOpenFile(name, node) {
   }
   if (node.kind === "entity") return termViewer(termEntId(node.ref.id), nvEntityDoc(node.ref));
   if (node.kind === "report") return termViewer(termEntId(node.ref.e.id) + " · REPORT " + node.ref.n, nvReportDoc(node.ref.e, node.ref.r));
+  if (node.kind === "personnel") return termViewer("S-" + node.ref.id, nvPersonDoc(node.ref));
 
-  /* Text, personnel and site files: a simple white document */
-  var title = name, body = "";
-  if (node.kind === "text") {
-    body = '<pre class="nv-pre">' + escHtml(node.text) + "</pre>";
-  } else if (node.kind === "personnel") {
-    var p = node.ref;
-    title = "S-" + p.id;
-    body = nvField("Personnel #", "S-" + p.id) + nvField("Name", (p.fname + " " + p.lname).trim()) + nvField("Position", p.pos) +
-      nvField("Department", p.dept) + nvField("Clearance", "Level " + p.clr) + nvField("Site", p.site ? "Site-" + p.site : "Unassigned") +
-      nvField("Status", p.active === "Y" ? "Active" : "Inactive");
-  } else {
-    return termViewer(node.ref.name, nvSiteDoc(node.ref));
-  }
-  termViewer(title, '<article class="nv-doc">' + nvHead(node.clr) + '<div class="nv-body">' + body + "</div></article>");
+  /* Text and site files */
+  if (node.kind !== "text") return termViewer(node.ref.name, nvSiteDoc(node.ref));
+  termViewer(name, '<article class="nv-doc">' + nvHead(node.clr) + '<div class="nv-body"><pre class="nv-pre">' + escHtml(node.text) + "</pre></div></article>");
 }
 
 /* ── Preview card content ── */

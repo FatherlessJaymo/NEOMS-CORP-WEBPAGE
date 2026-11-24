@@ -429,7 +429,7 @@ _root.querySelectorAll("[data-edtab]").forEach(function (btn) {
       return s ? (s.fname + " " + s.lname).trim() + " (S-" + s.id + ")" : "S-" + sid;
     }
 
-    /* Every report is filed by Nova (S-1002, Overseer Prime). Anyone else
+    /* Every report is filed by Nova (S-1002, AI Overseer). Anyone else
        on the report — the old `author` field plus `contributors` — is
        listed under "With". */
     const REPORT_FILER = 1002;
