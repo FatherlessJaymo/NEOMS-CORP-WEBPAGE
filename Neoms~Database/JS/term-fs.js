@@ -461,7 +461,7 @@ function nvPersonDoc(p) {
   return (
     '<article class="nv-doc">' + nvHead(p.clr) + '<div class="nv-body">' +
     (p.img
-      ? '<figure class="nv-fig"><img src="' + escHtml(p.img) + '" alt="' + escHtml(sid + " — " + name) + '" />' +
+      ? '<figure class="nv-fig"><img src="' + escHtml(p.img) + '" alt="' + escHtml(sid + " — " + name) + '" referrerpolicy="no-referrer" />' +
         "<figcaption>" + escHtml("Personnel photograph of " + sid + ".") + "</figcaption></figure>"
       : "") +
     nvField("Personnel #", sid) + nvField("Name", name) + nvField("Position", p.pos) +

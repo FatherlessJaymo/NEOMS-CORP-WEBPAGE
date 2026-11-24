@@ -88,7 +88,7 @@ function fbPeekEntity(e) {
 }
 function fbPeekPerson(p) {
   var active = p.active === "Y";
-  return '<div class="fb-peek-img fb-peek-img--icon">' + FB_ICON_PERSON + "</div>" +
+  return (p.img ? '<img class="fb-peek-img" src="' + escHtml(p.img) + '" alt="" referrerpolicy="no-referrer" />' : '<div class="fb-peek-img fb-peek-img--icon">' + FB_ICON_PERSON + "</div>") +
     '<div class="fb-peek-text"><b>S-' + p.id + "</b><strong>" + escHtml((p.fname + " " + p.lname).trim()) + "</strong>" +
     "<dl><dt>Position</dt><dd>" + escHtml(p.pos) + "</dd><dt>Dept</dt><dd>" + escHtml(p.dept) + "</dd>" +
     "<dt>Clearance</dt><dd>CL-" + p.clr + "</dd><dt>Site</dt><dd>" + (p.site ? "Site-" + p.site : "—") + "</dd>" +

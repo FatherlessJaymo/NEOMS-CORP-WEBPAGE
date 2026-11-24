@@ -3,6 +3,46 @@
    Neoms~Database/windows/main/main.css
    ============================================================ */
 
+/* Search / filter bar */
+.ml-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 16px;
+}
+.ml-filters input,
+.ml-filters select {
+  height: 34px;
+  padding: 0 10px;
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font: 12px "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 0.06em;
+}
+.ml-filters input:focus,
+.ml-filters select:focus {
+  border-color: #fff;
+  outline: none;
+}
+.ml-filters select option {
+  background: #0b0b0b;
+}
+.ml-q {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.ml-count {
+  margin-left: auto;
+  font: 700 11px "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.6);
+}
+.ml-gallery li[hidden] {
+  display: none;
+}
+
 .ml-gallery {
   list-style: none;
   margin: 0;

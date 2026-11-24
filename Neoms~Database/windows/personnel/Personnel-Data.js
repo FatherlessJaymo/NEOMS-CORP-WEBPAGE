@@ -22,7 +22,8 @@ const personnel = [
         dept: "[REDACTED]",
         clr: 5,
         site: null,
-        active: "Y"
+        active: "Y",
+        img: "../../Neoms~Universal-Fonts+Images/Creator/Creator-icon-2.png"
     },
     {
         id: 1002,
@@ -42,7 +43,8 @@ const personnel = [
         dept: "CONTAINMENT RESEARCH",
         clr: 3,
         site: 62656,
-        active: "Y"
+        active: "Y",
+        img: "https://unavatar.io/x/SpringlessEcho"
     },
     {
         id: 1004,
@@ -52,7 +54,8 @@ const personnel = [
         dept: "CONTAINMENT RESEARCH",
         clr: 3,
         site: 10081,
-        active: "Y"
+        active: "Y",
+        img: "https://static.wikia.nocookie.net/jujutsu-kaisen/images/f/fd/Gege_Akutami.png/revision/latest?cb=20250726004032"
     },
     {
         id: 1007,
@@ -62,7 +65,8 @@ const personnel = [
         dept: "CONTAINMENT RESEARCH",
         clr: 3,
         site: 10047,
-        active: "N"
+        active: "N",
+        img: "https://unavatar.io/youtube/toolzilla6829"
     }
 ];
 

@@ -29,6 +29,11 @@ const NM_CLASSIFIED = [
   {
     label: "Former Kumamoto Forward Post", clr: 5, lat: 32.8, lng: 130.7, ent: 333, rep: 2,
     role: "Destroyed in the light-spear impact and sealed; a perimeter team monitors cult activity and stands by for emergency operations"
+  },
+  {
+    /* Inside Site-10081, so drawn offset (px) with a stem back to the site */
+    label: "Observation Gallery · Window 2", clr: 3, lat: 35.6894, lng: 139.6917, ent: 8, rep: 6, offset: [-30, 26],
+    role: "E-0008 sighting: entity turned to face the observation window, unseen by every sensor"
   }
 ];
 
@@ -226,9 +231,14 @@ ENTITIES.forEach(function (e) {
     const spot = NM_CLASSIFIED.find((c) => c.ent === e.id && c.rep === i);
     const at = spot || site;
     if (!at) return;
-    NM_EVENTS.push({ e: e, r: r, i: i, lat: at.lat, lng: at.lng, broadcast: /broadcast/i.test(r.title) });
+    NM_EVENTS.push({ e: e, r: r, i: i, lat: at.lat, lng: at.lng, where: spot ? spot.label : site.name, broadcast: /broadcast/i.test(r.title) });
   });
 });
+
+/* Entity focus: null = all entities, otherwise one entity's id */
+let nmFocus = null;
+const nmFocusEnt = () => (nmFocus === null ? null : ENTITIES.find((e) => e.id === nmFocus) || null);
+const nmFocusEvents = () => NM_EVENTS.filter((ev) => nmFocus === null || ev.e.id === nmFocus);
 
 /* ════════════════════════════════════════════════════════════
    MAP BUILD
@@ -343,11 +353,31 @@ ENTITIES.forEach(function (e) {
     flyToPoint(site.lng, site.lat, 6);
   }
 
-  /* ── Site list (legend) — reaches markers that overlap ─────── */
-  (function buildSiteList() {
-    const list = document.getElementById("nm-site-list");
-    if (!list) return;
-    list.innerHTML = SITES.map(function (s) {
+  /* ── Site list (legend) — reaches markers that overlap ─────── *
+     In focus mode it lists the entity's reports instead. */
+  const siteList = document.getElementById("nm-site-list");
+  const legendTitle = document.getElementById("nm-legend-title");
+  function renderList() {
+    if (!siteList) return;
+    const fe = nmFocusEnt();
+    if (fe) {
+      const evs = nmFocusEvents();
+      if (legendTitle) legendTitle.textContent = "REPORTS · " + nmEntId(fe.id) + " (" + evs.length + ")";
+      siteList.innerHTML = evs.map(function (ev) {
+        const need = Math.max(fe.clr || 1, ev.r.clr || 1);
+        const locked = userClearance < need;
+        return (
+          '<button class="nm-site-row nm-rep-row" data-rep="' + ev.i + '" title="' +
+          escHtml(locked ? "[REDACTED] · CL-" + need : ev.r.title) + '">' +
+          '<span class="nm-legend-dot nm-dot--' + escHtml(String(ev.r.type).toLowerCase()) + '"></span>' +
+          String(ev.i + 1).padStart(2, "0") + " " + escHtml(ev.r.type) +
+          '<span class="nm-site-row-loc">' + escHtml(ev.where) + "</span></button>"
+        );
+      }).join("") || '<p class="nm-site-row-loc">No reports on file.</p>';
+      return;
+    }
+    if (legendTitle) legendTitle.textContent = "SITES";
+    siteList.innerHTML = SITES.map(function (s) {
       const bad = nmIsBreached(s);
       return (
         '<button class="nm-site-row' +
@@ -365,15 +395,66 @@ ENTITIES.forEach(function (e) {
         "</span></button>"
       );
     }).join("");
-    list.addEventListener("click", function (e) {
+  }
+  if (siteList) {
+    renderList();
+    siteList.addEventListener("click", function (e) {
       const row = e.target.closest(".nm-site-row");
       if (!row) return;
+      /* Report row: fly to it, pulse it and highlight its marker */
+      if (row.dataset.rep !== undefined) {
+        const ev = nmFocusEvents().find((x) => x.i === Number(row.dataset.rep));
+        if (!ev) return;
+        siteList.querySelectorAll(".nm-site-row").forEach((r) => r.classList.toggle("nm-site-row--active", r === row));
+        svg.selectAll(".nm-rep").classed("nm-rep--hl", function () { return Number(this.dataset.rep) === ev.i; });
+        flyToPoint(ev.lng, ev.lat, 4);
+        ring(ev.lng, ev.lat, "nm-fx--" + String(ev.r.type).toLowerCase(), 24, 2600);
+        return;
+      }
       const site = SITES.find((s) => s.id === Number(row.dataset.id));
       if (!site) return;
       selectSite(site.id);
       flyTo(site);
     });
-  })();
+  }
+
+  /* ── Entity focus dropdown ──────────────────────────────────── */
+  const focusSel = document.getElementById("nm-focus");
+  let timelineReset = function () {};
+
+  /* Zoom to fit the entity's site and every report location */
+  function fitFocus() {
+    const fe = nmFocusEnt();
+    if (!fe || !proj) return;
+    const site = SITES.find((s) => s.id === fe.site);
+    const pts = nmFocusEvents().concat(site ? [site] : []).map((p) => proj([p.lng, p.lat])).filter(Boolean);
+    if (!pts.length) return;
+    const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+    const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+    const y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+    const r = svgEl.getBoundingClientRect();
+    const k = Math.max(1, Math.min(8, 0.5 * Math.min(r.width / Math.max(x1 - x0, 1), r.height / Math.max(y1 - y0, 1))));
+    const t = d3.zoomIdentity.translate(r.width / 2, r.height / 2).scale(k).translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+    svg.transition().duration(750).call(zoom.transform, t);
+  }
+
+  if (focusSel) {
+    focusSel.insertAdjacentHTML("beforeend", ENTITIES.map(function (e) {
+      const locked = userClearance < (e.clr || 1);
+      return '<option value="' + e.id + '"' + (locked ? " disabled" : "") + ">" + nmEntId(e.id) + " · " +
+        (locked ? "[REDACTED] · CL-" + e.clr : escHtml(e.name)) + "</option>";
+    }).join(""));
+    focusSel.addEventListener("change", function () {
+      nmFocus = focusSel.value ? Number(focusSel.value) : null;
+      clearSelection();
+      nmPeekHide();
+      redraw();
+      renderList();
+      timelineReset();
+      if (nmFocus !== null) fitFocus();
+      else svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity);
+    });
+  }
 
   /* Reset view button */
   const resetBtn = document.getElementById("nm-reset");
@@ -387,7 +468,7 @@ ENTITIES.forEach(function (e) {
   function drawPins(g) {
     const layer = g.append("g").attr("class", "nm-pins");
     SITES.forEach(function (site) {
-      const ents = ENTITIES.filter((e) => e.site === site.id);
+      const ents = ENTITIES.filter((e) => e.site === site.id && (nmFocus === null || e.id === nmFocus));
       ents.forEach(function (e, i) {
         const grp = scaled(layer, site.lng, site.lat, "nm-pin" + (userClearance < (e.clr || 1) ? " nm-pin--locked" : ""));
         if (!grp) return;
@@ -436,12 +517,19 @@ ENTITIES.forEach(function (e) {
 
   /* ── Classified locations: real marker, or a [REDACTED] glitch ─ */
   function drawClassified(g) {
+    /* In focus mode the report markers stand in for these */
+    if (nmFocus !== null) return;
     const layer = g.append("g").attr("class", "nm-classified-layer");
     NM_CLASSIFIED.forEach(function (c) {
       const ok = userClearance >= c.clr;
-      const grp = scaled(layer, c.lng, c.lat, "nm-classified" + (ok ? "" : " nm-classified--fog"));
-      if (!grp) return;
-      grp
+      const at = scaled(layer, c.lng, c.lat, "nm-classified" + (ok ? "" : " nm-classified--fog"));
+      if (!at) return;
+      let grp = at;
+      if (c.offset) {
+        at.append("line").attr("class", "nm-pin-stem").attr("x1", 0).attr("y1", 0).attr("x2", c.offset[0]).attr("y2", c.offset[1]);
+        grp = at.append("g").attr("transform", "translate(" + c.offset[0] + "," + c.offset[1] + ")");
+      }
+      at
         .attr("tabindex", 0)
         .attr("role", "button")
         .attr("aria-label", ok ? c.label : "Classified location, CL-" + c.clr + " required");
@@ -454,10 +542,10 @@ ENTITIES.forEach(function (e) {
         .attr("text-anchor", "middle")
         .text(ok ? c.label.toUpperCase() + (c.unverified ? " · UNVERIFIED" : "") : "[REDACTED] · CL-" + c.clr);
       /* Hover tooltip: role + where the designation comes from */
-      grp
+      at
         .append("title")
         .text(ok
-          ? c.label + " — " + c.role + ". NeoMS-original designation" + (c.unverified ? "; coordinates unverified." : ".")
+          ? c.label + " — " + c.role + (c.offset ? "." : ". NeoMS-original designation" + (c.unverified ? "; coordinates unverified." : "."))
           : "Classified location — CL-" + c.clr + " required");
       function open() {
         const e = ENTITIES.find((x) => x.id === c.ent);
@@ -468,15 +556,67 @@ ENTITIES.forEach(function (e) {
         }
         if (e) nmOpenReport(e, c.rep);
       }
-      grp.on("click", function (evt) {
+      at.on("click", function (evt) {
         evt.stopPropagation();
         open();
       });
-      grp.on("keydown", function (evt) {
+      at.on("keydown", function (evt) {
         if (evt.key === "Enter" || evt.key === " ") {
           evt.preventDefault();
           open();
         }
+      });
+    });
+  }
+
+  /* ── Focus mode: a numbered marker per report of the entity ────
+     Reports filed at the same place fan out around it. */
+  function drawFocusReports(g) {
+    const fe = nmFocusEnt();
+    if (!fe) return;
+    const layer = g.append("g").attr("class", "nm-reports");
+    const spots = {};
+    nmFocusEvents().forEach(function (ev) {
+      const k = ev.lat + "," + ev.lng;
+      (spots[k] = spots[k] || []).push(ev);
+    });
+    Object.keys(spots).forEach(function (k) {
+      const evs = spots[k];
+      const at = scaled(layer, evs[0].lng, evs[0].lat, "nm-rep-spot");
+      if (!at) return;
+      /* Spread over 30°–250° so they stay clear of the entity pin (up-right) */
+      const rad = 32 + Math.max(0, evs.length - 4) * 5;
+      const pos = evs.map(function (ev, j) {
+        const a = ((evs.length === 1 ? 135 : 30 + (220 * j) / (evs.length - 1)) * Math.PI) / 180;
+        return [Math.cos(a) * rad, Math.sin(a) * rad];
+      });
+      pos.forEach((p) => at.append("line").attr("class", "nm-pin-stem").attr("x1", 0).attr("y1", 0).attr("x2", p[0]).attr("y2", p[1]));
+      at.append("circle").attr("class", "nm-rep-origin").attr("r", 2.5);
+      evs.forEach(function (ev, j) {
+        const need = Math.max(fe.clr || 1, ev.r.clr || 1);
+        const locked = userClearance < need;
+        const b = at
+          .append("g")
+          .attr("class", "nm-rep nm-rep--" + String(ev.r.type).toLowerCase() + (locked ? " nm-rep--locked" : ""))
+          .attr("transform", "translate(" + pos[j][0] + "," + pos[j][1] + ")")
+          .attr("data-rep", ev.i)
+          .attr("tabindex", 0)
+          .attr("role", "button")
+          .attr("aria-label", "Report " + (ev.i + 1) + ", " + ev.r.type + (locked ? ", CL-" + need + " required" : ", " + ev.r.title));
+        b.append("circle").attr("r", 10);
+        b.append("text").attr("text-anchor", "middle").attr("dy", "0.35em").text(ev.i + 1);
+        b.append("title").text(
+          "#" + (ev.i + 1) + " " + ev.r.type + " — " + (locked ? "[REDACTED] · CL-" + need : ev.r.title) + "\n" + ev.where
+        );
+        b.on("click", function (evt) {
+          evt.stopPropagation();
+          nmOpenReport(fe, ev.i);
+        }).on("keydown", function (evt) {
+          if (evt.key === "Enter" || evt.key === " ") {
+            evt.preventDefault();
+            nmOpenReport(fe, ev.i);
+          }
+        });
       });
     });
   }
@@ -592,7 +732,8 @@ ENTITIES.forEach(function (e) {
 
         const grp = g
           .append("g")
-          .attr("class", "nm-site-marker" + (breached ? " nm-breach" : ""))
+          .attr("class", "nm-site-marker" + (breached ? " nm-breach" : "") +
+            (nmFocus !== null && (nmFocusEnt() || {}).site !== site.id ? " nm-site-marker--dim" : ""))
           .attr("transform", "translate(" + xy[0] + "," + xy[1] + ")")
           .datum(site)
           .on("click", function (event, d) {
@@ -628,6 +769,7 @@ ENTITIES.forEach(function (e) {
       });
 
       drawClassified(g);
+      drawFocusReports(g);
       drawPins(g);
 
       /* Restore zoom + selection from before the redraw */
@@ -678,17 +820,30 @@ ENTITIES.forEach(function (e) {
     const play = document.getElementById("nm-tl-play");
     const label = document.getElementById("nm-tl-label");
     if (!range || !NM_EVENTS.length) return;
-    range.max = NM_EVENTS.length - 1;
+    /* Only the focused entity's reports when focus mode is on */
+    let evs = nmFocusEvents();
+    range.max = Math.max(0, evs.length - 1);
     let cur = -1;
     let timer = null;
+
+    timelineReset = function () {
+      stop();
+      evs = nmFocusEvents();
+      cur = -1;
+      range.max = Math.max(0, evs.length - 1);
+      range.value = 0;
+      range.disabled = play.disabled = !evs.length;
+      label.textContent = (nmFocus === null ? "INCIDENT TIMELINE" : nmEntId(nmFocus) + " TIMELINE") + " — press play";
+      label.classList.remove("nm-tl-label--locked");
+    };
 
     function show(i, fly) {
       cur = i;
       range.value = i;
-      const ev = NM_EVENTS[i];
+      const ev = evs[i];
       const locked = userClearance < Math.max(ev.e.clr || 1, ev.r.clr || 1);
       label.textContent =
-        String(i + 1).padStart(2, "0") + "/" + NM_EVENTS.length + " · " + nmEntId(ev.e.id) + " · " +
+        String(i + 1).padStart(2, "0") + "/" + evs.length + " · " + nmEntId(ev.e.id) + " · " +
         ev.r.type + " — " + (locked ? "[REDACTED] · CL-" + Math.max(ev.e.clr || 1, ev.r.clr || 1) : ev.r.title);
       label.classList.toggle("nm-tl-label--locked", locked);
       const radius = ev.broadcast ? 80 : { BREACH: 40, INCIDENT: 30, OBSERVATION: 24, SIGHTING: 20 }[ev.r.type] || 24;
@@ -705,10 +860,11 @@ ENTITIES.forEach(function (e) {
       if (timer) return stop();
       play.innerHTML = "&#10074;&#10074;";
       play.setAttribute("aria-label", "Pause incident timeline");
-      show(cur >= NM_EVENTS.length - 1 ? 0 : cur + 1, true);
+      if (!evs.length) return stop();
+      show(cur >= evs.length - 1 ? 0 : cur + 1, true);
       timer = setInterval(function () {
         if (!svgEl.isConnected) return stop();
-        if (cur >= NM_EVENTS.length - 1) return stop();
+        if (cur >= evs.length - 1) return stop();
         show(cur + 1, true);
       }, 2600);
     });
@@ -719,7 +875,7 @@ ENTITIES.forEach(function (e) {
     /* Clicking the caption opens that report */
     label.addEventListener("click", function () {
       if (cur < 0) return;
-      const ev = NM_EVENTS[cur];
+      const ev = evs[cur];
       nmOpenReport(ev.e, ev.i);
     });
   })();
