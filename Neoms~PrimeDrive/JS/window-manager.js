@@ -140,6 +140,7 @@ function openWin(id) {
     focusWin(id);
     addTBBtn(id, def.title, def.icon, def.iconImg);
     afterOpen(id);
+    syncMaxState();
 }
 
 function focusWin(id) {
@@ -171,11 +172,14 @@ function closeWin(id) {
 /* Lift the desktop over the label bar + taskbar while any maximized
    window is visible (see body.win-max-active in window-manager.css) */
 function syncMaxState() {
+    /* On phones every window is full-screen, so any visible one counts */
     var active = Object.keys(wins).some(function (k) {
-        return (wins[k].maximized || wins[k].snap) && !wins[k].minimized;
+        return (wins[k].maximized || wins[k].snap || isMobile()) && !wins[k].minimized;
     });
     document.body.classList.toggle("win-max-active", !!active);
 }
+/* Re-check when the screen crosses the phone width (rotation, resize) */
+if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener("change", syncMaxState);
 
 function minWin(id) {
     if (!wins[id]) return;
