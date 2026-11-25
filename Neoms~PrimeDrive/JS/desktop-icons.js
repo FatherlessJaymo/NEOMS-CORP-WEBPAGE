@@ -209,13 +209,18 @@ function makeDraggableIcon(el, id, url) {
     document.addEventListener("mouseup", onUp);
   });
 
-  el.addEventListener("dblclick", function () {
+  function openIcon() {
     if (moved) return;
     if (url) {
       window.open(url, "_blank");
       return;
     }
     openWin(id);
+  }
+  el.addEventListener("dblclick", openIcon);
+  /* Phones: one tap opens (a double tap zooms the page instead) */
+  el.addEventListener("click", function () {
+    if (typeof isMobile === "function" && isMobile()) openIcon();
   });
 }
 

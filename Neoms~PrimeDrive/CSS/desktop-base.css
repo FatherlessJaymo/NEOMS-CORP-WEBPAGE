@@ -37,6 +37,8 @@ body {
 }
 
 body {
+  /* No double-tap zoom: taps act immediately on touch screens */
+  touch-action: manipulation;
   background: url("../../Neoms~Universal-Fonts+Images/Wallpapers/Sonic-CD.gif") no-repeat center center fixed;
   background-size: cover;
   color: var(--text-base);

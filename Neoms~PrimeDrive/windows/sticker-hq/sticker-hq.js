@@ -90,19 +90,27 @@ function spawnSticker(src, px, py, sizePx) {
   el.addEventListener("mouseleave", function () { del.style.display = "none"; });
   del.addEventListener("click", function (e) { e.stopPropagation(); el.remove(); saveBoard(); updateStickerCount(); });
   el.appendChild(img); el.appendChild(del);
-  el.addEventListener("mousedown", function (e) {
+  /* Pointer events: the same drag works for mouse, finger and pen */
+  el.addEventListener("pointerdown", function (e) {
     if (e.target === del) return; e.preventDefault();
     var sx = e.clientX, sy = e.clientY, ol = parseFloat(el.style.left) || 0, ot = parseFloat(el.style.top) || 0;
+    var moved = false;
     el.style.zIndex = 9999;
     function mv(e) {
+      if (Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) > 4) moved = true;
       var nl = Math.max(0, Math.min(window.innerWidth  - el.offsetWidth,  ol + (e.clientX - sx)));
       var nt = Math.max(0, Math.min(window.innerHeight - el.offsetHeight, ot + (e.clientY - sy)));
       el.style.left = nl + "px"; el.style.top = nt + "px";
       el.dataset.px = (nl / window.innerWidth)  * 100;
       el.dataset.py = (nt / window.innerHeight) * 100;
     }
-    function up() { el.style.zIndex = 9000; saveBoard(); document.removeEventListener("mousemove", mv); document.removeEventListener("mouseup", up); }
-    document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
+    function up(ev) {
+      el.style.zIndex = 9000; saveBoard();
+      document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up); document.removeEventListener("pointercancel", up);
+      /* Touch has no hover: a tap (no drag) shows / hides the × */
+      if (!moved && ev.pointerType !== "mouse") del.style.display = del.style.display === "block" ? "none" : "block";
+    }
+    document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up); document.addEventListener("pointercancel", up);
   });
   board.appendChild(el); saveBoard(); updateStickerCount(); return el;
 }

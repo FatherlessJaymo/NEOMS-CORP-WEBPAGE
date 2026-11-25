@@ -183,6 +183,26 @@
   color: #a8c8e8;
 }
 
+/* Phones: full-width menu, narrower user panel, taller rows for fingers */
+@media (max-width: 700px) {
+  #start-menu {
+    width: 100%;
+  }
+  .start-body {
+    min-height: 0;
+    max-height: calc(100vh - var(--taskbar-h) - 22px - 36px);
+  }
+  .start-user {
+    width: 120px;
+  }
+  .start-item {
+    padding: 12px;
+  }
+  .start-social {
+    padding: 9px 6px;
+  }
+}
+
 /* Icon sizing — applies to both <span> and <img> variants */
 .start-item-icon,
 .start-item img.start-item-icon {

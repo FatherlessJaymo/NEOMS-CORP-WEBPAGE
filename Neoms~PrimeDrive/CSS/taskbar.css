@@ -157,3 +157,27 @@
     display: none;
   }
 }
+/* Phones: compact start button and clock, no volume slider
+   (phones use their own volume buttons) */
+@media (max-width: 700px) {
+  #start-btn {
+    padding: 0 12px 0 10px;
+    letter-spacing: 1px;
+  }
+  #taskbar #tb-nm-vol {
+    display: none;
+  }
+  #taskbar #tb-neomix {
+    padding: 0 4px;
+  }
+  #taskbar-clock {
+    min-width: 0;
+    padding: 0 10px 0 12px;
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+  .tb-btn {
+    min-width: 36px;
+    height: 34px;
+  }
+}

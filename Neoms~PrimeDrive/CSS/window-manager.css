@@ -284,3 +284,48 @@ body.win-max-active #desktop {
   border-color: #a8c8e8;
   box-shadow: 0 0 8px rgba(0, 109, 255, 0.7);
 }
+
+/* ── Phones: every window fills the screen, like a phone app ──
+   Sits between the top label bar (22px) and the taskbar (#desktop
+   already stops above it). !important beats the inline left/top/
+   width/height that openWin and dragging set. Switch windows with
+   the taskbar buttons. Width matches MOBILE_MQ in window-manager.js. */
+@media (max-width: 700px) {
+  .win,
+  .win.maximized {
+    left: 0 !important;
+    top: 22px !important;
+    width: 100% !important;
+    height: calc(100% - 22px) !important;
+    min-width: 0;
+    min-height: 0;
+    border-width: 0;
+    border-radius: 0;
+    resize: none;
+  }
+  body.win-max-active #desktop {
+    z-index: 1;
+  }
+  .win-bar {
+    height: 40px;
+    border-radius: 0;
+    cursor: default;
+  }
+  .win-title {
+    font-size: 8px;
+  }
+  .win-btn {
+    width: 34px;
+    height: 30px;
+    line-height: 30px;
+  }
+  .win-btn.win-max,
+  .win-resize,
+  #snap-flyout,
+  #snap-preview {
+    display: none !important;
+  }
+  .win-body {
+    border-radius: 0;
+  }
+}

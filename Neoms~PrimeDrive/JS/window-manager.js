@@ -51,6 +51,15 @@ function iconImg(id) {
     return WIN_ICONS[id] || FOLDER_IMG;
 }
 
+/* ---- Phone layout ----
+   At this width windows fill the screen like phone apps (see the
+   @media block in window-manager.css), icons open with one tap and
+   no windows open on startup. Keep the number in sync with the CSS. */
+var MOBILE_MQ = window.matchMedia("(max-width: 700px)");
+function isMobile() {
+    return MOBILE_MQ.matches;
+}
+
 /* ============================================================
    OPEN / FOCUS / CLOSE / MIN / MAX
 ============================================================ */
@@ -713,10 +722,17 @@ function wireSnapButton(id, btn) {
    Order = left → right; the LAST one ends up focused.
 ============================================================ */
 var STARTUP_WINS = ["prime", "guestbook", "core"];
+/* Phones show one full-screen window at a time, so start on the
+   desktop instead (add ids here to open some anyway, e.g. ["core"]) */
+var STARTUP_WINS_MOBILE = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
         if (typeof openWin !== "function") return;
+        if (isMobile()) {
+            STARTUP_WINS_MOBILE.forEach(openWin);
+            return;
+        }
         STARTUP_WINS.forEach(openWin);
         tileWins(STARTUP_WINS);
     }, 200);

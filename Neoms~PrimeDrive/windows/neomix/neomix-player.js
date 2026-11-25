@@ -433,19 +433,19 @@ function initNeomixInWin() {
         else neomixYtPlayer.nextVideo();
       });
     if (seekBar) {
-      seekBar.addEventListener("mousedown", function () {
+      seekBar.addEventListener("pointerdown", function () {
         neomixIsSeeking = true;
       });
       seekBar.addEventListener("input", function () {
         neomixSetFill(this);
         if (neomixYtPlayer) neomixYtPlayer.seekTo(parseFloat(this.value), true);
       });
-      seekBar.addEventListener("mouseup", function () {
+      seekBar.addEventListener("pointerup", function () {
         neomixIsSeeking = false;
       });
     }
     if (volBar) {
-      volBar.addEventListener("mousedown", function () {
+      volBar.addEventListener("pointerdown", function () {
         neomixIsVolSliding = true;
       });
       volBar.addEventListener("input", function () {
@@ -455,7 +455,7 @@ function initNeomixInWin() {
         neomixIsMuted = v === 0;
         if (muteBtn) muteBtn.innerHTML = neomixIsMuted ? "&#128263;" : "&#128266;";
       });
-      volBar.addEventListener("mouseup", function () {
+      volBar.addEventListener("pointerup", function () {
         neomixIsVolSliding = false;
       });
     }
@@ -568,14 +568,14 @@ function initNeomixTaskbar() {
       neomixYtPlayer.getPlayerState() === 1 ? neomixYtPlayer.pauseVideo() : neomixYtPlayer.playVideo();
     });
   if (tbSeek) {
-    tbSeek.addEventListener("mousedown", function () {
+    tbSeek.addEventListener("pointerdown", function () {
       tbSeeking = true;
     });
     tbSeek.addEventListener("input", function () {
       neomixSetFill(this);
       if (neomixYtPlayer) neomixYtPlayer.seekTo(parseFloat(this.value), true);
     });
-    tbSeek.addEventListener("mouseup", function () {
+    tbSeek.addEventListener("pointerup", function () {
       tbSeeking = false;
     });
   }

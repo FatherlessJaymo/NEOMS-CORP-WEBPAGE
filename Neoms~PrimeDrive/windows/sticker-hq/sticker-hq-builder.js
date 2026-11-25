@@ -7,7 +7,7 @@
 (function () {
     window.buildSticker = function () {
         return (
-            '<div style="margin:-16px;">' +
+            '<div style="margin:-12px;">' +
             '<div style="background:rgba(0,15,50,.65);border-bottom:1px solid var(--panel-border);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">' +
             '<span style="font-size:10px;letter-spacing:2px;color:var(--accent-hi);">\u2726 STICKER.HQ</span>' +
             '<button class="copy-btn" style="color:var(--danger);border-color:var(--danger);font-size:7px;" id="sticker-clear-btn">CLEAR ALL</button>' +
