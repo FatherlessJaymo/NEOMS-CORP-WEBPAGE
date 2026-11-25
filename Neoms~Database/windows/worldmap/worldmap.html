@@ -67,9 +67,13 @@
   <!-- Legend + site list (click a site to fly to it) -->
   <div class="nm-legend">
     <div class="nm-legend-head">
-      <span class="nm-legend-title">SITES</span>
+      <span class="nm-legend-title" id="nm-legend-title">SITES</span>
       <button id="nm-reset" class="nm-reset" title="Reset view">&#8634; RESET</button>
     </div>
+    <!-- Focus on one entity: hides the others and maps all its reports -->
+    <select id="nm-focus" class="nm-focus" aria-label="Focus on one entity">
+      <option value="">ALL ENTITIES</option>
+    </select>
     <div id="nm-site-list" class="nm-site-list"></div>
     <div class="nm-legend-keys">
       <span><i class="nm-legend-dot nm-legend-dot-active"></i>ACTIVE</span>
@@ -84,5 +88,6 @@
     <div>DRAG — pan</div>
     <div>CLICK SITE — site HUD</div>
     <div>HOVER PIN — entity card</div>
+    <div>FOCUS — one entity's reports</div>
   </div>
 </div>

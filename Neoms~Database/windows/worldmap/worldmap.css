@@ -11,6 +11,8 @@
   background: #050b14;
   position: relative;
   overflow: hidden;
+  /* Lets the hints react to the map's own width (it may be pinned to a side) */
+  container-type: inline-size;
 }
 
 /* ── Header overlay ──────────────────────────────────────────── */
@@ -701,6 +703,99 @@
   transform: rotate(45deg);
 }
 
+/* ── Entity focus ────────────────────────────────────────────── */
+.nm-focus {
+  width: 100%;
+  height: 26px;
+  margin-bottom: 6px;
+  padding: 0 6px;
+  background: #050c16;
+  border: 1px solid #1f5a5a;
+  border-radius: 2px;
+  color: #cfe8e8;
+  font: 12px "Share Tech Mono", monospace;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.nm-focus:focus {
+  border-color: #00e0e0;
+  outline: none;
+}
+.nm-focus option {
+  background: #050c16;
+}
+.nm-site-marker--dim {
+  opacity: 0.25;
+}
+/* Focus list rows: "03 OBSERVATION" on one line, location under it */
+.nm-rep-row {
+  align-items: flex-start;
+}
+.nm-rep-row .nm-legend-dot {
+  margin-top: 5px;
+}
+.nm-rep-row-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.nm-rep-row-txt b {
+  font-weight: normal;
+  white-space: nowrap;
+}
+.nm-rep-row-txt small {
+  font-size: 10px;
+  color: #6fa8a8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Report type dots in the focus list */
+.nm-dot--breach,
+.nm-dot--incident { background: #ff4444; }
+.nm-dot--observation { background: #6b9cff; }
+.nm-dot--sighting { background: #ffaa00; }
+.nm-dot--intelligence { background: #ff9a3c; }
+
+/* Numbered report markers */
+.nm-rep-origin {
+  fill: #fff;
+}
+.nm-rep {
+  cursor: pointer;
+  outline: none;
+}
+.nm-rep circle {
+  fill: #050b14;
+  stroke: #8fc7c7;
+  stroke-width: 2;
+  transition: fill 0.12s;
+}
+.nm-rep text {
+  fill: #fff;
+  font: 700 10px "Share Tech Mono", monospace;
+  pointer-events: none;
+}
+.nm-rep--breach circle,
+.nm-rep--incident circle { stroke: #ff4444; }
+.nm-rep--observation circle { stroke: #6b9cff; }
+.nm-rep--sighting circle { stroke: #ffaa00; }
+.nm-rep--intelligence circle { stroke: #ff9a3c; stroke-dasharray: 4 3; }
+.nm-rep:hover circle,
+.nm-rep:focus-visible circle {
+  fill: #1a3a40;
+}
+.nm-rep--hl circle {
+  fill: #1a3a40;
+  stroke-width: 3.5;
+}
+.nm-rep--locked {
+  opacity: 0.55;
+}
+.nm-rep--locked circle {
+  stroke-dasharray: 2 2;
+}
+
 /* ── Hints ───────────────────────────────────────────────────── */
 .nm-hints {
   position: absolute;
@@ -718,6 +813,13 @@
 @media (max-width: 700px) {
   .nm-header-sub2,
   .nm-header-meta,
+  .nm-hints {
+    display: none;
+  }
+}
+/* Hints share the bottom-right corner with the timeline; drop them
+   once the map itself is too narrow for both */
+@container (max-width: 900px) {
   .nm-hints {
     display: none;
   }

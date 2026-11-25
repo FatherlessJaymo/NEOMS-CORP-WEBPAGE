@@ -5,6 +5,13 @@
     <div class="page-subtitle" id="main-subtitle">Entities currently in containment</div>
   </div>
   <div class="scroll-area">
+    <!-- Search / filter bar (wired up by main.js) -->
+    <form class="ml-filters" id="main-filters" role="search" onsubmit="return false">
+      <input type="search" id="main-q" class="ml-q" placeholder="Search name or ID…" aria-label="Search by name or ID" autocomplete="off" />
+      <select id="main-cls" aria-label="Filter by class"><option value="">All classes</option></select>
+      <select id="main-st" aria-label="Filter by status"><option value="">All statuses</option></select>
+      <span class="ml-count" id="main-count" aria-live="polite"></span>
+    </form>
     <!-- Picture gallery of current entities (built by main.js) -->
     <ul class="ml-gallery" id="main-gallery" aria-label="Current entities"></ul>
   </div>

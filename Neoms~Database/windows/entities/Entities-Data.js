@@ -387,6 +387,30 @@ const ENTITIES = [
                 summary:
                     "Quarterly binding integrity inspection completed. All 8 exorcism-ritual anchors confirmed at nominal tension. Dharma wheel has not rotated unprompted in 94 days — longest recorded stable period. Positive-energy field emitters operating at 97% output. Entity remains in dormant stance. No vocalisation, movement, or adaptation events logged this quarter. Containment status: STABLE. Note logged for the record: entity has not once faced toward the observation window in 94 days. This is statistically anomalous given prior behavioural data. Monitoring continues.",
                 author: 1004
+            },
+            {
+                title: "Observation Window Orientation Event",
+                subtitle: "Sighting",
+                date: "20██-05-██",
+                type: "SIGHTING",
+                clr: 3,
+                summary:
+                    "On day 97 of the stable period, the night-watch observer logged the entity turning its head toward the observation window for the first time since containment. No sensor registered the movement, and the anomaly-spin array showed no Dharma wheel rotation. The entity held the orientation for 6 minutes, then returned to its dormant posture. Night-watch rotation was changed immediately afterwards. The observer reported that the entity appeared to be watching the reflection in the glass, not the observer. No adaptation, binding or barrier events were recorded. Containment status remains CONTAINED. Sighting logged per standard protocol.",
+                location: "Site-10081, Observation Gallery (Window 2)",
+                personnel: "1 night-watch observer (CL-3), 2 CL-4 duty officers",
+                log: [
+                    { t: "02:47", text: "Night watch begins. Entity in dormant stance, facing away from Window 2." },
+                    { t: "03:14", who: "Observer", text: "It's turning. Its head is turning toward the glass." },
+                    { t: "03:14", text: "Anomaly-spin array: no Dharma wheel rotation. Motion sensors: no movement registered." },
+                    { t: "03:15", text: "Duty officers arrive at the gallery. They confirm the entity is oriented toward Window 2." },
+                    { t: "03:17", who: "Observer", text: "It's not looking at me. It's looking at the reflection." },
+                    { t: "03:20", text: "Entity returns to dormant stance. Sensors still show no movement at any point." },
+                    { note: "Note: 03:14 is the same minute as the earlier unprompted wheel rotation (NMS-008-BREACH-001). This may not be a coincidence. — S-1004" }
+                ],
+                notes:
+                    "Window 2 fitted with an anti-reflective film. Visual-only observation is now paired with a second observer at all times, because the sensors cannot be trusted to log this behaviour. The 94-day stable period is declared ended.",
+                file: "NMS-008-SIGHT-002.pdf",
+                author: 1004
             }
         ]
     },
@@ -416,6 +440,7 @@ const ENTITIES = [
         disc: "20██-████-████",
         glyph: "\u271D",
         img: "../../Neoms~Universal-Fonts+Images/Entities-Data/Seraphim-Ghidorah/Seraphim-Ghidorah(Entity-PFP).gif",
+        imgCaption: "Footage of E-0333 recorded during a manifestation event.",
         bioImages: [
             {
                 src: "../../Neoms~Universal-Fonts+Images/Entities-Data/Seraphim-Ghidorah/Ghidorah-BlackHoles.jpg",

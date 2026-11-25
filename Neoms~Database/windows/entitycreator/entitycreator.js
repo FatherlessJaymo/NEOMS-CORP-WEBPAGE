@@ -5,6 +5,15 @@
    sessionpersonnel, userClearance, openWin, closeWin
    ============================================================ */
 
+/* This creator's own pane — the Personnel Creator shares the ec-* classes */
+var ecPane = document.getElementById("wbody_" + winId) || document;
+
+/* Entity file / Personnel file switch */
+ecPane.querySelector(".ec-mode").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-open]");
+  if (b) openWin(b.dataset.open);
+});
+
 /* ── Populate site dropdown from live SITES data ─────────── */
 var siteSelect = document.getElementById("ec-site");
 if (siteSelect && SITES && SITES.length) {
@@ -16,26 +25,36 @@ if (siteSelect && SITES && SITES.length) {
   });
 }
 
-/* ── Tab switching ───────────────────────────────────────── */
+/* ── Steps (guided tabs) ─────────────────────────────────── */
 var tabBar = document.getElementById("ec-tabs");
+
+function ecGoTo(target) {
+  if (!tabBar) return;
+  tabBar.querySelectorAll(".ec-tab").forEach(function (t) {
+    var on = t.dataset.tab === target;
+    t.classList.toggle("ec-tab--active", on);
+    t.setAttribute("aria-selected", String(on));
+  });
+  ecPane.querySelectorAll(".ec-panel").forEach(function (p) {
+    p.classList.toggle("ec-hidden", p.id !== "ec-panel-" + target);
+  });
+  var body = ecPane.querySelector(".ec-body");
+  if (body) body.scrollTop = 0;
+  if (target === "review") ecRenderReview();
+  ecRenderPreview();
+}
+
 if (tabBar) {
   tabBar.addEventListener("click", function (e) {
     var btn = e.target.closest(".ec-tab");
-    if (!btn) return;
-    var target = btn.dataset.tab;
-
-    tabBar.querySelectorAll(".ec-tab").forEach(function (t) {
-      t.classList.remove("ec-tab--active");
-    });
-    btn.classList.add("ec-tab--active");
-
-    document.querySelectorAll(".ec-panel").forEach(function (p) {
-      p.classList.add("ec-hidden");
-    });
-    var panel = document.getElementById("ec-panel-" + target);
-    if (panel) panel.classList.remove("ec-hidden");
+    if (btn) ecGoTo(btn.dataset.tab);
   });
 }
+/* Back / Next buttons at the foot of each step */
+ecPane.querySelector(".ec-body").addEventListener("click", function (e) {
+  var nav = e.target.closest("[data-goto]");
+  if (nav) ecGoTo(nav.dataset.goto);
+});
 
 /* ── Protocol list ───────────────────────────────────────── */
 var protocolList = document.getElementById("ec-protocols-list");
@@ -382,62 +401,87 @@ function stringify(obj, indent) {
   }).join(",\n");
 }
 
-/* ── Generate output ─────────────────────────────────────── */
-function generateOutput() {
-  var id = gn("ec-id");
-  var name = gv("ec-name");
+/* ── Build the entity object from the form ───────────────────
+   Used by the live preview, the review step, the code output and
+   the submission. Links (not device pictures) go into img/bioImages. */
+var EC_GALLERY = [1, 2, 3];
 
-  /* Validate required */
-  var valid = true;
-  ["ec-id", "ec-name", "ec-cls", "ec-status", "ec-clr"].forEach(function (fid) {
-    var el = document.getElementById(fid);
-    if (el) {
-      if (!el.value || el.value.trim() === "") {
-        el.classList.add("ec-invalid");
-        valid = false;
-        setTimeout(function () {
-          el.classList.remove("ec-invalid");
-        }, 2000);
-      }
-    }
-  });
-  if (!valid) {
-    var pre = document.getElementById("ec-output-pre");
-    if (pre)
-      pre.textContent =
-        "// ⚠ Required fields missing: ID, Name, Classification, Status, Clearance.\n// Fill them in on the PROFILE tab, then regenerate.";
-    return;
-  }
-
+function ecBuildEntity() {
   var siteVal = gv("ec-site");
-  var imgVal = gv("ec-img");
-  var discBy = gn("ec-discoveredby");
-
   var obj = {
-    id: id,
+    id: gn("ec-id"),
     clr: parseInt(gv("ec-clr") || "1", 10),
     site: siteVal ? parseInt(siteVal, 10) : null,
-    name: name,
+    name: gv("ec-name") || "",
     cls: gv("ec-cls") || "AR",
     ps: gv("ec-ps") || "",
     status: gv("ec-status") || "CONTAINED",
     disc: gv("ec-disc") || "20██-██-██",
     glyph: gv("ec-glyph") || "○",
-    img: imgVal || null,
-    desc: gv("ec-desc") || "",
-    aprop: gv("ec-aprop") || "",
-    phys: gv("ec-phys") || "",
-    dims: gv("ec-dims") || "",
-    sentient: gv("ec-sentient") || "U",
-    hostile: gv("ec-hostile") || "U",
-    safety: gv("ec-safety") || "HAZARDOUS",
-    discoveredBy: discBy,
-    contributors: [],
-    sources: [],
-    protocols: collectProtocols(),
-    reports: collectReports()
+    img: gv("ec-img") || null
   };
+  if (gv("ec-imgcap")) obj.imgCaption = gv("ec-imgcap");
+  var gallery = EC_GALLERY.map(function (n) {
+    return { src: gv("ec-gal-src-" + n), caption: gv("ec-gal-cap-" + n) || "" };
+  }).filter(function (g) { return g.src; });
+  if (gallery.length) obj.bioImages = gallery;
+  obj.desc = gv("ec-desc") || "";
+  obj.aprop = gv("ec-aprop") || "";
+  obj.phys = gv("ec-phys") || "";
+  obj.dims = gv("ec-dims") || "";
+  obj.sentient = gv("ec-sentient") || "U";
+  obj.hostile = gv("ec-hostile") || "U";
+  obj.safety = gv("ec-safety") || "HAZARDOUS";
+  obj.discoveredBy = gn("ec-discoveredby");
+  obj.contributors = [];
+  obj.sources = [];
+  obj.protocols = collectProtocols();
+  obj.reports = collectReports();
+  return obj;
+}
 
+/* Blocking problems (errors) and gentle nudges (warnings) */
+function ecValidate() {
+  var errors = [], warnings = [];
+  var id = gn("ec-id");
+  var taken = (typeof ENTITIES !== "undefined" ? ENTITIES : []).some(function (e) { return e.id === id; });
+  if (!gv("ec-name")) errors.push({ msg: "Give the entity a name.", step: "basics", field: "ec-name" });
+  if (!id) errors.push({ msg: "Choose an entity number.", step: "basics", field: "ec-id" });
+  else if (taken) errors.push({ msg: "E-" + String(id).padStart(4, "0") + " is already in the archive — pick another number.", step: "basics", field: "ec-id" });
+  if (!gv("ec-desc")) errors.push({ msg: "Write a description.", step: "desc", field: "ec-desc" });
+  if (!gv("ec-img")) {
+    warnings.push({
+      msg: ecLocalImgs.main ? "Your profile picture is only on your device — add its link so it's included." : "No profile picture link yet (recommended).",
+      step: "pictures", field: "ec-img"
+    });
+  }
+  EC_GALLERY.forEach(function (n) {
+    if (ecLocalImgs["gal" + n] && !gv("ec-gal-src-" + n)) {
+      warnings.push({ msg: "Gallery picture " + n + " is only on your device — add its link.", step: "pictures", field: "ec-gal-src-" + n });
+    }
+  });
+  ["ec-img"].concat(EC_GALLERY.map(function (n) { return "ec-gal-src-" + n; })).forEach(function (f) {
+    var v = gv(f);
+    if (v && !/^https?:\/\//i.test(v) && v.indexOf("../") !== 0) {
+      warnings.push({ msg: "A picture link doesn't start with https:// — check it was copied fully.", step: "pictures", field: f });
+    }
+  });
+  if (!gv("ec-aprop") && !gv("ec-phys")) warnings.push({ msg: "Anomalous properties or a physical description would make the file richer.", step: "desc", field: "ec-aprop" });
+  return { errors: errors, warnings: warnings };
+}
+
+/* ── Generate output ─────────────────────────────────────── */
+function generateOutput() {
+  var v = ecValidate();
+  if (v.errors.length) {
+    var pre0 = document.getElementById("ec-output-pre");
+    if (pre0)
+      pre0.textContent =
+        "// ⚠ Fix these first:\n" + v.errors.map(function (e) { return "//   • " + e.msg; }).join("\n");
+    return;
+  }
+
+  var obj = ecBuildEntity();
   var padId = String(obj.id || 0).padStart(4, "0");
   var out =
     "    /* ════════════════════════════════════════════════════════\n" +
@@ -503,7 +547,11 @@ if (genBtn) genBtn.addEventListener("click", generateOutput);
 var submitBtn = document.getElementById("ec-submit-btn");
 if (submitBtn) {
   submitBtn.addEventListener("click", function () {
-    /* Ensure output is generated and valid first */
+    /* Anything required missing? Show it on the review list instead */
+    if (ecValidate().errors.length) {
+      ecGoTo("review");
+      return;
+    }
     generateOutput();
     var pre = document.getElementById("ec-output-pre");
     if (!pre) return;
@@ -535,8 +583,17 @@ if (submitBtn) {
       generated_object: outputText
     };
 
+    var ent = ecBuildEntity();
+    payload.submitted_by = gv("ec-credit") || "(anonymous)";
+    payload.profile_image_link = ent.img || "";
+    payload.photo_caption = ent.imgCaption || "";
+    payload.gallery_links = (ent.bioImages || []).map(function (g) { return g.src + (g.caption ? " — " + g.caption : ""); }).join("\n");
+
+    var msg = document.getElementById("ec-submit-msg");
+    var idle = "<span>&#x21E7;</span><span>SUBMIT FOR REVIEW</span>";
     submitBtn.innerHTML = "<span>&#x29D6;</span><span>SENDING&hellip;</span>";
     submitBtn.disabled = true;
+    if (msg) msg.textContent = "";
 
     fetch("https://formspree.io/f/mojrejvd", {
       method: "POST",
@@ -550,11 +607,13 @@ if (submitBtn) {
         if (data.ok || data.next) {
           submitBtn.innerHTML = "<span>&#x2713;</span><span>SUBMITTED</span>";
           submitBtn.classList.add("ec-submit-btn--ok");
+          if (msg) msg.textContent = "Received — thank you! It will be reviewed before joining the archive.";
+          if (typeof arcNotify === "function") arcNotify("ENTITY SUBMITTED · E-" + String(ent.id).padStart(4, "0"), "file");
           setTimeout(function () {
-            submitBtn.innerHTML = "<span>&#x21E7;</span><span>SUBMIT</span>";
+            submitBtn.innerHTML = idle;
             submitBtn.classList.remove("ec-submit-btn--ok");
             submitBtn.disabled = false;
-          }, 3000);
+          }, 4000);
         } else {
           throw new Error(JSON.stringify(data));
         }
@@ -563,14 +622,179 @@ if (submitBtn) {
         console.error("Formspree error:", err);
         submitBtn.innerHTML = "<span>&#x2717;</span><span>FAILED</span>";
         submitBtn.classList.add("ec-submit-btn--err");
+        if (msg) msg.textContent = "Couldn't send — check your connection and try again. Your draft is saved.";
         setTimeout(function () {
-          submitBtn.innerHTML = "<span>&#x21E7;</span><span>SUBMIT</span>";
+          submitBtn.innerHTML = idle;
           submitBtn.classList.remove("ec-submit-btn--err");
           submitBtn.disabled = false;
-        }, 3000);
+        }, 4000);
       });
   });
 }
+
+/* ════════════════════════════════════════════════════════════
+   GUIDED-CREATOR EXTRAS: pictures, live preview, review, ID hint
+   ════════════════════════════════════════════════════════════ */
+
+/* Pictures chosen from the device: kept in memory for the preview
+   only (too big for draft storage); submissions use the links. */
+var ecLocalImgs = {};
+var EC_MAX_IMG = 8 * 1024 * 1024;
+
+function ecThumb(key, src) {
+  var id = key === "main" ? "ec-img-thumb" : "ec-gal-thumb-" + key.replace("gal", "");
+  var box = document.getElementById(id);
+  if (!box) return;
+  box.innerHTML = src
+    ? '<img src="' + ecEsc(src) + '" alt="" />'
+    : "<span>" + (key === "main" ? "No picture" : "Empty") + "</span>";
+}
+
+function ecRefreshThumbs() {
+  ecThumb("main", ecLocalImgs.main || gv("ec-img"));
+  EC_GALLERY.forEach(function (n) {
+    ecThumb("gal" + n, ecLocalImgs["gal" + n] || gv("ec-gal-src-" + n));
+  });
+}
+
+function ecPickFile(input, key) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  if (!/^image\//.test(file.type)) {
+    alert("That file isn't a picture.");
+    input.value = "";
+    return;
+  }
+  if (file.size > EC_MAX_IMG) {
+    alert("That picture is over 8 MB — please choose a smaller one.");
+    input.value = "";
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function () {
+    ecLocalImgs[key] = reader.result;
+    ecRefreshThumbs();
+    ecRenderPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("ec-img-file").addEventListener("change", function () {
+  ecPickFile(this, "main");
+});
+EC_GALLERY.forEach(function (n) {
+  document.getElementById("ec-gal-file-" + n).addEventListener("change", function () {
+    ecPickFile(this, "gal" + n);
+  });
+});
+
+/* ── Live preview: the real entity document, built as you type ── */
+var ecPreviewTimer = null;
+
+function ecPreviewEntity() {
+  var e = ecBuildEntity();
+  if (!e.name) e.name = "UNNAMED ENTITY";
+  if (!e.id) e.id = 0;
+  /* Device pictures show in the preview even before a link exists */
+  if (ecLocalImgs.main) e.img = ecLocalImgs.main;
+  var gal = EC_GALLERY.map(function (n) {
+    var src = ecLocalImgs["gal" + n] || gv("ec-gal-src-" + n);
+    return src ? { src: src, caption: gv("ec-gal-cap-" + n) || "" } : null;
+  }).filter(Boolean);
+  if (gal.length) e.bioImages = gal;
+  return e;
+}
+
+function ecRenderPreview() {
+  clearTimeout(ecPreviewTimer);
+  var box = document.getElementById("ec-preview");
+  if (!box) return;
+  if (typeof nvEntityDoc !== "function") {
+    box.innerHTML = '<p class="ec-preview-none">Preview unavailable here.</p>';
+    return;
+  }
+  box.innerHTML = nvEntityDoc(ecPreviewEntity());
+}
+
+function ecSchedulePreview() {
+  clearTimeout(ecPreviewTimer);
+  ecPreviewTimer = setTimeout(function () {
+    ecRenderPreview();
+    ecRefreshThumbs();
+    ecIdHint();
+  }, 250);
+}
+
+var ecPreviewOpen = document.getElementById("ec-preview-open");
+if (ecPreviewOpen) {
+  ecPreviewOpen.addEventListener("click", function () {
+    if (typeof termViewer !== "function") return;
+    var e = ecPreviewEntity();
+    termViewer("PREVIEW · E-" + String(e.id).padStart(4, "0"), nvEntityDoc(e));
+  });
+}
+
+/* ── Entity number hint: shows taken numbers / the next free one ── */
+function ecIdHint() {
+  var hint = document.getElementById("ec-id-hint");
+  if (!hint) return;
+  var ids = (typeof ENTITIES !== "undefined" ? ENTITIES : []).map(function (e) { return e.id; }).sort(function (a, b) { return a - b; });
+  var id = gn("ec-id");
+  var free = 1;
+  while (ids.indexOf(free) !== -1) free++;
+  if (id && ids.indexOf(id) !== -1) {
+    hint.textContent = "E-" + String(id).padStart(4, "0") + " is already taken. Taken: " + ids.join(", ") + ".";
+    hint.className = "ec-help ec-help--bad";
+  } else if (id) {
+    hint.textContent = "Will be filed as E-" + String(id).padStart(4, "0") + ".";
+    hint.className = "ec-help ec-help--ok";
+  } else {
+    hint.textContent = "Becomes its E-number, e.g. 451 → E-0451. Taken: " + ids.join(", ") + ".";
+    hint.className = "ec-help";
+  }
+}
+
+/* ── Review step: what's missing, with buttons to jump there ── */
+function ecRenderReview() {
+  var ul = document.getElementById("ec-review");
+  if (!ul) return;
+  var v = ecValidate();
+  var e = ecBuildEntity();
+  var items = v.errors.map(function (x) { return { cls: "bad", x: x }; })
+    .concat(v.warnings.map(function (x) { return { cls: "warn", x: x }; }));
+  var summary = (e.protocols.length || e.reports.length)
+    ? '<li class="ec-review-item ec-review-item--info">Includes ' + e.protocols.length + " protocol" + (e.protocols.length === 1 ? "" : "s") +
+      " and " + e.reports.length + " report" + (e.reports.length === 1 ? "" : "s") + ".</li>"
+    : "";
+  ul.innerHTML = (items.length
+    ? items.map(function (it) {
+        return '<li class="ec-review-item ec-review-item--' + it.cls + '"><span>' + (it.cls === "bad" ? "&#10007; " : "! ") + ecEsc(it.x.msg) +
+          '</span><button type="button" data-goto="' + it.x.step + '" data-focus="' + it.x.field + '">Fix</button></li>';
+      }).join("")
+    : '<li class="ec-review-item ec-review-item--ok">&#10003; Everything required is filled in — ready to submit.</li>') + summary;
+  var btn = document.getElementById("ec-submit-btn");
+  if (btn && !btn.classList.contains("ec-submit-btn--ok")) btn.disabled = v.errors.length > 0;
+}
+
+/* "Fix" buttons: jump to the step and focus the field */
+document.getElementById("ec-review").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-focus]");
+  if (!b) return;
+  setTimeout(function () {
+    var f = document.getElementById(b.dataset.focus);
+    if (f) f.focus();
+  }, 30);
+});
+
+/* Typing anywhere refreshes the preview (and review if it's open) */
+ecPane.querySelector(".ec-body").addEventListener("input", function () {
+  ecSchedulePreview();
+  if (!document.getElementById("ec-panel-review").classList.contains("ec-hidden")) ecRenderReview();
+});
+ecPane.querySelector(".ec-body").addEventListener("change", ecSchedulePreview);
+ecPane.querySelector(".ec-body").addEventListener("click", function (e) {
+  if (e.target.closest(".ec-add-btn, .ec-entry-remove")) ecSchedulePreview();
+});
 
 /* ── DRAFTS ──────────────────────────────────────────────────
    Each entity in progress is a draft saved in localStorage, so several
@@ -580,7 +804,10 @@ var EC_DRAFTS_KEY = "neoms_ec_drafts";
 var EC_FIELDS = [
   "ec-id", "ec-clr", "ec-name", "ec-site", "ec-cls", "ec-status", "ec-ps", "ec-disc",
   "ec-glyph", "ec-sentient", "ec-hostile", "ec-safety", "ec-img", "ec-discoveredby",
-  "ec-desc", "ec-aprop", "ec-phys", "ec-dims"
+  "ec-desc", "ec-aprop", "ec-phys", "ec-dims",
+  /* Guided creator: picture links/captions and the credit name */
+  "ec-imgcap", "ec-gal-src-1", "ec-gal-cap-1", "ec-gal-src-2", "ec-gal-cap-2",
+  "ec-gal-src-3", "ec-gal-cap-3", "ec-credit"
 ];
 /* Field suffixes inside protocol/report cards, e.g. ec-proto-type-3 */
 var EC_PROTO_KEYS = ["type", "clr", "desc", "equip", "dur", "personnel"];
@@ -677,6 +904,13 @@ function ecApply(data) {
 
   var pre = document.getElementById("ec-output-pre");
   if (pre) pre.textContent = EC_EMPTY_OUTPUT;
+
+  /* Device pictures belong to the draft they were picked in */
+  ecLocalImgs = {};
+  ecPane.querySelectorAll('.ec-root input[type="file"]').forEach(function (f) { f.value = ""; });
+  ecRefreshThumbs();
+  ecIdHint();
+  ecRenderPreview();
 }
 
 function ecLabel(d) {
@@ -734,10 +968,9 @@ function ecNewDraft() {
     ecStore.drafts.unshift(d);
     ecActivate(d.id);
   }
-  var profileTab = tabBar && tabBar.querySelector('[data-tab="profile"]');
-  if (profileTab) profileTab.click();
-  var idField = document.getElementById("ec-id");
-  if (idField) idField.focus();
+  ecGoTo("basics");
+  var nameField = document.getElementById("ec-name");
+  if (nameField) nameField.focus();
 }
 
 /* Remove id from the open tabs; if it was active, open its neighbour */
@@ -867,7 +1100,7 @@ if (ecToggleBtn) {
 }
 
 /* Autosave: typing, dropdowns, and adding/removing protocol or report cards */
-var ecBody = document.querySelector(".ec-body");
+var ecBody = ecPane.querySelector(".ec-body");
 if (ecBody) {
   ecBody.addEventListener("input", ecScheduleSave);
   ecBody.addEventListener("change", ecScheduleSave);
@@ -886,3 +1119,4 @@ ecStore.active = null;
 if (ecStart) ecActivate(ecStart);
 else ecNewDraft();
 ecSetExplorer(!!ecStore.explorer);
+ecGoTo("basics");

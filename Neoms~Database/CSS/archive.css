@@ -635,90 +635,6 @@ body::after {
   color: var(--arc-dim);
 }
 
-/* ── DOSSIER VIEWER ──────────────────────────────────────────── */
-.arc-docwrap {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(0, 0, 0, 0.6);
-  display: grid;
-  place-items: center;
-  padding: 3vh 3vw;
-}
-.arc-docwin {
-  width: min(900px, 100%);
-  height: min(88vh, 1000px);
-  display: flex;
-  flex-direction: column;
-  background: #0b0b0b;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
-  animation: arc-pop 0.18s ease-out;
-}
-.arc-docwrap.max {
-  padding: 0;
-}
-/* Docked over the left column of split view (position set in JS) */
-.arc-docwrap.docked {
-  padding: 0;
-  background: none;
-  place-items: stretch;
-}
-.arc-docwrap.docked .arc-docwin {
-  width: 100%;
-  height: 100%;
-  box-shadow: none;
-}
-.arc-docwrap.max .arc-docwin {
-  width: 100%;
-  height: 100%;
-}
-@keyframes arc-pop {
-  from {
-    transform: translateY(8px);
-    opacity: 0;
-  }
-}
-.arc-doc-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4px 0 12px;
-  height: 34px;
-  flex-shrink: 0;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-.arc-doc-actions button {
-  background: none;
-  border: 0;
-  color: inherit;
-  width: 32px;
-  height: 28px;
-  cursor: pointer;
-  font-size: 16px;
-}
-.arc-doc-actions button:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-.arc-doc-body {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-}
-.arc-doc-scroll {
-  position: absolute;
-  inset: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-.arc-doc-scroll > * {
-  flex: 1 0 auto;
-}
-
 /* ── TOAST ───────────────────────────────────────────────────── */
 #toast {
   position: fixed;
@@ -751,7 +667,6 @@ body::after {
    uppercase labels, teal kept for IDs / live numbers.
    ============================================================ */
 .arc-pane .page-area,
-.arc-doc-scroll .page-area,
 .arc-pane .scroll-area,
 .arc-pane .nav-sidebar {
   background: transparent;
@@ -859,9 +774,8 @@ body::after {
   font-family: var(--arc-term) !important;
 }
 
-/* Tables (entities, personnel, sites) */
-.arc-pane table,
-.arc-doc-scroll table {
+/* Tables */
+.arc-pane table {
   border-collapse: separate;
   border-spacing: 0 4px;
 }
@@ -899,6 +813,16 @@ body::after {
   border-radius: 0 !important;
   color: var(--arc-fg) !important;
   font-family: var(--arc-ui) !important;
+}
+/* The open dropdown list is drawn by the browser — the transparent
+   background above would leave white text on its white popup */
+.arc-pane select option,
+.arc-pane select optgroup {
+  background: #0b0f16;
+  color: var(--arc-fg);
+}
+.arc-pane select option:checked {
+  background: #1f3a52;
 }
 .filter-btn {
   font-size: 10px !important;
@@ -960,19 +884,9 @@ body::after {
   .arc-panehead {
     margin-top: 4px;
   }
-  .arc-docwrap {
-    padding: 0;
-  }
-  .arc-docwin {
-    width: 100%;
-    height: 100%;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .arc-sweep {
-    animation: none;
-  }
-  .arc-docwin {
     animation: none;
   }
   .arc-ring-fg,

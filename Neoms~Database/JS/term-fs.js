@@ -413,6 +413,15 @@ function nvRedacted(label, clr) {
   return "<p><b>" + escHtml(label) + ":</b> " + '<span class="nv-redact">████████████████████</span> <em>[CL-' + clr + " CLEARANCE REQUIRED]</em></p>";
 }
 
+/* Photo caption: an entity's own imgCaption, else one that matches
+   its status (only CONTAINED entities are "in containment") */
+function nvImgCaption(e, id) {
+  if (e.imgCaption) return e.imgCaption;
+  if (e.status === "CONTAINED") return "A photograph of " + id + " in containment.";
+  if (e.status === "BREACHED") return "A photograph of " + id + " recorded during an active breach.";
+  return "A photograph of " + id + " under observation.";
+}
+
 function nvEntityDoc(e) {
   var id = termEntId(e.id);
   var cls = typeof CLS_LABELS !== "undefined" && CLS_LABELS[e.cls] ? CLS_LABELS[e.cls] + " (" + e.cls + ")" : e.cls;
@@ -421,26 +430,64 @@ function nvEntityDoc(e) {
     return userClearance < (p.clr || 1) ? nvRedacted(label, p.clr) : nvField(label, p.desc);
   }).join("");
   var addenda = (e.reports || []).map(function (r, i) {
-    var path = "~/entities/" + id.toLowerCase() + "/reports/" + termReportName(r, i);
     return userClearance < Math.max(e.clr || 1, r.clr || 1)
       ? '<li><span class="nv-redact">██████████████</span> <em>[CL-' + r.clr + "]</em></li>"
       : '<li><button type="button" class="nv-report-link" data-ent="' + e.id + '" data-rep="' + i + '">' +
-        escHtml(r.type + " — " + r.title) + "</button> <code>cat " + escHtml(path) + "</code></li>";
+        escHtml(r.type + " — " + r.title) + "</button></li>";
+  }).join("");
+  var yn = function (v) { return v === "Y" ? "Yes" : v === "N" ? "No" : v ? "Unknown" : ""; };
+  var disc = e.discovery || {};
+  var contribs = (e.contributors || []).filter(function (sid) { return sid != null; }).map(termStaff).join(", ");
+  /* Extra photographs (e.bioImages: [{ src, caption }]), minus the main one */
+  var gallery = (e.bioImages || []).filter(function (b) { return b && b.src && b.src !== e.img; }).map(function (b) {
+    return '<figure><img src="' + escHtml(b.src) + '" alt="' + escHtml(b.caption || id) + '" loading="lazy" />' +
+      (b.caption ? "<figcaption>" + escHtml(b.caption) + "</figcaption>" : "") + "</figure>";
+  }).join("");
+  /* Out-of-universe sources: wiki pages, videos, etc. */
+  var sources = (e.sources || []).filter(function (s) { return s && /^https?:\/\//i.test(s.url || ""); }).map(function (s) {
+    var tag = { wiki: "WIKI", youtube: "VIDEO" }[s.type] || String(s.type || "LINK").toUpperCase();
+    var label = s.label || s.url.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0];
+    return '<li><span class="nv-src-tag">[' + escHtml(tag) + ']</span> <a href="' + escHtml(s.url) +
+      '" target="_blank" rel="noopener noreferrer">' + escHtml(label) + "</a></li>";
   }).join("");
   return (
     '<article class="nv-doc">' + nvHead(e.clr) + '<div class="nv-body">' +
     (e.img
       ? '<figure class="nv-fig"><img src="' + escHtml(e.img) + '" alt="' + escHtml(id + " — " + e.name) + '" />' +
-        "<figcaption>A photograph of " + escHtml(id) + " in containment.</figcaption></figure>"
+        "<figcaption>" + escHtml(nvImgCaption(e, id)) + "</figcaption></figure>"
       : "") +
     nvField("Item #", id) + nvField("Designation", e.name) + nvField("Also Known As", e.alias) +
     nvField("Object Class", cls) + nvField("Power Scale", e.ps) + nvField("Status", e.status) +
     nvField("Containment Type", e.containment) +
     nvField(e.adminSite ? "Primary Administrative Site" : "Assigned Site", e.adminSite || (e.site ? "Site-" + e.site : "")) +
+    nvField("Discovered", disc.date || e.disc) + nvField("Discovery Location", disc.location) +
+    nvField("Sentient", yn(e.sentient)) + nvField("Hostile", yn(e.hostile)) +
     nvField("Threat Vectors", (e.vectors || []).join(", ")) + nvField("Interaction Safety", e.safety) +
     protos + nvField("Description", e.desc) + nvField("Anomalous Properties", e.aprop) +
     nvField("Physical Description", e.phys) + nvField("Dimensions", e.dims) +
+    (gallery ? '<p><b>Additional Photographs:</b></p><div class="nv-gallery">' + gallery + "</div>" : "") +
     (addenda ? '<p><b>Addenda:</b></p><ul class="nv-addenda">' + addenda + "</ul>" : "") +
+    nvField("Original Creator / Source", e.discoveredBy != null ? termStaff(e.discoveredBy) : "") +
+    nvField("Contributors", contribs) +
+    (sources ? '<p><b>Sources:</b></p><ul class="nv-addenda nv-sources">' + sources + "</ul>" : "") +
+    "</div></article>"
+  );
+}
+
+/* Personnel file — optional photo, specialty, start date and bio */
+function nvPersonDoc(p) {
+  var sid = "S-" + p.id;
+  var name = ((p.fname || "") + " " + (p.lname || "")).trim();
+  return (
+    '<article class="nv-doc">' + nvHead(p.clr) + '<div class="nv-body">' +
+    (p.img
+      ? '<figure class="nv-fig"><img src="' + escHtml(p.img) + '" alt="' + escHtml(sid + " — " + name) + '" referrerpolicy="no-referrer" />' +
+        "<figcaption>" + escHtml("Personnel photograph of " + sid + ".") + "</figcaption></figure>"
+      : "") +
+    nvField("Personnel #", sid) + nvField("Name", name) + nvField("Position", p.pos) +
+    nvField("Department", p.dept) + nvField("Specialty", p.specialty) + nvField("Clearance", "Level " + p.clr) +
+    nvField("Site", p.site ? "Site-" + p.site : "Unassigned") + nvField("Joined", p.joined) +
+    nvField("Status", p.active === "Y" ? "Active" : "Inactive") + nvField("Profile", p.bio) +
     "</div></article>"
   );
 }

@@ -268,6 +268,59 @@ body.ap-fadeout {
   color: #333;
 }
 
+/* MP-04 memorandum (expandable) */
+.ap-memo {
+  margin: 0 0 1.6em;
+}
+.ap-memo summary {
+  cursor: pointer;
+  list-style: none;
+}
+.ap-memo summary::-webkit-details-marker {
+  display: none;
+}
+.ap-memo-toggle {
+  margin-left: 8px;
+  font: 700 13px "JetBrains Mono", Consolas, monospace;
+  letter-spacing: 0.08em;
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ap-memo[open] .ap-memo-toggle {
+  visibility: hidden;
+}
+.ap-memo summary:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 4px;
+}
+.ap-memo-body {
+  margin-top: 16px;
+  padding: 18px 22px 6px;
+  border: 2px solid #111;
+  background: #fafafa;
+}
+.ap-memo-body ol {
+  margin: 0 0 1.2em;
+  padding-left: 1.4em;
+}
+
+/* Exit link */
+.ap-exit {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 2px solid #111;
+  font-size: 14px;
+}
+.ap-exit a {
+  color: #555;
+  text-underline-offset: 3px;
+}
+.ap-exit a:hover,
+.ap-exit a:focus-visible {
+  color: #111;
+}
+
 /* ── Buttons ─────────────────────────────────────────────────── */
 .ap-submit {
   display: inline-flex;

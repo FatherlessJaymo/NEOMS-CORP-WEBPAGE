@@ -11,7 +11,17 @@ if (subtitle) subtitle.textContent = ENTITIES.length + " entities currently on f
 
 const gallery = document.getElementById("main-gallery");
 if (gallery) {
-  gallery.innerHTML = ENTITIES.map(function (e) {
+  /* Sort by class (CLS_LABELS order), then by ID */
+  const clsOrder = Object.keys(CLS_LABELS);
+  const rank = function (e) {
+    const i = clsOrder.indexOf(e.cls);
+    return i < 0 ? clsOrder.length : i;
+  };
+  const sorted = ENTITIES.slice().sort(function (a, b) {
+    return rank(a) - rank(b) || a.id - b.id;
+  });
+
+  gallery.innerHTML = sorted.map(function (e) {
     const id = "E-" + String(e.id).padStart(4, "0");
     const locked = userClearance < (e.clr || 1);
     const label = locked ? id + ", CL-" + e.clr + " clearance required" : id + " " + e.name + ", " + e.status;
@@ -27,6 +37,50 @@ if (gallery) {
       "</span></button></li>"
     );
   }).join("");
+
+  /* ── Search / filter: name or ID, class, status ──
+     Locked tiles hide their name, class and status, so they only
+     match an ID search with both dropdowns on "All". */
+  const qIn = document.getElementById("main-q");
+  const clsSel = document.getElementById("main-cls");
+  const stSel = document.getElementById("main-st");
+  const count = document.getElementById("main-count");
+
+  if (clsSel) {
+    clsSel.insertAdjacentHTML("beforeend", clsOrder.map(function (k) {
+      return '<option value="' + k + '">' + k + " · " + escHtml(CLS_LABELS[k]) + "</option>";
+    }).join(""));
+  }
+  if (stSel) {
+    const statuses = [];
+    ENTITIES.forEach(function (e) { if (e.status && statuses.indexOf(e.status) < 0) statuses.push(e.status); });
+    stSel.insertAdjacentHTML("beforeend", statuses.sort().map(function (s) {
+      return '<option value="' + escHtml(s) + '">' + escHtml(s) + "</option>";
+    }).join(""));
+  }
+
+  const applyFilters = function () {
+    const q = (qIn ? qIn.value : "").trim().toLowerCase();
+    const cls = clsSel ? clsSel.value : "";
+    const st = stSel ? stSel.value : "";
+    let shown = 0;
+    sorted.forEach(function (e, i) {
+      const li = gallery.children[i];
+      const locked = userClearance < (e.clr || 1);
+      const id = "e-" + String(e.id).padStart(4, "0");
+      const text = locked ? id + " " + e.id : id + " " + e.id + " " + String(e.name).toLowerCase();
+      const ok = (!q || text.indexOf(q) >= 0) &&
+        (!cls || (!locked && e.cls === cls)) &&
+        (!st || (!locked && e.status === st));
+      li.hidden = !ok;
+      if (ok) shown++;
+    });
+    if (count) count.textContent = shown + " / " + sorted.length;
+  };
+  [qIn, clsSel, stSel].forEach(function (el) {
+    if (el) el.addEventListener(el.tagName === "SELECT" ? "change" : "input", applyFilters);
+  });
+  applyFilters();
 
   gallery.addEventListener("click", function (ev) {
     const tile = ev.target.closest(".ml-tile");
