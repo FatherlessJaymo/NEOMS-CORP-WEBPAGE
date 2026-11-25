@@ -92,6 +92,12 @@
               </div>
             </div>
 
+            <!-- Spam trap: hidden from people, bots fill it in -->
+            <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden" aria-hidden="true">
+              <label for="ap-gotcha">Leave this field empty</label>
+              <input id="ap-gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
             <h2>INFORMATION</h2>
             <div class="ap-row ap-row--3">
               <div class="ap-field">
@@ -182,7 +188,7 @@
       </div>
     </main>
 
-    <script src="../../Neoms~Database/windows/sites/Sites-Data.js"></script>
+    <script src="../../Neoms~Database/JS/Sites-Data.js"></script>
     <script src="../../Neoms~Database/JS/intake.js"></script>
   </body>
 </html>

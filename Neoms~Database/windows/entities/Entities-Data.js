@@ -1,7 +1,7 @@
 /* ============================================================
    NEOMS CONTAINMENT LOG — ENTITIES INDEX
    Neoms~Database/windows/entities/Entities-Data.js
-   Schema v2.3 — Build 2026.11
+   Schema v2.2 — Build 2026.04
 
    One entry per entity with only what lists, the map, the HUD
    and the file browser need: id, clr, site, name, cls, ps,
@@ -282,7 +282,14 @@ const entityRecordWaiting = {};
 /* Called by each record file: merge it into its index entry */
 function NEOMS_RECORD(id, rec) {
     const e = ENTITIES.find(function (x) { return x.id === id; });
-    if (!e) return;
+    const tag = "E-" + String(id).padStart(4, "0");
+    if (!e) return console.warn("NeoMS: " + tag + ".js has no matching entry in Entities-Data.js");
+    /* Report bodies are matched to headers by position — flag drift */
+    const nIdx = (e.reports || []).length, nRec = (rec.reports || []).length;
+    if (nIdx !== nRec) {
+        console.warn("NeoMS: " + tag + " — Entities-Data.js has " + nIdx + " report header(s) but " + tag + ".js has " +
+            nRec + " report bod" + (nRec === 1 ? "y" : "ies") + ". Reports are matched by position; check both lists.");
+    }
     Object.keys(rec).forEach(function (k) {
         if (k !== "reports") e[k] = rec[k];
     });

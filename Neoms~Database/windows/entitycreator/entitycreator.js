@@ -474,6 +474,7 @@ function ecValidate() {
 function generateOutput() {
   var v = ecValidate();
   if (v.errors.length) {
+    ecLastRecord = null;
     var pre0 = document.getElementById("ec-output-pre");
     if (pre0)
       pre0.textContent =
@@ -500,6 +501,22 @@ function generateOutput() {
   var record = pick(obj, entKeys, false);
   record.reports = obj.reports.map(function (r) { return pick(r, repKeys, false); });
 
+  var recordFile =
+    "/* ============================================================\n" +
+    "   NEOMS CONTAINMENT LOG — E-" + padId + " FULL RECORD (" + (obj.name || "UNNAMED") + ")\n" +
+    "   Neoms~Database/windows/entities/records/E-" + padId + ".js\n\n" +
+    "   Loaded the first time this entity's dossier or a report is\n" +
+    "   opened. Summary fields and each report's header (title, date,\n" +
+    "   type, clr, author, file) live in ../Entities-Data.js. Report\n" +
+    "   bodies below are matched to those headers BY POSITION —\n" +
+    "   keep both lists in the same order.\n" +
+    "   ============================================================ */\n" +
+    '"use strict";\n\n' +
+    "NEOMS_RECORD(" + (obj.id || 0) + ", {\n" +
+    stringify(record, "    ") +
+    "\n});\n";
+  ecLastRecord = { name: "E-" + padId + ".js", text: recordFile };
+
   var out =
     "// ── 1 of 2 ── Paste inside the ENTITIES list in\n" +
     "//            Neoms~Database/windows/entities/Entities-Data.js\n\n" +
@@ -509,15 +526,32 @@ function generateOutput() {
     "    {\n" +
     stringify(indexEntry, "        ") +
     "\n    },\n\n" +
-    "// ── 2 of 2 ── Save as a new file:\n" +
+    "// ── 2 of 2 ── Save as a new file (or use ⇩ DOWNLOAD):\n" +
     "//            Neoms~Database/windows/entities/records/E-" + padId + ".js\n\n" +
-    '"use strict";\n\n' +
-    "NEOMS_RECORD(" + (obj.id || 0) + ", {\n" +
-    stringify(record, "    ") +
-    "\n});";
+    recordFile;
 
   var pre = document.getElementById("ec-output-pre");
   if (pre) pre.textContent = out;
+  var dl = document.getElementById("ec-dl-btn");
+  if (dl) dl.lastElementChild.textContent = "DOWNLOAD " + ecLastRecord.name;
+}
+
+/* ── Download the record file ───────────────────────────────── */
+var ecLastRecord = null;
+var dlBtn = document.getElementById("ec-dl-btn");
+if (dlBtn) {
+  dlBtn.addEventListener("click", function () {
+    generateOutput();
+    if (!ecLastRecord) return; /* validation errors are shown in the output box */
+    var url = URL.createObjectURL(new Blob([ecLastRecord.text], { type: "text/javascript" }));
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = ecLastRecord.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
 }
 
 /* ── Copy to clipboard ───────────────────────────────────── */
@@ -527,7 +561,7 @@ if (copyBtn) {
     var pre = document.getElementById("ec-output-pre");
     if (!pre) return;
     var text = pre.textContent;
-    if (text.indexOf("// ⚠") === 0) {
+    if (text.indexOf("// ⚠") === 0 || text.indexOf("// Click") === 0) {
       generateOutput();
     }
     text = pre.textContent;
@@ -614,6 +648,13 @@ if (submitBtn) {
     submitBtn.innerHTML = "<span>&#x29D6;</span><span>SENDING&hellip;</span>";
     submitBtn.disabled = true;
     if (msg) msg.textContent = "";
+
+    /* Spam trap filled in: a bot. Pretend it worked and send nothing. */
+    var gotcha = gv("ec-gotcha");
+    if (gotcha) {
+      submitBtn.innerHTML = "<span>&#x2713;</span><span>SUBMITTED</span>";
+      return;
+    }
 
     fetch("https://formspree.io/f/mojrejvd", {
       method: "POST",

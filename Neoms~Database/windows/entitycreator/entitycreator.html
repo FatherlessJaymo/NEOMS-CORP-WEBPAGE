@@ -290,23 +290,31 @@
         <input class="ec-input" id="ec-credit" type="text" maxlength="60" placeholder="e.g. JDM" />
       </div>
 
+      <!-- Spam trap: hidden from people, bots fill it in (Formspree drops _gotcha submissions) -->
+      <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden" aria-hidden="true">
+        <label for="ec-gotcha">Leave this field empty</label>
+        <input id="ec-gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
       <div class="ec-submit-row">
         <button type="button" class="ec-submit-btn" id="ec-submit-btn"><span>&#8679;</span><span>SUBMIT FOR REVIEW</span></button>
         <span class="ec-submit-msg" id="ec-submit-msg" role="status"></span>
       </div>
 
       <details class="ec-advanced">
-        <summary>Advanced — generated code for Entities-Data.js</summary>
+        <summary>Advanced — generated code for Entities-Data.js and records/E-XXXX.js</summary>
         <div class="ec-output-bar">
           <span class="ec-output-label">&#128196; Generated Entity Object</span>
           <div class="ec-output-btns">
             <button type="button" class="ec-gen-btn" id="ec-gen-btn"><span>&#9654;</span><span>GENERATE</span></button>
             <button type="button" class="ec-copy-btn" id="ec-copy-btn"><span>&#10697;</span><span>COPY</span></button>
+            <button type="button" class="ec-copy-btn" id="ec-dl-btn"><span>&#8681;</span><span>DOWNLOAD RECORD</span></button>
           </div>
         </div>
         <div class="ec-output-hint">
-          Paste this block into <span class="ec-code">Entities-Data.js</span> inside the
-          <span class="ec-code">ENTITIES</span> array.
+          Part 1 goes inside the <span class="ec-code">ENTITIES</span> array in
+          <span class="ec-code">Entities-Data.js</span>. Part 2 is the entity's own file — download it and put it in
+          <span class="ec-code">windows/entities/records/</span>.
         </div>
         <pre class="ec-output-pre" id="ec-output-pre">// Click ▶ GENERATE to build your entity object.</pre>
       </details>

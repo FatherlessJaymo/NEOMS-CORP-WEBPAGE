@@ -466,16 +466,32 @@ function arcRenderHud() {
     );
   }).join("");
 
-  /* Incident log — the newest reports across all entities */
-  var events = [];
+  /* Incident log — the 7 newest reports across all entities.
+     Reports with a full date (YYYY-MM-DD, no █) come first, newest
+     first. The rest — most dates are redacted — are taken in turns,
+     each entity's newest report first, so every entity shows up.
+     (An entity's reports are listed oldest → newest in its file.) */
+  var fullDate = function (d) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(d || "") ? d : null;
+  };
+  var dated = [], queues = [];
   ENT.forEach(function (e) {
+    var q = [];
     (e.reports || []).forEach(function (r) {
-      events.push({ e: e, r: r });
+      if (fullDate(r.date)) dated.push({ e: e, r: r });
+      else q.unshift({ e: e, r: r });
     });
+    if (q.length) queues.push(q);
   });
+  dated.sort(function (a, b) { return a.r.date < b.r.date ? 1 : a.r.date > b.r.date ? -1 : 0; });
+  var events = dated.slice(0, 7);
+  while (events.length < 7 && queues.length) {
+    queues = queues.filter(function (q) {
+      if (events.length < 7) events.push(q.shift());
+      return q.length > 0;
+    });
+  }
   document.getElementById("hud-events").innerHTML = events
-    .slice(-7)
-    .reverse()
     .map(function (x) {
       return (
         '<li class="ev-' + escHtml(x.r.type || "") + '"><b>' + escHtml(x.r.type || "REPORT") + " · E-" +

@@ -1,6 +1,6 @@
 /* ============================================================
    NEOMS CONTAINMENT LOG — SITES DATA
-   Neoms~Database/windows/sites/Sites-Data.js
+   Neoms~Database/JS/Sites-Data.js
    ============================================================ */
 "use strict";
 

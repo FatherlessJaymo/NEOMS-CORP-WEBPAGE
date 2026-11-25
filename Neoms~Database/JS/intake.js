@@ -202,6 +202,8 @@ function setStatus(text, cls) {
 }
 
 function transmitToRegistry(record) {
+  /* Spam trap filled in: a bot. Report success and send nothing. */
+  if ($("ap-gotcha").value) return Promise.resolve({ ok: true });
   return fetch(FORMSPREE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
