@@ -217,6 +217,33 @@ body.win-max-active #desktop {
   opacity: 1;
 }
 
+/* Touch: dragging the title bar or grip moves the window, not the page */
+.win-bar,
+.win-resize {
+  touch-action: none;
+}
+/* Touch screens (tablets): a bigger, always-visible resize grip */
+@media (pointer: coarse) {
+  .win-resize {
+    width: 28px;
+    height: 28px;
+    background-size: 9px 9px;
+    background-position:
+      1px 1px,
+      10px 1px,
+      19px 1px,
+      10px 10px,
+      19px 10px,
+      19px 19px;
+    opacity: 0.8;
+  }
+  .win-btn {
+    width: 26px;
+    height: 24px;
+    line-height: 24px;
+  }
+}
+
 /* Split-screen snap preview (drag a window to an edge or corner).
    Above the lifted desktop (9500), below the taskbar (9999). */
 #snap-preview {

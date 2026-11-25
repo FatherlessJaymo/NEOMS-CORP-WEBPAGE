@@ -154,7 +154,8 @@ function makeDraggableIcon(el, id, url) {
     moved = false;
   var THRESH = 6;
 
-  el.addEventListener("mousedown", function (e) {
+  /* Pointer events: mouse, finger and pen all drag the icon */
+  el.addEventListener("pointerdown", function (e) {
     if (e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
@@ -185,12 +186,17 @@ function makeDraggableIcon(el, id, url) {
       el.style.top = Math.max(22, Math.min(maxY, origTop + dy)) + "px";
     }
 
-    function onUp() {
+    function onUp(ev) {
       dragging = false;
       el.classList.remove("dragging");
       el.style.zIndex = "";
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      document.removeEventListener("pointercancel", onUp);
+
+      /* A tap (no drag) opens: always on touch/pen, and with a mouse
+         on phone-width screens. Desktop mice keep double-click. */
+      if (!moved && ev.type === "pointerup" && (ev.pointerType !== "mouse" || isMobile())) openIcon();
 
       if (moved) {
         var target = snapToCell(parseInt(el.style.left), parseInt(el.style.top));
@@ -205,8 +211,9 @@ function makeDraggableIcon(el, id, url) {
       }
     }
 
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+    document.addEventListener("pointercancel", onUp);
   });
 
   function openIcon() {
@@ -217,10 +224,9 @@ function makeDraggableIcon(el, id, url) {
     }
     openWin(id);
   }
-  el.addEventListener("dblclick", openIcon);
-  /* Phones: one tap opens (a double tap zooms the page instead) */
-  el.addEventListener("click", function () {
-    if (typeof isMobile === "function" && isMobile()) openIcon();
+  /* Desktop mice: double-click (single taps/clicks open in onUp) */
+  el.addEventListener("dblclick", function () {
+    if (!isMobile()) openIcon();
   });
 }
 

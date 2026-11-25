@@ -262,10 +262,13 @@ function addTBBtn(id, title, icon, iconSrc) {
 /* ============================================================
    DRAG & RESIZE
 ============================================================ */
+/* Pointer events throughout, so mouse, finger and pen all drag/resize
+   (touch-action: none on the bar and grip stops the page panning) */
 function makeDraggable(win, bar) {
     var sx, sy, sl, st;
-    bar.addEventListener("mousedown", function (e) {
+    bar.addEventListener("pointerdown", function (e) {
         if (e.target.classList.contains("win-btn")) return;
+        if (e.button !== 0) return;
         var id = win.id.replace("win-", "");
         focusWin(id);
         if (wins[id] && wins[id].maximized) return; /* maximized windows stay put */
@@ -304,20 +307,22 @@ function makeDraggable(win, bar) {
             snapPreview(side);
         }
         function up() {
-            document.removeEventListener("mousemove", mv);
-            document.removeEventListener("mouseup", up);
+            document.removeEventListener("pointermove", mv);
+            document.removeEventListener("pointerup", up);
+            document.removeEventListener("pointercancel", up);
             snapPreview(null);
             if (flyout.mode === "drag") hideFlyout();
             if (side && w) snapWin(id, side);
         }
-        document.addEventListener("mousemove", mv);
-        document.addEventListener("mouseup", up);
+        document.addEventListener("pointermove", mv);
+        document.addEventListener("pointerup", up);
+        document.addEventListener("pointercancel", up);
         e.preventDefault();
     });
 }
 
 function makeResizable(win, handle) {
-    handle.addEventListener("mousedown", function (e) {
+    handle.addEventListener("pointerdown", function (e) {
         e.stopPropagation();
         e.preventDefault();
         var sw = parseInt(win.style.width);
@@ -329,11 +334,13 @@ function makeResizable(win, handle) {
             win.style.height = Math.max(180, sh + (e.clientY - sy)) + "px";
         }
         function up() {
-            document.removeEventListener("mousemove", mv);
-            document.removeEventListener("mouseup", up);
+            document.removeEventListener("pointermove", mv);
+            document.removeEventListener("pointerup", up);
+            document.removeEventListener("pointercancel", up);
         }
-        document.addEventListener("mousemove", mv);
-        document.addEventListener("mouseup", up);
+        document.addEventListener("pointermove", mv);
+        document.addEventListener("pointerup", up);
+        document.addEventListener("pointercancel", up);
     });
 }
 
@@ -453,7 +460,8 @@ function toast(msg, dur) {
 var TOP_BAR_H = 24;
 var TASKBAR_H = 48;
 var TILE_GAP = 8;
-var TILE_MIN_W = 320;
+var TILE_MIN_W = 300;
+var TILE_MIN_H = 260; /* row height needed to stack windows instead */
 
 /* Right edge of the desktop icons, so tiled windows don't cover them */
 function iconsRight() {
@@ -487,14 +495,24 @@ function tileWins(ids) {
     var top = TOP_BAR_H + TILE_GAP;
     var height = window.innerHeight - TASKBAR_H - TILE_GAP - top;
     var colW = Math.floor((right - left - TILE_GAP * (ids.length - 1)) / ids.length);
+    var rowH = Math.floor((height - TILE_GAP * (ids.length - 1)) / ids.length);
 
-    /* Too narrow (phones / small windows) — keep the normal cascade */
-    if (colW < TILE_MIN_W || height < 240) return false;
-
-    ids.forEach(function (id, i) {
-        setWinRect(id, left + i * (colW + TILE_GAP), top, colW, height);
-    });
-    return true;
+    /* Side by side when wide enough (desktops, landscape tablets) */
+    if (colW >= TILE_MIN_W && height >= 240) {
+        ids.forEach(function (id, i) {
+            setWinRect(id, left + i * (colW + TILE_GAP), top, colW, height);
+        });
+        return true;
+    }
+    /* Else stacked top to bottom when tall enough (portrait tablets) */
+    if (right - left >= TILE_MIN_W && rowH >= TILE_MIN_H) {
+        ids.forEach(function (id, i) {
+            setWinRect(id, left, top + i * (rowH + TILE_GAP), right - left, rowH);
+        });
+        return true;
+    }
+    /* Too small either way — keep the normal cascade */
+    return false;
 }
 
 /* Snap zones: "left" | "right" halves, and quarters
