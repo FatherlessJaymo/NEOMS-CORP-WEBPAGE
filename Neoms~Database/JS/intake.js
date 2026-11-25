@@ -14,7 +14,6 @@
 "use strict";
 
 const LS_KEY = "neoms_session_personnel";
-const LS_ID_KEY = "neoms_next_personnel_id";
 const FORMSPREE_URL = "https://formspree.io/f/xwvwybya";
 const DESKTOP_URL = "archive.html";
 const MAX_LEN = 40;
@@ -35,21 +34,15 @@ function lsLoad() {
     return null;
   }
 }
-function loadNextId() {
-  try {
-    const stored = parseInt(localStorage.getItem(LS_ID_KEY), 10);
-    return isNaN(stored) ? 2000 : stored;
-  } catch (e) {
-    return 2000;
-  }
-}
-function saveNextId(id) {
-  try {
-    localStorage.setItem(LS_ID_KEY, String(id));
-  } catch (e) {}
+/* Random ID in S-3000…S-9999 — kept clear of the static roster (S-1xxx/S-2xxx).
+   A static site can't guarantee uniqueness; this just makes collisions unlikely. */
+function generatePersonnelId() {
+  const n = new Uint32Array(1);
+  (window.crypto || window.msCrypto).getRandomValues(n);
+  return 3000 + (n[0] % 7000);
 }
 
-let nextpersonnelId = loadNextId();
+let nextpersonnelId = generatePersonnelId();
 
 /* ── Background: a terminal file listing behind the window ── */
 function fillBackground() {
@@ -99,6 +92,11 @@ function showSession(record) {
   renderRecord($("ap-session-record"), record);
   $("ap-session-msg").textContent = "Welcome back, " + record.fname + ". Resuming session…";
   resumeTimer = setTimeout(proceedToDesktop, 2600);
+  $("ap-continue").addEventListener("click", function () {
+    clearTimeout(resumeTimer);
+    proceedToDesktop();
+  });
+  $("ap-continue").focus();
   $("ap-new").addEventListener("click", function () {
     clearTimeout(resumeTimer);
     try {
@@ -160,8 +158,7 @@ function submitApplication(e) {
   const c = checks();
   if (!(c.filled && c.length && c.chars && c.ack)) return;
 
-  const newId = nextpersonnelId++;
-  saveNextId(nextpersonnelId);
+  const newId = nextpersonnelId;
   const record = {
     id: newId,
     fname: $("ap-fname").value.trim(),

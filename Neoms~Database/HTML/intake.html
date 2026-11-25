@@ -38,11 +38,22 @@
           </header>
           <div class="ap-bar">CONFIDENTIAL DOCUMENT</div>
 
+          <noscript>
+            <h2>TERMINAL ERROR</h2>
+            <p>
+              The NeoMS intake terminal requires JavaScript. Enable JavaScript in your browser and reload this page to
+              complete your application.
+            </p>
+          </noscript>
+
           <!-- Returning visitor: session found, then straight to the archive -->
           <section id="ap-session" hidden aria-live="polite">
             <h2>SESSION RECORD FOUND</h2>
             <dl class="ap-record" id="ap-session-record"></dl>
             <p id="ap-session-msg"></p>
+            <div class="ap-actions">
+              <button type="button" class="ap-submit ap-submit--on" id="ap-continue">CONTINUE TO ARCHIVE</button>
+            </div>
             <p class="ap-small">
               Not you?
               <button type="button" class="ap-link" id="ap-new">Submit a new application</button>
@@ -71,12 +82,12 @@
             <div class="ap-row ap-row--2">
               <div class="ap-field">
                 <label class="ap-field-label" for="ap-fname">FIRST NAME</label>
-                <input id="ap-fname" autocomplete="off" maxlength="60" aria-describedby="ap-fname-help" required />
+                <input id="ap-fname" autocomplete="off" maxlength="40" aria-describedby="ap-fname-help" required />
                 <p class="ap-field-help" id="ap-fname-help">Your given name, as it will appear in the personnel registry.</p>
               </div>
               <div class="ap-field">
                 <label class="ap-field-label" for="ap-lname">LAST NAME / DESIGNATION</label>
-                <input id="ap-lname" autocomplete="off" maxlength="60" aria-describedby="ap-lname-help" required />
+                <input id="ap-lname" autocomplete="off" maxlength="40" aria-describedby="ap-lname-help" required />
                 <p class="ap-field-help" id="ap-lname-help">Your family name or unit designation.</p>
               </div>
             </div>
@@ -124,7 +135,26 @@
               </li>
             </ul>
 
-            <p class="ap-policy"><i>By submitting this form, you agree to Directive-Prime memorandum MP-04.</i></p>
+            <details class="ap-policy ap-memo" id="ap-mp04">
+              <summary>
+                <i>By submitting this form, you agree to Directive-Prime memorandum MP-04.</i>
+                <span class="ap-memo-toggle">[READ MP-04]</span>
+              </summary>
+              <div class="ap-memo-body">
+                <p><b>DIRECTIVE-PRIME MEMORANDUM MP-04 — TERMINAL CONDUCT</b></p>
+                <ol>
+                  <li>All activity on NeoMS terminals is logged and monitored.</li>
+                  <li>Access is granted under the Principle of Least Privilege. Personnel may view only the databanks
+                    their clearance permits.</li>
+                  <li>Clearance is raised only by directive. Attempts to bypass clearance controls are grounds for
+                    revocation.</li>
+                  <li>Submitted applications are CLASSIFIED LEVEL 3/NEOMS and must not be disclosed outside the
+                    organisation.</li>
+                  <li>Falsified, omitted, or obfuscated information results in immediate denial and may warrant
+                    disciplinary review.</li>
+                </ol>
+              </div>
+            </details>
             <button type="submit" class="ap-submit" id="ap-submit" disabled>SUBMIT <span aria-hidden="true">&#10003;</span></button>
           </form>
 
@@ -144,6 +174,10 @@
             </div>
             <p class="ap-status" id="ap-status" role="status"></p>
           </section>
+
+          <footer class="ap-exit">
+            <a href="../../index.html">&larr; Withdraw and return to NeoMS home</a>
+          </footer>
         </article>
       </div>
     </main>
