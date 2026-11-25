@@ -60,8 +60,14 @@ function fbOpenFile(name, node) {
     if (typeof arcNotify === "function") arcNotify("ACCESS DENIED · CL-" + node.clr, "deny");
     return;
   }
-  if (node.kind === "entity") return termViewer(termEntId(node.ref.id), nvEntityDoc(node.ref));
-  if (node.kind === "report") return termViewer(termEntId(node.ref.e.id) + " · REPORT " + node.ref.n, nvReportDoc(node.ref.e, node.ref.r));
+  if (node.kind === "entity") {
+    return entityRecord(node.ref, function () { termViewer(termEntId(node.ref.id), nvEntityDoc(node.ref)); });
+  }
+  if (node.kind === "report") {
+    return entityRecord(node.ref.e, function () {
+      termViewer(termEntId(node.ref.e.id) + " · REPORT " + node.ref.n, nvReportDoc(node.ref.e, node.ref.r));
+    });
+  }
   if (node.kind === "personnel") return termViewer("S-" + node.ref.id, nvPersonDoc(node.ref));
 
   /* Text and site files */

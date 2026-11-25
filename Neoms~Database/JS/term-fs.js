@@ -155,10 +155,12 @@ function termCat(args) {
   termSeq([termInfo("Fetching complete information for " + label + "..."), termInfo("Successfully fetched " + label)], function () {
     if (userClearance < node.clr) return termDenied(node.clr);
     if (node.kind === "entity") {
-      termViewer(termEntId(node.ref.id), nvEntityDoc(node.ref));
+      entityRecord(node.ref, function () { termViewer(termEntId(node.ref.id), nvEntityDoc(node.ref)); });
       termPrint("Displaying '" + termEntId(node.ref.id) + "' in secured viewer.");
     } else if (node.kind === "report") {
-      termViewer(termEntId(node.ref.e.id) + " · REPORT " + node.ref.n, nvReportDoc(node.ref.e, node.ref.r));
+      entityRecord(node.ref.e, function () {
+        termViewer(termEntId(node.ref.e.id) + " · REPORT " + node.ref.n, nvReportDoc(node.ref.e, node.ref.r));
+      });
       termPrint("Displaying '" + node.ref.r.title + "' in secured viewer.");
     } else if (node.kind === "personnel") {
       var s = node.ref;
@@ -324,7 +326,7 @@ document.addEventListener("click", function (ev) {
   })[0];
   if (!e) return;
   if (userClearance < (e.clr || 1)) return termDenied(e.clr);
-  termViewer(termEntId(e.id), nvEntityDoc(e));
+  entityRecord(e, function () { termViewer(termEntId(e.id), nvEntityDoc(e)); });
 }, true);
 
 /* Addenda links inside an entity document open that report */
@@ -338,7 +340,7 @@ document.addEventListener("click", function (ev) {
   var r = e && e.reports && e.reports[i];
   if (!r) return;
   if (userClearance < Math.max(e.clr || 1, r.clr || 1)) return termDenied(Math.max(e.clr || 1, r.clr || 1));
-  termViewer(termEntId(e.id) + " · REPORT " + (i + 1), nvReportDoc(e, r));
+  entityRecord(e, function () { termViewer(termEntId(e.id) + " · REPORT " + (i + 1), nvReportDoc(e, r)); });
 });
 
 /* ── Minimise dock ───────────────────────────────────────────────

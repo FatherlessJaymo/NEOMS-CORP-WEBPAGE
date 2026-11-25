@@ -451,33 +451,36 @@ function termRun(raw) {
       termSeq(termLoadLines(path), function () {
         var need = Math.max(pe.clr || 1, pr.clr || 1);
         if (userClearance < need) return termDenied(need);
-        var withIds = [pr.author].concat(pr.contributors || []).filter(function (sid, i, all) {
-          return sid && sid !== TERM_FILER && all.indexOf(sid) === i;
-        });
-        var meta = [["Title", pr.title], ["Entity", termEntId(pe.id) + " — " + pe.name], ["Date", pr.date || "UNKNOWN"]];
-        if (pr.location) meta.push(["Location", pr.location]);
-        if (pr.personnel) meta.push(["Personnel", pr.personnel]);
-        meta.push(["Filed By", termStaff(TERM_FILER)]);
-        if (withIds.length) meta.push(["With", withIds.map(termStaff).join(", ")]);
-        meta.push(["Clearance", "CL-" + (pr.clr || 1)]);
-        var sections = [];
-        if (pr.summary) sections.push({ heading: "Summary", text: pr.summary });
-        if (pr.foreword) sections.push({ heading: "Foreword", text: pr.foreword });
-        if (pr.log && pr.log.length) {
-          sections.push({
-            heading: "Log",
-            html: [termC("<Begin Log>", "dim")]
-              .concat(pr.log.map(function (l) {
-                if (typeof l === "string") return escHtml(l);
-                if (l.note) return termC(l.note, "note");
-                return (l.t ? termC("[" + l.t + "]", "cyan") + " " : "") + (l.who ? termC(l.who + ":", "bold") + " " : "") + escHtml(l.text || "");
-              }))
-              .concat([termC("<End Log>", "dim")])
+        /* Report bodies live in the entity's record file */
+        entityRecord(pe, function () {
+          var withIds = [pr.author].concat(pr.contributors || []).filter(function (sid, i, all) {
+            return sid && sid !== TERM_FILER && all.indexOf(sid) === i;
           });
-        }
-        if (pr.notes) sections.push({ heading: "Closing Statement", text: pr.notes });
-        termReport((pr.type || "INCIDENT") + " REPORT" + (pr.file ? " — " + pr.file.replace(/\.pdf$/i, "") : ""), meta, sections);
-        termPrint(termRule("="), "dim");
+          var meta = [["Title", pr.title], ["Entity", termEntId(pe.id) + " — " + pe.name], ["Date", pr.date || "UNKNOWN"]];
+          if (pr.location) meta.push(["Location", pr.location]);
+          if (pr.personnel) meta.push(["Personnel", pr.personnel]);
+          meta.push(["Filed By", termStaff(TERM_FILER)]);
+          if (withIds.length) meta.push(["With", withIds.map(termStaff).join(", ")]);
+          meta.push(["Clearance", "CL-" + (pr.clr || 1)]);
+          var sections = [];
+          if (pr.summary) sections.push({ heading: "Summary", text: pr.summary });
+          if (pr.foreword) sections.push({ heading: "Foreword", text: pr.foreword });
+          if (pr.log && pr.log.length) {
+            sections.push({
+              heading: "Log",
+              html: [termC("<Begin Log>", "dim")]
+                .concat(pr.log.map(function (l) {
+                  if (typeof l === "string") return escHtml(l);
+                  if (l.note) return termC(l.note, "note");
+                  return (l.t ? termC("[" + l.t + "]", "cyan") + " " : "") + (l.who ? termC(l.who + ":", "bold") + " " : "") + escHtml(l.text || "");
+                }))
+                .concat([termC("<End Log>", "dim")])
+            });
+          }
+          if (pr.notes) sections.push({ heading: "Closing Statement", text: pr.notes });
+          termReport((pr.type || "INCIDENT") + " REPORT" + (pr.file ? " — " + pr.file.replace(/\.pdf$/i, "") : ""), meta, sections);
+          termPrint(termRule("="), "dim");
+        });
       });
       break;
     }
@@ -552,16 +555,18 @@ function termRun(raw) {
         termPrint(args[1] ? "Entity " + args[1] + " not found." : "Usage: get entity <id>", args[1] ? "red" : "yellow");
         break;
       }
-      termReport(termEntId(ent.id) + " — " + ent.name, [
-        ["Class", ent.cls + (typeof CLS_LABELS !== "undefined" && CLS_LABELS[ent.cls] ? " (" + CLS_LABELS[ent.cls] + ")" : "")],
-        ["Scale", ent.ps || "UNKNOWN"],
-        ["Status", ent.status],
-        ["Site", ent.site ? "Site-" + ent.site : "UNASSIGNED"],
-        ["Clearance", "CL-" + (ent.clr || 1)],
-        ["Protocols", String((ent.protocols || []).length)],
-        ["Reports", String((ent.reports || []).length)]
-      ]);
-      termPrint("Use 'access " + termEntId(ent.id) + "' to open the file, or 'reports " + termEntId(ent.id) + "'.", "dim");
+      entityRecord(ent, function () {
+        termReport(termEntId(ent.id) + " — " + ent.name, [
+          ["Class", ent.cls + (typeof CLS_LABELS !== "undefined" && CLS_LABELS[ent.cls] ? " (" + CLS_LABELS[ent.cls] + ")" : "")],
+          ["Scale", ent.ps || "UNKNOWN"],
+          ["Status", ent.status],
+          ["Site", ent.site ? "Site-" + ent.site : "UNASSIGNED"],
+          ["Clearance", "CL-" + (ent.clr || 1)],
+          ["Protocols", String((ent.protocols || []).length)],
+          ["Reports", String((ent.reports || []).length)]
+        ]);
+        termPrint("Use 'access " + termEntId(ent.id) + "' to open the file, or 'reports " + termEntId(ent.id) + "'.", "dim");
+      });
       break;
     }
 

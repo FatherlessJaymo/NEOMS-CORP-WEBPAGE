@@ -189,7 +189,9 @@ function openWin(type, data) {
   /* Entity files open in the secured viewer (JS/term-fs.js) */
   if (type === "entity" && data !== undefined) {
     var ent = (typeof ENTITIES !== "undefined" ? ENTITIES : []).filter(function (e) { return e.id === data; })[0];
-    if (ent && typeof termViewer === "function") termViewer("E-" + String(ent.id).padStart(4, "0"), nvEntityDoc(ent));
+    if (ent && typeof termViewer === "function") {
+      entityRecord(ent, function () { termViewer("E-" + String(ent.id).padStart(4, "0"), nvEntityDoc(ent)); });
+    }
     return;
   }
 
@@ -393,7 +395,9 @@ function arcRenderTracker() {
       toast("CL-" + e.clr + " REQUIRED");
       return arcNotify("ACCESS DENIED · CL-" + e.clr, "deny");
     }
-    if (typeof termViewer === "function") termViewer("E-" + String(e.id).padStart(4, "0"), nvEntityDoc(e));
+    if (typeof termViewer === "function") {
+      entityRecord(e, function () { termViewer("E-" + String(e.id).padStart(4, "0"), nvEntityDoc(e)); });
+    }
   }
 
   if (host.dataset.wired) return;

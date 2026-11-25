@@ -77,7 +77,7 @@ function nmOpenEntity(e) {
     if (typeof arcNotify === "function") arcNotify("ACCESS DENIED · CL-" + e.clr, "deny");
     return;
   }
-  termViewer(nmEntId(e.id), nvEntityDoc(e));
+  entityRecord(e, function () { termViewer(nmEntId(e.id), nvEntityDoc(e)); });
 }
 function nmOpenReport(e, i) {
   const r = e.reports[i];
@@ -87,7 +87,7 @@ function nmOpenReport(e, i) {
     if (typeof arcNotify === "function") arcNotify("ACCESS DENIED · CL-" + need, "deny");
     return;
   }
-  termViewer(nmEntId(e.id) + " · REPORT " + (i + 1), nvReportDoc(e, r));
+  entityRecord(e, function () { termViewer(nmEntId(e.id) + " · REPORT " + (i + 1), nvReportDoc(e, r)); });
 }
 
 /* ════════════════════════════════════════════════════════════

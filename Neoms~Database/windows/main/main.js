@@ -91,6 +91,6 @@ if (gallery) {
     }
     /* Open the entity file in the secured viewer (JS/term-fs.js) */
     const ent = ENTITIES.find(function (x) { return x.id === parseInt(tile.dataset.id, 10); });
-    if (ent) termViewer("E-" + String(ent.id).padStart(4, "0"), nvEntityDoc(ent));
+    if (ent) entityRecord(ent, function () { termViewer("E-" + String(ent.id).padStart(4, "0"), nvEntityDoc(ent)); });
   });
 }

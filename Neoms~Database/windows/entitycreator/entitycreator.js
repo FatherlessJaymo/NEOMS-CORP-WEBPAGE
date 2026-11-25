@@ -483,18 +483,38 @@ function generateOutput() {
 
   var obj = ecBuildEntity();
   var padId = String(obj.id || 0).padStart(4, "0");
+
+  /* Split into the index entry (Entities-Data.js) and the full
+     record (records/E-XXXX.js) — same split as the archive uses */
+  var entKeys = typeof ENTITY_INDEX_KEYS !== "undefined" ? ENTITY_INDEX_KEYS : ["id", "clr", "site", "name", "cls", "ps", "status", "disc", "glyph", "img", "desc", "reports"];
+  var repKeys = typeof REPORT_INDEX_KEYS !== "undefined" ? REPORT_INDEX_KEYS : ["title", "subtitle", "date", "type", "clr", "author", "contributors", "file"];
+  var pick = function (src, keys, keep) {
+    var o = {};
+    Object.keys(src).forEach(function (k) {
+      if ((keys.indexOf(k) !== -1) === keep) o[k] = src[k];
+    });
+    return o;
+  };
+  var indexEntry = pick(obj, entKeys, true);
+  indexEntry.reports = obj.reports.map(function (r) { return pick(r, repKeys, true); });
+  var record = pick(obj, entKeys, false);
+  record.reports = obj.reports.map(function (r) { return pick(r, repKeys, false); });
+
   var out =
+    "// ── 1 of 2 ── Paste inside the ENTITIES list in\n" +
+    "//            Neoms~Database/windows/entities/Entities-Data.js\n\n" +
     "    /* ════════════════════════════════════════════════════════\n" +
-    "       E-" +
-    padId +
-    " — " +
-    (obj.name || "UNNAMED") +
-    "\n" +
+    "       E-" + padId + " — " + (obj.name || "UNNAMED") + "\n" +
     "       ════════════════════════════════════════════════════════ */\n" +
     "    {\n" +
-    stringify(obj) +
-    "\n" +
-    "    }";
+    stringify(indexEntry, "        ") +
+    "\n    },\n\n" +
+    "// ── 2 of 2 ── Save as a new file:\n" +
+    "//            Neoms~Database/windows/entities/records/E-" + padId + ".js\n\n" +
+    '"use strict";\n\n' +
+    "NEOMS_RECORD(" + (obj.id || 0) + ", {\n" +
+    stringify(record, "    ") +
+    "\n});";
 
   var pre = document.getElementById("ec-output-pre");
   if (pre) pre.textContent = out;
@@ -507,7 +527,7 @@ if (copyBtn) {
     var pre = document.getElementById("ec-output-pre");
     if (!pre) return;
     var text = pre.textContent;
-    if (text.indexOf("//") === 0) {
+    if (text.indexOf("// ⚠") === 0) {
       generateOutput();
     }
     text = pre.textContent;
